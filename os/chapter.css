@@ -331,7 +331,7 @@ body.is-scrolled .site-header { height:68px; background:rgba(5,20,57,.92); box-s
   .hero h1 { font-size: clamp(3.1rem, 14vw, 4.4rem); line-height: .88; }
   .hero-copy { margin-top:20px; font-size: .91rem; line-height: 1.55; }
   .button-row { margin-top:24px; align-items: stretch; flex-direction: row; gap: 14px; }
-  .button-row .button { flex:1; min-height:48px; padding-inline:16px; font-size:.65rem; }
+  .button-row .button { flex:0 1 auto; min-height:48px; padding-inline:16px; font-size:.65rem; }
   .button-row .text-link { width: max-content; }
   .hero-index div { padding: 14px 11px; }
   .hero-index strong { font-size: 1.45rem; }
@@ -660,4 +660,53 @@ body::after {
 @media (min-width: 981px) and (max-width: 1200px) {
   .desktop-nav { gap: 12px; }
   .desktop-nav a { font-size: .72rem; letter-spacing: .02em; }
+}
+
+/* Content-sized, rounded calls to action across the chapter site. */
+.button,
+.button-row .button,
+.join-actions .button,
+.path-grid .button {
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 1 auto;
+  align-self: flex-start;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  line-height: 1.45;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-shadow: 0 4px 14px rgba(3, 24, 63, .12);
+  transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.button > span { flex: 0 0 auto; }
+.join-actions { flex-wrap: wrap; align-items: center; }
+.join-actions .button { align-self: center; }
+.header-cta {
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  justify-self: end;
+  border-radius: 999px;
+  padding: 12px 20px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(3, 24, 63, .12);
+  transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.button:hover, .header-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(3, 24, 63, .18);
+}
+.button:active, .header-cta:active { transform: translateY(0); }
+.button:focus-visible, .header-cta:focus-visible {
+  outline: 3px solid #87b4ff;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .button, .button-row .button, .join-actions .button, .path-grid .button, .header-cta { transition: none; }
+  .button:hover, .header-cta:hover { transform: none; }
 }
