@@ -579,3 +579,32 @@ body.is-scrolled .site-header { height:80px; background:#061c46f5; }
 .officer-card h3 { margin:0; font-family:var(--serif); font-size:1.35rem; font-weight:500; line-height:1.2; overflow-wrap:anywhere; }
 @media(max-width:1100px) { .officer-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:680px) { .officer-grid { grid-template-columns:1fr; gap:14px; } .officer-card { gap:22px; } .officer-card img { width:106px; flex-basis:106px; } .officer-card h3 { font-size:1.5rem; } .leadership-heading .button { margin-top:24px; } }
+
+/* Prominent draft watermark shared by every chapter page. */
+body::after {
+  content: "DRAFT";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  z-index: 2147483647;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(96px, 24vw, 380px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: .08em;
+  color: rgba(190, 15, 35, .36);
+  -webkit-text-stroke: 2px rgba(255, 255, 255, .6);
+  text-shadow: 0 2px 14px rgba(255, 255, 255, .35);
+}
+@media print {
+  body::after {
+    position: fixed;
+    color: rgba(190, 15, 35, .36);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
