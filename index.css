@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  a, button, input, textarea, select {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue focus-visible:ring-offset-2;
+  }
+}
+
+:root {
+  --text-xs: 9px;
+  --text-sm: 0.95em;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+  --space-6: 64px;
+  --space-7: 80px;
+
+  --z-base: 10;
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.16);
+
+  --color-royal-blue: #19468D;
+  --color-sigma-gray: #BCBEBE;
+  --color-gold: #D4AF37;
+
+  --font-primary: 'Arial', sans-serif;
+  --font-secondary: 'Inter', sans-serif;
+  --font-signature: 'Brittany Signature', 'Allura', cursive;
+}
+
+.signature-text {
+  font-family: var(--font-signature);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 1.3;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.hero-bg-overlay {
+  background-image: url('https://phibetasigma1914.org/wp-content/uploads/2023/02/Phi-Beta-Sigma-clipart_white-1.png');
+  background-position: center;
+  background-size: auto 80%;
+  filter: drop-shadow(0px 4px 24px rgba(255,255,255,0.1));
+}
+
+.gold-text-shadow {
+  text-shadow: 0 0 4px rgba(212,175,55,0.6), 0 0 8px rgba(212,175,55,0.4);
+}
+
+.loading-text-shadow {
+  text-shadow: 0 0 30px rgba(191, 219, 254, 0.4);
+}
+
+body {
+  font-family: var(--font-primary);
+}
+
+html {
+  scroll-padding-top: var(--space-7); /* Matches navbar height */
+}
+
+/* BeVISIBLE™ mapping tweaks for existing Tailwind markup */
+.bevisible-grid {
+  width: 100%;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bevisible-grid {
+    column-gap: 20px;
+    row-gap: 18px;
+  }
+}
+
+.bevisible-grid > div > div.rounded-full {
+  font-weight: 800;
+  line-height: 1;
+  user-select: none;
+}
+
+.bevisible-grid > div > div.rounded-full[data-letter="Be"] {
+  font-size: var(--text-sm);
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 768px) {
+  .bevisible-grid {
+    column-gap: 18px;
+    row-gap: 16px;
+  }
+
+  .bevisible-grid > div {
+    gap: 8px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bevisible-grid > div {
+    gap: 10px;
+  }
+
+  .bevisible-grid > div > div.rounded-full {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+.bevisible-grid > div > span {
+  white-space: nowrap;
+  line-height: 1.1;
+}
+
+@media (max-width: 480px) {
+  .bevisible-grid > div > span {
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+  }
+}
