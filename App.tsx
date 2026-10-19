@@ -66,7 +66,14 @@ const PageMetadata = () => {
   return null;
 };
 
-const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+interface FadeInProps {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+  key?: React.Key;
+}
+
+const FadeIn = ({ children, delay = 0, className = "" }: FadeInProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-20px" });
   
@@ -550,14 +557,14 @@ const HomePage = () => {
   const y = useTransform(scrollY, [0, 500], [0, 200]);
   
   const handleShare = (title: string, text: string) => {
-    if (navigator.share) {
+    if (typeof navigator !== 'undefined' && navigator.share) {
       navigator.share({
         title,
         text,
         url: window.location.href,
       }).catch((err) => console.log('Error sharing:', err));
-    } else {
-      alert(`Sharing is not supported on this browser.\n\n${title}\n${text}`);
+    } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).catch(() => {});
     }
   };
 
@@ -1494,31 +1501,55 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/bio" element={<BioPage />} />
-        <Route path="/leadership" element={<LeadershipPage />} />
-        <Route path="/lifestyle" element={<LifeStylePage />} />
-        <Route path="/privacy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms" element={<TermsOfServicePage />} />
-      </Routes>
+      <motion.div key={location.pathname}>
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/bio" element={<BioPage />} />
+          <Route path="/leadership" element={<LeadershipPage />} />
+          <Route path="/lifestyle" element={<LifeStylePage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+        </Routes>
+      </motion.div>
     </AnimatePresence>
   );
 };
 
+const safeStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        return window.sessionStorage.getItem(key);
+      }
+    } catch {
+      // Gracefully handle iframe sandboxing / blocked storage
+    }
+    return null;
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        window.sessionStorage.setItem(key, value);
+      }
+    } catch {
+      // Gracefully handle iframe sandboxing / blocked storage
+    }
+  }
+};
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(() => {
-    // Only show the loading screen once per session
-    return !sessionStorage.getItem('geauxmab_loaded');
+    // Only show the loading screen once per session if storage is permitted
+    const alreadyLoaded = safeStorage.getItem('geauxmab_loaded');
+    return !alreadyLoaded;
   });
 
   useEffect(() => {
     if (isLoading) {
-      // Dramatic duration for readability and effect
       const timer = setTimeout(() => {
         setIsLoading(false);
-        sessionStorage.setItem('geauxmab_loaded', 'true');
-      }, 3500);
+        safeStorage.setItem('geauxmab_loaded', 'true');
+      }, 1800);
       return () => clearTimeout(timer);
     }
   }, [isLoading]);

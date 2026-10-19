@@ -1,10 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-royal-blue: #19468D;
+  --color-sigma-gray: #BCBEBE;
+  --color-gold: #D4AF37;
+}
 
 @layer base {
   a, button, input, textarea, select {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue focus-visible:ring-offset-2;
+    outline-color: var(--color-royal-blue);
   }
 }
 
