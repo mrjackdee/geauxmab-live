@@ -8,7 +8,7 @@ import {
   ArrowUpRight, BookOpen, Building2, CalendarCheck, Compass, Cpu, Flower2, Footprints, GraduationCap,
   Globe, Newspaper, Plane, Rocket, Rss, Sunrise, Users,
 } from 'lucide-react';
-import { BOOK_URL, IntroContext, InstallButton, ShareButton, SocialIcons } from './SiteChrome';
+import { BOOK_URL, IntroContext, InstallButton, ShareButton, SigDraw, SocialIcons } from './SiteChrome';
 import NewsFeed, { FollowingFeed } from './NewsFeed';
 
 const HEADSHOT = 'https://lh3.googleusercontent.com/d/1FNA4TdQp7d3gw7Hyp-HBzfKLGWup4YdD';
@@ -27,23 +27,11 @@ const useGreeting = () => {
 };
 
 /* ---------------- Handwritten name ---------------- */
-// Written left to right once the opening screen clears, with a glowing pen point riding the edge of the ink
+// Traced letter by letter once the opening screen clears (held at the start until then)
 const Signature = ({ ready }: { ready: boolean }) => (
-  <div className="relative inline-block mt-5 md:mt-8 mb-2 md:mb-4">
-    <motion.h1
-      initial={{ clipPath: 'inset(-30% 100% -30% 0)' }}
-      animate={ready ? { clipPath: 'inset(-30% 0% -30% 0)' } : undefined}
-      transition={{ duration: 1.8, delay: 0.35, ease: [0.45, 0.05, 0.55, 0.95] }}
-      className="signature-text text-signature whitespace-nowrap text-white leading-[1.25] loading-text-shadow pr-3"
-    >
-      Jack Dee
-    </motion.h1>
-    <motion.span aria-hidden="true"
-      className="absolute top-[55%] h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-white shadow-[0_0_16px_5px_rgba(255,255,255,0.85)]"
-      initial={{ left: '0%', opacity: 0 }}
-      animate={ready ? { left: ['0%', '96%'], opacity: [0, 1, 1, 0] } : undefined}
-      transition={{ duration: 1.8, delay: 0.35, ease: [0.45, 0.05, 0.55, 0.95], times: [0, 0.08, 0.9, 1] }} />
-  </div>
+  <h1 className="mt-5 md:mt-8 mb-2 md:mb-4 flex justify-center md:justify-start">
+    <SigDraw start={0.35} wait={!ready} className="w-[16rem] md:w-[24rem] max-w-full" />
+  </h1>
 );
 
 /* ---------------- Roles graphic ---------------- */
@@ -195,7 +183,7 @@ const Welcome = () => {
             {hello} I'm
           </motion.p>
           <Signature ready={ready} />
-          <motion.p {...show(2.1)} className="font-display text-lead font-semibold text-white/95 max-w-md mx-auto md:mx-0">
+          <motion.p {...show(2.1)} className="text-lead font-semibold text-white/95 max-w-md mx-auto md:mx-0">
             Brother, scholar, builder, lifelong student. This is where all of it lives.
           </motion.p>
           <RoleReel ready={ready} />
@@ -345,7 +333,7 @@ const LifeTile = ({ t, i, onOpen, extra }: { t: Tile; i: number; onOpen: () => v
       transition={{ delay: (i % 4) * 0.09, type: 'spring', stiffness: 200, damping: 20 }}
       whileTap={{ scale: 0.96 }}
       style={{ rotateX: srx, rotateY: sry, transformPerspective: 800 }}
-      className={`group relative overflow-hidden rounded-[26px] text-left border border-white/20 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.7)]
+      className={`@container group relative overflow-hidden rounded-[26px] text-left border border-white/20 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.7)]
         bg-gradient-to-br from-[#2a6ab5] via-[#164f90] to-[#0d3260] ${t.span}
         ${big ? 'min-h-[220px] lg:min-h-0' : t.span.includes('col-span-2') ? 'min-h-[170px]' : 'min-h-[190px] sm:min-h-[210px]'}`}>
       {t.photo && (
@@ -379,7 +367,7 @@ const LifeTile = ({ t, i, onOpen, extra }: { t: Tile; i: number; onOpen: () => v
           {!big && <ArrowUpRight size={18} className="text-white/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />}
         </span>
         <span>
-          <span className={`font-display block font-bold leading-tight text-white ${big ? 'text-2xl lg:text-4xl' : 'text-base sm:text-lg'}`}>{t.title}</span>
+          <span className={`font-display block font-bold leading-tight text-white ${big ? 'text-[clamp(1.2rem,8cqi,2.4rem)]' : 'text-[clamp(0.85rem,9cqi,1.15rem)]'}`}>{t.title}</span>
           <span className={`mt-1 block leading-snug text-white/90 ${big ? 'text-sm lg:text-base max-w-sm' : 'text-xs sm:text-sm'}`}>{extra || t.line}</span>
           {big && (
             <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold tracking-wide text-royal-blue">
@@ -491,11 +479,11 @@ const QuoteWidget = () => {
         <SectionHead title="Words I Live By" />
         <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
           className="glass relative overflow-hidden rounded-[32px] px-6 py-8 sm:px-12 sm:py-12">
-          <span aria-hidden="true" className="absolute -top-10 left-3 sm:left-6 font-serif text-[160px] leading-none text-white/10">"</span>
+          <span aria-hidden="true" className="absolute -top-10 left-3 sm:left-6 text-[160px] leading-none text-white/10">"</span>
           <div className="relative min-h-[150px] sm:min-h-[120px] flex items-center" aria-live="polite">
             <AnimatePresence mode="wait">
               <motion.p key={i} exit={{ opacity: 0, y: -10, transition: { duration: 0.3 } }}
-                className="font-display text-xl sm:text-3xl font-semibold leading-snug text-white">
+                className="text-xl sm:text-3xl font-semibold leading-snug text-white">
                 {QUOTES[i].split(' ').map((w, n) => (
                   <motion.span key={n} className="inline-block mr-[0.28em]"
                     initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -507,7 +495,7 @@ const QuoteWidget = () => {
             </AnimatePresence>
           </div>
           <div className="relative mt-6 flex items-center justify-between gap-4">
-            <span className="signature-text text-4xl text-white">Jack Dee</span>
+            <span className="signature-text text-xl sm:text-2xl font-bold text-white">Jack Dee</span>
             <div className="flex items-center gap-1.5">
               {QUOTES.map((_, n) => (
                 <button key={n} onClick={() => setI(n)} aria-label={`Quote ${n + 1}`}

@@ -1,5 +1,5 @@
 // © MrJackDee™. All rights reserved.
-// Cloudflare Worker for geauxmab.com (routes: geauxmab.com/api/*, geauxmab.com/journal/*).
+// Cloudflare Worker for geauxmab.com (routes: geauxmab.com/api/*, geauxmab.com/journal, geauxmab.com/journal/*).
 // The site itself stays static on Hostinger; this Worker only answers these paths:
 //   GET  /api/news                  Phi Beta Sigma news, videos and podcasts (cached 30 min)
 //   GET  /api/following             "What Jack Dee is following": last-5-day news on his interests (cached 6 h)
@@ -7,6 +7,7 @@
 //   GET  /api/journal               published journal entries (newest first)
 //   GET  /api/journal/:slug         one entry
 //   GET  /journal/rss.xml           journal RSS feed
+//   GET  /journal, /journal/:slug   redirect to the app screen (#/journal...)
 //   GET  /api/journal/admin/login   behind Cloudflare Access; sends the author to the write page
 //   GET  /api/journal/admin/me      who is signed in
 //   POST /api/journal/admin         publish an entry
@@ -434,6 +435,8 @@ export const handle = async (request: Request, env: Env, ctx?: { waitUntil(p: Pr
     if (path === '/api/following.xml') return followingRss(env, await following(request, ctx));
     if (path === '/journal/rss.xml' || path === '/api/journal/rss.xml') return await rss(env);
     if (path === '/api/journal' || path.startsWith('/api/journal/')) return await journal(request, env, path);
+    // The site is a single page with hash routes, so /journal and /journal/<story> open the matching app screen
+    if (path === '/journal' || path.startsWith('/journal/')) return Response.redirect(`${SITE(env)}/#${path}`, 301);
     return json({ error: 'Not found' }, 404);
   } catch {
     return json({ error: 'Something went wrong. Try again in a moment.' }, 500);

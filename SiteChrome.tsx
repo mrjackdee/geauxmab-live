@@ -26,6 +26,21 @@ export const BOOK_URL = 'https://book.geauxmab.com/';
 // true once the opening screen has cleared, so intro animations play where people can see them
 export const IntroContext = React.createContext(true);
 
+/* ---------------- Pen-trace name ---------------- */
+// "Jack Dee" in Michroma: each letter's outline is drawn left to right, then fills in white (as on book.geauxmab.com).
+// start = seconds before the first letter; wait = hold at the start until the page is ready.
+export const SigDraw = ({ start = 0.5, wait = false, className = '' }: { start?: number; wait?: boolean; className?: string }) => (
+  <svg viewBox="0 0 400 90" role="img" aria-label="Jack Dee"
+    className={`sig-draw block h-auto overflow-visible ${wait ? 'sig-wait' : ''} ${className}`}
+    style={{ '--sig-start': `${start}s` } as React.CSSProperties}>
+    <text x="200" y="62" textAnchor="middle" fontSize="60" letterSpacing="1.2" className="signature-text">
+      {'Jack Dee'.split('').map((ch, i) => (
+        <tspan key={i} style={{ '--i': i } as React.CSSProperties}>{ch}</tspan>
+      ))}
+    </text>
+  </svg>
+);
+
 export const NAV = [
   { name: 'Home', path: '/' },
   { name: 'The Brotherhood', path: '/bio' },
@@ -181,15 +196,10 @@ export const Splash = ({ show }: { show: boolean }) => (
             </motion.picture>
           </div>
 
-          {/* Handwritten: the signature is revealed left to right, as if a pen is writing it */}
-          <motion.h1
-            initial={{ clipPath: 'inset(-30% 100% -30% 0)' }}
-            animate={{ clipPath: 'inset(-30% 0% -30% 0)' }}
-            transition={{ duration: 1.6, delay: 0.55, ease: [0.45, 0.05, 0.55, 0.95] }}
-            className="signature-text text-6xl md:text-8xl text-white mt-6 px-6 loading-text-shadow"
-          >
-            Jack Dee
-          </motion.h1>
+          {/* Pen-trace name: finishes at about 2.4s, before the opening screen closes at 3s */}
+          <h1 className="mt-6 px-6">
+            <SigDraw start={0.55} className="w-[16rem] md:w-[24rem]" />
+          </h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 0.8, y: 0 }}

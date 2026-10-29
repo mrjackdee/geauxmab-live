@@ -88,10 +88,10 @@ const PageTop = ({ label, title, lead, side, children }: { label: string; title:
   <section className="px-4 sm:px-6 pt-6 md:pt-12">
     <div className="max-w-6xl mx-auto grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] items-center gap-8 md:gap-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
-        className="glass order-2 md:order-1 rounded-[32px] px-5 py-7 sm:px-8 md:px-10 md:py-10 text-center md:text-left">
+        className="glass @container order-2 md:order-1 rounded-[32px] px-5 py-7 sm:px-8 md:px-10 md:py-10 text-center md:text-left">
         <p className="text-sm font-bold tracking-wide text-[#c8c9c7]">{label}</p>
-        <h1 className="font-display mt-2 text-[clamp(2.25rem,7vw,4.5rem)] font-extrabold leading-[1.02] tracking-tight text-white">{title}</h1>
-        <p className="font-display text-lead mt-4 font-semibold text-white/90 max-w-xl mx-auto md:mx-0">{lead}</p>
+        <h1 className="font-display mt-2 text-[clamp(1.4rem,8.6cqi,3rem)] font-extrabold leading-[1.15] text-white">{title}</h1>
+        <p className="text-lead mt-4 font-semibold text-white/90 max-w-xl mx-auto md:mx-0">{lead}</p>
         {children}
       </motion.div>
       <motion.div initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 140, damping: 18, delay: 0.1 }}
@@ -236,8 +236,9 @@ export const BrotherhoodPage = () => {
             { big: <>#2174</>, label: 'Life Member', sub: 'national, 2014' },
             { big: <>Wizard</>, label: 'Line name', sub: 'number six' },
           ].map((w, i) => (
-            <Glass key={w.label} delay={i * 0.06} className="p-4 sm:p-6">
-              <p className="font-display text-[clamp(1.6rem,6vw,2.75rem)] font-extrabold leading-none text-white">{w.big}</p>
+            <Glass key={w.label} delay={i * 0.06} className="@container p-4 sm:p-6">
+              {/* sized to the card, so the widest number always fits */}
+              <p className="font-display text-[clamp(1.1rem,13cqi,2.4rem)] font-extrabold leading-none text-white">{w.big}</p>
               <p className="mt-3 text-sm font-bold text-white">{w.label}</p>
               <p className="text-xs text-[#c8c9c7]">{w.sub}</p>
             </Glass>
@@ -300,8 +301,8 @@ export const BrotherhoodPage = () => {
         <Glass className="p-6 sm:p-8 md:p-10">
           <div className="grid md:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)] gap-8 items-center">
             <div>
-              <span aria-hidden="true" className="block font-serif text-7xl leading-[0.6] text-white/20">"</span>
-              <blockquote className="font-display text-lg sm:text-2xl font-semibold leading-snug text-white">
+              <span aria-hidden="true" className="block text-7xl leading-[0.6] text-white/20">"</span>
+              <blockquote className="text-lg sm:text-2xl font-semibold leading-snug text-white">
                 Freemasonry chose me before I chose it. I just did not recognize it until I was ready, standing on the shoulders of a man of God who never needed a degree to understand dignity, service, and what it means to live with integrity.
               </blockquote>
               <div className="mt-6 grid sm:grid-cols-2 gap-3">
@@ -452,7 +453,7 @@ export const ScholarshipPage = () => {
                 <p>I have watched brilliant people do everything right and still stall one level short of the top. The work was never the problem. Who was in the room speaking their name was.</p>
                 <p>So I am asking Black leaders who have held Director-level roles or higher in tech how their records were finally seen, and what got in the way. Their answers shape the BeVISIBLE™ Alliance Model.</p>
               </div>
-              <p className="mt-5 rounded-2xl bg-white p-4 text-sm italic text-royal-blue font-serif">
+              <p className="mt-5 rounded-2xl bg-white p-4 text-sm italic text-royal-blue">
                 "Developing a Strategic Advisory Framework to Advance Black Senior Leadership in the Technology Industry: The BeVISIBLE Alliance Model"
               </p>
             </div>
@@ -489,7 +490,7 @@ export const ScholarshipPage = () => {
             <motion.div className="h-full rounded-full bg-white" initial={{ width: 0 }} whileInView={{ width: `${((DONE + 0.5) / MILESTONES.length) * 100}%` }}
               viewport={{ once: true }} transition={{ duration: 1.4, ease: [0.2, 0.8, 0.2, 1] }} />
           </div>
-          <ol className="mt-6 grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-4 gap-3">
+          <ol className="mt-6 grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-4 gap-3">
             {MILESTONES.map((m, i) => (
               <motion.li key={m.label} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
                 className={`flex items-center gap-3 rounded-2xl border px-3 py-3 ${m.state === 'done' ? 'border-white/25 bg-white/[0.08]' : m.state === 'now' ? 'border-emerald-300/70 bg-emerald-400/10 shadow-[0_0_18px_rgba(52,211,153,0.35)]' : 'border-white/15'}`}>
@@ -516,7 +517,7 @@ export const ScholarshipPage = () => {
               return (
                 <button key={b.t} onClick={() => setOpen(b.t)} aria-pressed={on} className="flex flex-col items-center gap-2 py-1">
                   <motion.span animate={{ scale: on ? 1.1 : 1 }} transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-                    className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl border-2 font-display text-xl sm:text-2xl font-extrabold transition-colors ${on ? 'border-white bg-white text-royal-blue shadow-[0_0_24px_rgba(255,255,255,0.5)]' : 'border-white/35 bg-white/[0.06] text-white'}`}>
+                    className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl border-2 font-display text-base sm:text-xl font-extrabold transition-colors ${on ? 'border-white bg-white text-royal-blue shadow-[0_0_24px_rgba(255,255,255,0.5)]' : 'border-white/35 bg-white/[0.06] text-white'}`}>
                     {b.l}
                   </motion.span>
                   <span className={`text-[11px] font-bold tracking-wide ${on ? 'text-white' : 'text-[#c8c9c7]'}`}>{b.t}</span>
@@ -553,16 +554,16 @@ export const ScholarshipPage = () => {
       {/* Learning path */}
       <Section id="learning">
         <SectionHead title="A Lifelong Student" note="Every degree opened the next door." />
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {DEGREES.map((d, i) => (
-            <Glass key={d.school} delay={i * 0.08} className={`p-5 sm:p-6 ${d.now ? 'ring-1 ring-emerald-300/50' : ''}`}>
+            <Glass key={d.school} delay={i * 0.08} className={`@container p-5 sm:p-6 ${d.now ? 'ring-1 ring-emerald-300/50' : ''}`}>
               <div className="flex items-center gap-3">
                 <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white p-1.5 shadow-lg">
                   <img src={d.logo} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" loading="lazy" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-xs font-bold tracking-wide text-[#c8c9c7]">Step {i + 1}{d.now ? ' · Now' : ''}</p>
-                  <h3 className="font-display text-lg font-bold leading-tight text-white">{d.school}</h3>
+                  <h3 className="font-display text-[clamp(0.8rem,6cqi,1.125rem)] font-bold leading-tight text-white">{d.school}</h3>
                 </div>
               </div>
               <ul className="mt-4 space-y-2">
@@ -586,13 +587,13 @@ export const ScholarshipPage = () => {
             <motion.a key={name} href={href} target="_blank" rel="noopener noreferrer"
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, type: 'spring', stiffness: 180, damping: 22 }}
               whileHover={{ y: -6 }} whileTap={{ scale: 0.97 }}
-              className="glass group relative flex flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:p-6">
+              className="glass @container group relative flex flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:p-6">
               <span className="flex items-start justify-between">
                 <IconChip Icon={Icon} />
                 <ArrowUpRight size={18} className="text-white/70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
               </span>
               <span>
-                <span className="font-display block text-xl font-bold text-white">{name}</span>
+                <span className="font-display block text-[clamp(0.95rem,8.5cqi,1.5rem)] font-bold text-white">{name}</span>
                 <span className="mt-1 block text-sm text-white/85 leading-relaxed">{line}</span>
               </span>
             </motion.a>

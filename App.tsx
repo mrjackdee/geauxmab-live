@@ -1,6 +1,6 @@
 // © MrJackDee™. All rights reserved.
 import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Link, Routes, Route, useLocation } from 'react-router-dom';
 import { motion, MotionConfig, useScroll, useTransform, AnimatePresence } from 'motion/react';
 
 import { AppFrame, Footer, IntroContext, Splash } from './SiteChrome';
@@ -158,6 +158,20 @@ const TermsOfServicePage = () => (
   </LegalPage>
 );
 
+// Any screen that does not exist
+const NotFoundPage = () => (
+  <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-4 sm:px-6 pt-10 md:pt-20 pb-16">
+    <div className="glass max-w-xl mx-auto rounded-[32px] px-6 py-10 sm:px-10 text-center">
+      <p className="text-sm font-bold tracking-wide text-[#c8c9c7]">Page not found</p>
+      <h1 className="mt-3 text-[clamp(1.5rem,6vw,2.4rem)] font-bold text-white leading-tight">Wrong turn.</h1>
+      <p className="mt-4 text-white/85 leading-relaxed">This page does not exist, or it moved. Head back home and pick up from there.</p>
+      <Link to="/" className="btn-pill btn-solid mt-7 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold tracking-wide text-royal-blue">
+        Back to Home
+      </Link>
+    </div>
+  </motion.main>
+);
+
 // --- Main App ---
 
 const AnimatedRoutes = () => {
@@ -178,6 +192,7 @@ const AnimatedRoutes = () => {
           <Route path="/journal/:slug" element={<JournalArticle />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </motion.div>
     </AnimatePresence>

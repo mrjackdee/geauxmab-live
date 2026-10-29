@@ -1,7 +1,7 @@
 {
   // © MrJackDee™. All rights reserved.
   // Cloudflare Worker for geauxmab.com news + journal (the site itself stays on Hostinger).
-  // It only answers geauxmab.com/api/* and geauxmab.com/journal/*; /os and all other paths are untouched.
+  // It only answers geauxmab.com/api/*, geauxmab.com/journal and geauxmab.com/journal/*; /os and all other paths are untouched.
   // Deploy: npx wrangler deploy -c wrangler.site.jsonc
   // One-time setup: see README_SITE.md (KV namespace, Cloudflare Access, ACCESS_AUD).
   "$schema": "node_modules/wrangler/config-schema.json",
@@ -20,6 +20,7 @@
   },
   "routes": [
     { "pattern": "geauxmab.com/api/*", "zone_name": "geauxmab.com" },
+    { "pattern": "geauxmab.com/journal", "zone_name": "geauxmab.com" },
     { "pattern": "geauxmab.com/journal/*", "zone_name": "geauxmab.com" }
   ]
 }

@@ -63,7 +63,7 @@ const Masthead = ({ count }: { count: number }) => (
       <span className="hidden sm:inline truncate">{fullDate(new Date().toISOString())}</span>
       <span className="truncate">{count ? `${count} ${count === 1 ? 'Edition' : 'Editions'}` : 'First Edition Soon'}</span>
     </div>
-    <h1 className="newspaper-head mt-4 text-5xl sm:text-6xl md:text-8xl text-royal-blue leading-none">The Journal</h1>
+    <h1 className="newspaper-head mt-4 text-[clamp(1.4rem,7.2vw,3.6rem)] text-royal-blue leading-tight">The Journal</h1>
     <p className="mt-3 text-sm md:text-base italic text-royal-blue/80" style={{ fontFamily: 'Georgia, serif' }}>
       Daily notes from Jack Dee on brotherhood, scholarship, service and life in motion.
     </p>
@@ -118,7 +118,7 @@ export const JournalPage = () => {
           ) : !lead ? (
             <div className="py-12 md:py-16 text-center max-w-xl mx-auto">
               <PenLine className="mx-auto text-royal-blue/50" size={32} />
-              <h2 className="newspaper-head mt-4 text-3xl md:text-4xl">The presses are warming up.</h2>
+              <h2 className="newspaper-head mt-4 text-[1.15rem] md:text-[1.4rem] leading-snug">The presses are warming up.</h2>
               <p className="mt-3 text-royal-blue/75" style={{ fontFamily: 'Georgia, serif' }}>
                 {error ? 'The Journal could not be reached just now. Check back shortly.' : 'The first edition is on its way. Subscribe by RSS and it will come to you.'}
               </p>
@@ -130,7 +130,7 @@ export const JournalPage = () => {
                 <div className="min-w-0">
                   <p className="text-[11px] font-bold tracking-wide text-royal-blue/60">{lead.category}</p>
                   <Link to={`/journal/${lead.slug}`} className="group block">
-                    <h2 className="newspaper-head mt-1 text-3xl sm:text-4xl md:text-5xl leading-[1.05] group-hover:underline decoration-2 underline-offset-4">{lead.title}</h2>
+                    <h2 className="newspaper-head mt-1 text-[1.2rem] sm:text-[1.4rem] md:text-[1.85rem] leading-snug group-hover:underline decoration-2 underline-offset-4">{lead.title}</h2>
                   </Link>
                   {lead.dek && <p className="mt-3 text-lg italic text-royal-blue/80" style={{ fontFamily: 'Georgia, serif' }}>{lead.dek}</p>}
                   <div className="mt-3"><Byline e={lead} /></div>
@@ -158,7 +158,7 @@ export const JournalPage = () => {
                       <article key={e.slug} className={`py-5 sm:px-5 ${i % 3 === 0 ? 'lg:pl-0' : ''} border-b border-royal-blue/15`}>
                         <p className="text-[11px] font-bold tracking-wide text-royal-blue/60">{e.category}</p>
                         <Link to={`/journal/${e.slug}`} className="group block">
-                          <h4 className="newspaper-head mt-1 text-2xl leading-tight group-hover:underline underline-offset-4">{e.title}</h4>
+                          <h4 className="newspaper-head mt-1 text-[1.1rem] leading-snug group-hover:underline underline-offset-4">{e.title}</h4>
                         </Link>
                         {e.dek && <p className="mt-2 text-sm text-royal-blue/80" style={{ fontFamily: 'Georgia, serif' }}>{e.dek}</p>}
                         <div className="mt-2"><Byline e={e} /></div>
@@ -201,7 +201,7 @@ export const JournalArticle = () => {
             <div className="py-16 flex justify-center"><Loader2 className="animate-spin text-royal-blue/60" /></div>
           ) : entry === null ? (
             <div className="py-12 text-center">
-              <h1 className="newspaper-head text-3xl">This story could not be found.</h1>
+              <h1 className="newspaper-head text-[1.2rem] leading-snug">This story could not be found.</h1>
               <Link to="/journal" className="mt-5 inline-flex items-center gap-2 text-sm font-bold underline underline-offset-4">Back to The Journal</Link>
             </div>
           ) : (
@@ -209,7 +209,7 @@ export const JournalArticle = () => {
               <p className="text-center text-[11px] font-bold tracking-wide text-royal-blue/60 border-b border-royal-blue/20 pb-2">
                 The Journal · {entry.category}
               </p>
-              <h1 className="newspaper-head mt-5 text-center text-4xl sm:text-5xl md:text-6xl leading-[1.05]">{entry.title}</h1>
+              <h1 className="newspaper-head mt-5 text-center text-[1.4rem] sm:text-[1.85rem] md:text-[2.3rem] leading-snug">{entry.title}</h1>
               {entry.dek && <p className="mt-4 text-center text-lg md:text-xl italic text-royal-blue/80 max-w-2xl mx-auto" style={{ fontFamily: 'Georgia, serif' }}>{entry.dek}</p>}
               <div className="mt-5 flex flex-wrap items-center justify-center gap-3 border-y border-royal-blue/20 py-3">
                 <Byline e={entry} />
@@ -221,7 +221,7 @@ export const JournalArticle = () => {
               )}
               <div className="mt-6 max-w-2xl mx-auto text-royal-blue/90">
                 <Body text={entry.body || ''} />
-                <p className="mt-8 text-right signature-text text-4xl text-royal-blue">Jack Dee</p>
+                <p className="mt-8 text-right signature-text text-[1.4rem] text-royal-blue">Jack Dee</p>
               </div>
             </article>
           )}
@@ -245,7 +245,7 @@ export const JournalArticle = () => {
                 <Link key={e.slug} to={`/journal/${e.slug}`}
                   className="block glass rounded-[22px] p-5 hover:border-white/50 transition-colors">
                   <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">{e.category} · {shortDate(e.date)}</p>
-                  <p className="newspaper-head mt-1 text-xl text-white leading-tight">{e.title}</p>
+                  <p className="newspaper-head mt-1 text-[0.95rem] text-white leading-snug">{e.title}</p>
                 </Link>
               ))}
             </div>
@@ -277,7 +277,7 @@ export const JournalLatest = () => {
             <span>The Journal</span>
             <span>{latest ? shortDate(latest.date) : 'Coming Soon'}</span>
           </p>
-          <p className="newspaper-head mt-4 text-3xl sm:text-4xl leading-tight">{latest ? latest.title : 'Daily notes, coming soon.'}</p>
+          <p className="newspaper-head mt-4 text-[1.2rem] sm:text-[1.4rem] leading-snug">{latest ? latest.title : 'Daily notes, coming soon.'}</p>
           <p className="mt-2 text-royal-blue/80 italic" style={{ fontFamily: 'Georgia, serif' }}>
             {latest ? latest.dek || `${latest.category} · ${readTime(latest.words)}` : 'Brotherhood, scholarship, service and life in motion, written daily.'}
           </p>
@@ -410,7 +410,7 @@ export const JournalWrite = () => {
           <div className="mt-5">
             <Paper>
               <p className="text-center text-[11px] font-bold tracking-wide text-royal-blue/60 border-b border-royal-blue/20 pb-2">The Journal · {draft.category}</p>
-              <h2 className="newspaper-head mt-4 text-center text-4xl leading-tight">{draft.title || 'Your headline'}</h2>
+              <h2 className="newspaper-head mt-4 text-center text-[1.4rem] leading-snug">{draft.title || 'Your headline'}</h2>
               {draft.dek && <p className="mt-3 text-center italic text-royal-blue/80" style={{ fontFamily: 'Georgia, serif' }}>{draft.dek}</p>}
               <div className="mt-6 max-w-2xl mx-auto"><Body text={draft.body || 'Start writing to see your story here.'} /></div>
             </Paper>
@@ -458,7 +458,7 @@ export const JournalWrite = () => {
               {list.map((e) => (
                 <li key={e.slug} className="flex items-center gap-3 glass rounded-2xl px-4 py-3">
                   <button onClick={() => navigate(`/journal/${e.slug}`)} className="min-w-0 flex-1 text-left">
-                    <span className="block truncate font-bold text-white">{e.title}</span>
+                    <span className="block break-words font-bold leading-snug text-white">{e.title}</span>
                     <span className="block text-[11px] text-[#c8c9c7]">{e.category} · {shortDate(e.date)}</span>
                   </button>
                   <button onClick={() => edit(e.slug)} aria-label={`Edit ${e.title}`} className="tap-target w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center"><PenLine size={15} /></button>
