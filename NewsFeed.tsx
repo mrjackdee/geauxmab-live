@@ -85,7 +85,7 @@ const Card = ({ item }: { item: NewsItem }) => {
   const Icon = item.topic ? TOPIC_ICON[item.topic] || Newspaper : KindIcon;
   return (
     <a href={item.link} target="_blank" rel="noopener noreferrer"
-      className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-[#113b6c] border border-white/15 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] hover:border-white/50 transition-colors">
+      className="glass group relative flex h-full flex-col overflow-hidden rounded-[28px] hover:border-white/60 transition-colors">
       <div aria-hidden="true" className="absolute inset-x-8 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
       <div className="relative aspect-[16/9] overflow-hidden bg-royal-blue">
         {item.image ? (
@@ -206,45 +206,49 @@ const FeedCarousel = ({ cfg }: { cfg: FeedConfig }) => {
   };
 
   return (
-    <section ref={section} className="py-12 md:py-16" aria-labelledby={cfg.id}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="text-center md:text-left md:flex md:items-end md:justify-between md:gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 border border-white/30 rounded-full mb-4">
+    <section ref={section} className="pt-12 md:pt-16" aria-labelledby={cfg.id}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+          <div className="flex items-center justify-between gap-3">
+            <span className="inline-flex items-center gap-2 px-3 py-1 border border-white/30 rounded-full">
               <span className="relative flex w-2 h-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
                 <span className="relative inline-flex w-2 h-2 rounded-full bg-emerald-400" />
               </span>
               <span className="text-[11px] font-bold text-white tracking-wide">{cfg.badge}</span>
-            </div>
-            <h2 id={cfg.id} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight">
-              {cfg.title}
-            </h2>
-            <p className="text-white/80 mt-3 text-sm md:text-base">{cfg.sub}</p>
+            </span>
+            <span className="flex gap-2">
+              {cfg.rss && (
+                <a href={cfg.rss} target="_blank" rel="noopener noreferrer" aria-label="Subscribe by RSS"
+                  className="tap-target glass w-10 h-10 rounded-full text-white flex items-center justify-center hover:bg-white hover:text-royal-blue transition-colors">
+                  <Rss size={16} />
+                </a>
+              )}
+              <button onClick={() => load(true)} disabled={refreshing} aria-label="Refresh"
+                className="tap-target glass w-10 h-10 rounded-full text-white flex items-center justify-center hover:bg-white hover:text-royal-blue transition-colors disabled:opacity-60">
+                <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+              </button>
+            </span>
           </div>
-          <div className="mt-5 md:mt-0 shrink-0 flex flex-wrap justify-center gap-2">
-          {cfg.rss && (
-            <a href={cfg.rss} target="_blank" rel="noopener noreferrer"
-              className="btn-pill btn-ghost inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/60 text-white font-bold tracking-wide text-xs hover:bg-white hover:text-royal-blue transition-all">
-              <Rss size={14} /> RSS
-            </a>
-          )}
-          <button onClick={() => load(true)} disabled={refreshing}
-            className="btn-pill btn-ghost shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/60 text-white font-bold tracking-wide text-xs hover:bg-white hover:text-royal-blue transition-all disabled:opacity-60">
-            <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} /> Refresh
-          </button>
-          </div>
-        </div>
+          <h2 id={cfg.id} className="mt-4 font-display text-display font-extrabold text-white tracking-tight">{cfg.title}</h2>
+          <p className="text-white/80 mt-2 text-sm md:text-base max-w-2xl">{cfg.sub}</p>
+        </motion.div>
 
         {items && items.length > 0 && (
-          <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-1.5" role="tablist" aria-label="Show">
-            {chips.map((f) => (
-              <button key={f.id} role="tab" aria-selected={filter === f.id} onClick={() => setFilter(f.id)}
-                className={`tap-target h-9 px-4 rounded-full text-[11px] sm:text-xs font-bold tracking-wide border transition-colors ${
-                  filter === f.id ? 'bg-white text-royal-blue border-white' : 'text-white/85 border-white/25 hover:border-white/70'}`}>
-                {f.label}
-              </button>
-            ))}
+          // Segmented control: the white indicator slides to the chosen filter
+          <div className="mt-5 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="glass inline-flex min-w-max gap-1 rounded-full p-1" role="tablist" aria-label="Show">
+              {chips.map((f) => {
+                const on = filter === f.id;
+                return (
+                  <button key={f.id} role="tab" aria-selected={on} onClick={() => setFilter(f.id)}
+                    className={`relative h-9 px-4 rounded-full text-[11px] sm:text-xs font-bold tracking-wide whitespace-nowrap transition-colors ${on ? 'text-royal-blue' : 'text-white/85 hover:text-white'}`}>
+                    {on && <motion.span layoutId={`seg-${cfg.id}`} className="absolute inset-0 rounded-full bg-white shadow-[0_0_18px_rgba(255,255,255,0.45)]" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                    <span className="relative">{f.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -300,7 +304,7 @@ const FeedCarousel = ({ cfg }: { cfg: FeedConfig }) => {
         ) : (
           <AnimatePresence>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className="mt-6 p-8 rounded-[28px] bg-[#113b6c] border border-white/15 text-center text-white">
+              className="glass mt-6 p-8 rounded-[28px] text-center text-white">
               <p className="mb-5">Headlines are taking a breather. Catch the latest straight from the source.</p>
               <a href={cfg.emptyLink.href} target="_blank" rel="noopener noreferrer"
                 className="btn-pill btn-solid inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-white text-royal-blue font-bold tracking-wide text-xs">

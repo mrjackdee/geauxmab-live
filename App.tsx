@@ -781,7 +781,7 @@ const LeadershipPage = () => {
       {/* Business */}
       <section id="business" className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6">
         <SectionTitle label="Business" title="DonOra Global" sub="Strategic advisory for the AI era: enterprise transformation, AI governance, and digital presence strategy for organizations ready to lead." />
-        <div className="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-4">
+        <div className="max-w-3xl mx-auto">
           <FadeIn>
             <Panel className="h-full p-6 md:p-8">
               <div className="flex items-center gap-4">
@@ -805,34 +805,7 @@ const LeadershipPage = () => {
               </a>
             </Panel>
           </FadeIn>
-          <FadeIn delay={0.15}>
-            <Panel className="h-full p-6 md:p-8">
-              <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">Career Highlights</p>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {[
-                  { n: '$300M+', t: 'Technology programs led' },
-                  { n: '600+', t: 'Implementations moved to AWS' },
-                  { n: '17,000+', t: 'Hours saved' },
-                  { n: '$12.3M', t: 'Annual cost reduction' },
-                ].map((s) => (
-                  <div key={s.t} className="rounded-2xl bg-white/[0.08] border border-white/15 p-4 text-center">
-                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white tabular-nums">{s.n}</p>
-                    <p className="mt-1 text-[11px] text-[#c8c9c7] leading-snug">{s.t}</p>
-                  </div>
-                ))}
-              </div>
-              <ul className="mt-5 space-y-2 text-sm text-white/85">
-                <li className="flex justify-between gap-3"><span className="font-bold text-white">JLL</span><span className="text-right">Director, Technology Program Management</span></li>
-                <li className="flex justify-between gap-3"><span className="font-bold text-white">HCL Technologies</span><span className="text-right">2019–2021</span></li>
-                <li className="flex justify-between gap-3"><span className="font-bold text-white">DXC Technology</span><span className="text-right">2016–2019</span></li>
-                <li className="flex justify-between gap-3"><span className="font-bold text-white">Bank of America</span><span className="text-right">Analyst to Vice President</span></li>
-              </ul>
-              <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-1.5 text-xs font-bold tracking-wide text-white underline underline-offset-4">
-                Full résumé on MrJackDee.com <ArrowUpRight size={13} />
-              </a>
-            </Panel>
-          </FadeIn>
+
         </div>
       </section>
 
@@ -882,11 +855,7 @@ const LeadershipPage = () => {
                     </div>
                   </Panel>
                 ))}
-                <div className="flex flex-wrap justify-center md:justify-start gap-2 pt-1">
-                  {['CSPO® · Scrum Alliance', 'Google Project Management', 'Google Generative AI Leader', 'Anthropic AI Fluency'].map((t) => (
-                    <span key={t} className="px-3 py-1.5 rounded-full border border-white/25 bg-white/[0.06] text-[11px] font-bold tracking-wide text-white/90">{t}</span>
-                  ))}
-                </div>
+
               </div>
             </FadeIn>
           </div>

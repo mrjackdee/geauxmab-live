@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, useScroll, useSpring, useTransform, type TargetAndTransition } from 'motion/react';
 import {
   ArrowUpRight, BookOpen, Building2, CalendarCheck, Compass, Cpu, Flower2, Footprints, GraduationCap,
-  Globe, Newspaper, Plane, Rocket, Rss, Users,
+  Globe, Newspaper, Plane, Rocket, Rss, Sunrise, Users,
 } from 'lucide-react';
 import { BOOK_URL, IntroContext, InstallButton, ShareButton, SocialIcons } from './SiteChrome';
 import NewsFeed, { FollowingFeed } from './NewsFeed';
@@ -47,11 +47,23 @@ const Signature = ({ ready }: { ready: boolean }) => (
 );
 
 /* ---------------- Roles graphic ---------------- */
-// Five roles as icon chips: they pop in after the signature, float gently, and a spotlight moves between them
+// Nerd face for "Techie": round face, thick-rimmed glasses, toothy grin (lucide has no nerd icon)
+const NerdIcon = ({ size = 14 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="8.5" cy="10" r="2.6" />
+    <circle cx="15.5" cy="10" r="2.6" />
+    <path d="M11.1 10h1.8M2.5 9.5l3.4.3M21.5 9.5l-3.4.3" />
+    <path d="M8.5 15.5c1.9 1.6 5.1 1.6 7 0" />
+    <path d="M11 16.4v1.3h2v-1.3" strokeWidth="1.5" />
+  </svg>
+);
+
+// Five roles as icon chips (Techie, Strategist, Doctoral Candidate, Entrepreneur, SIGMA): they pop in after the signature, float gently, and a spotlight moves between them
 const ROLES: { label: string; Icon?: typeof Cpu; seal?: boolean }[] = [
-  { label: 'Techie', Icon: Cpu },
+  { label: 'Techie', Icon: NerdIcon as unknown as typeof Cpu },
   { label: 'Strategist', Icon: Compass },
-  { label: 'Life Student', Icon: BookOpen },
+  { label: 'Doctoral Candidate', Icon: GraduationCap },
   { label: 'Entrepreneur', Icon: Rocket },
   { label: 'SIGMA', seal: true },
 ];
@@ -68,7 +80,7 @@ const RoleReel = ({ ready }: { ready: boolean }) => {
     return () => { clearTimeout(start); clearInterval(t); };
   }, [ready]);
   return (
-    <ul className="mt-5 flex flex-wrap justify-center md:justify-start gap-2" aria-label="Techie, Strategist, Life Student, Entrepreneur, SIGMA">
+    <ul className="mt-5 flex flex-wrap justify-center md:justify-start gap-2" aria-label="Techie, Strategist, Doctoral Candidate, Entrepreneur, SIGMA">
       {ROLES.map(({ label, Icon, seal }, i) => {
         const on = lit === i;
         return (
@@ -200,10 +212,83 @@ const Welcome = () => {
   );
 };
 
-/* ---------------- Life tiles ---------------- */
+/* ---------------- Section 2: Life in Motion ---------------- */
+// A bento grid: one tile per part of Jack's life, each with its own original line art,
+// its own small motion, a light sweep, and a 3D tilt that follows the finger or cursor.
+
+// Original line-art motifs drawn for each tile (white strokes on the tile's blue)
+const ART: Record<string, React.ReactNode> = {
+  brotherhood: (
+    <g fill="none" stroke="white" strokeOpacity="0.28">
+      <circle cx="100" cy="100" r="88" strokeDasharray="2 7" />
+      <circle cx="100" cy="100" r="70" />
+      <circle cx="100" cy="100" r="52" strokeOpacity="0.16" strokeWidth="8" />
+      {Array.from({ length: 24 }, (_, i) => <line key={i} x1="100" y1="6" x2="100" y2="18" transform={`rotate(${i * 15} 100 100)`} />)}
+    </g>
+  ),
+  scholarship: (
+    <g fill="none" stroke="white" strokeOpacity="0.32" strokeWidth="2" strokeLinejoin="round">
+      <path d="M30 140 L100 120 L170 140 L170 60 L100 40 L30 60 Z" />
+      <path d="M100 40 L100 120" />
+      <path d="M45 70 L85 58 M45 88 L85 76 M45 106 L85 94 M115 58 L155 70 M115 76 L155 88 M115 94 L155 106" strokeOpacity="0.2" />
+      {Array.from({ length: 7 }, (_, i) => <line key={i} x1="100" y1="30" x2="100" y2="6" transform={`rotate(${(i - 3) * 18} 100 40)`} strokeOpacity="0.22" />)}
+    </g>
+  ),
+  wellness: (
+    <g fill="none" stroke="white" strokeOpacity="0.32" strokeWidth="2">
+      <path d="M100 150 C70 120 70 80 100 50 C130 80 130 120 100 150 Z" />
+      <path d="M100 150 C60 140 40 110 44 80 C70 90 92 115 100 150 Z" />
+      <path d="M100 150 C140 140 160 110 156 80 C130 90 108 115 100 150 Z" />
+      <path d="M40 165 Q100 150 160 165" strokeOpacity="0.2" />
+    </g>
+  ),
+  journal: (
+    <g fill="none" stroke="white" strokeOpacity="0.3" strokeWidth="2">
+      <rect x="30" y="30" width="140" height="140" rx="8" />
+      <path d="M45 52 H155" strokeWidth="6" strokeOpacity="0.25" />
+      <path d="M45 72 H155 M45 82 H155" strokeOpacity="0.2" />
+      <rect x="45" y="94" width="50" height="40" strokeOpacity="0.22" />
+      <path d="M105 98 H155 M105 110 H155 M105 122 H155 M105 134 H140 M45 148 H155" strokeOpacity="0.18" />
+    </g>
+  ),
+  jordans: (
+    <g fill="none" stroke="white" strokeOpacity="0.32" strokeWidth="2" strokeLinejoin="round">
+      <path d="M28 130 L36 96 C60 96 78 80 88 60 L112 66 C112 82 124 92 142 96 C162 100 174 110 174 126 L174 136 L28 136 Z" />
+      <path d="M28 136 L174 136 L174 146 L28 146 Z" strokeOpacity="0.22" />
+      <path d="M92 74 L120 80 M88 84 L118 90 M84 94 L114 100" strokeOpacity="0.22" />
+      <circle cx="140" cy="116" r="7" strokeOpacity="0.22" />
+    </g>
+  ),
+  faith: (
+    <g fill="none" stroke="white" strokeOpacity="0.3" strokeWidth="2">
+      <path d="M20 140 H180" />
+      <path d="M50 140 A50 50 0 0 1 150 140" />
+      {Array.from({ length: 9 }, (_, i) => <line key={i} x1="100" y1="80" x2="100" y2="40" transform={`rotate(${(i - 4) * 20} 100 140)`} strokeOpacity="0.2" />)}
+      <path d="M60 160 Q100 150 140 160 M80 172 Q100 166 120 172" strokeOpacity="0.18" />
+    </g>
+  ),
+  travel: (
+    <g fill="none" stroke="white" strokeOpacity="0.32" strokeWidth="2">
+      <path d="M20 160 C60 150 70 90 110 80 C140 72 160 50 176 30" strokeDasharray="5 7" strokeOpacity="0.28" />
+      <circle cx="20" cy="160" r="5" />
+      <path d="M168 40 l14 -16 -4 20 -10 -4 z" fill="white" fillOpacity="0.35" stroke="none" />
+      <circle cx="100" cy="100" r="78" strokeOpacity="0.12" />
+    </g>
+  ),
+  following: (
+    <g fill="none" stroke="white" strokeOpacity="0.3" strokeWidth="2">
+      <circle cx="100" cy="100" r="22" />
+      <circle cx="100" cy="100" r="46" strokeOpacity="0.22" />
+      <circle cx="100" cy="100" r="70" strokeOpacity="0.15" />
+      <circle cx="100" cy="100" r="94" strokeOpacity="0.1" />
+      <path d="M100 100 L166 34" strokeOpacity="0.3" />
+    </g>
+  ),
+};
+
 type Tile = {
-  key: string; title: string; line: string; to: string; Icon: typeof Cpu;
-  image?: string; wide?: boolean; motion: 'float' | 'spin' | 'pulse' | 'swing' | 'drift';
+  key: keyof typeof ART; title: string; line: string; to: string; Icon: typeof Cpu;
+  span: string; motion: 'float' | 'spin' | 'pulse' | 'swing' | 'drift'; artMotion: 'turn' | 'breathe' | 'drift'; photo?: string;
 };
 
 const ICON_MOTION: Record<Tile['motion'], TargetAndTransition> = {
@@ -213,58 +298,94 @@ const ICON_MOTION: Record<Tile['motion'], TargetAndTransition> = {
   swing: { rotate: [0, -10, 10, 0] },
   drift: { x: [0, 5, 0] },
 };
+const ART_MOTION: Record<Tile['artMotion'], TargetAndTransition> = {
+  turn: { rotate: 360 },
+  breathe: { scale: [1, 1.08, 1] },
+  drift: { x: [0, 10, 0], y: [0, -8, 0] },
+};
 
+// span: phone (2 columns) then desktop (4 columns) footprint
 const TILES: Tile[] = [
-  { key: 'brotherhood', title: 'Brotherhood', line: '25+ years a Sigma. Still all in.', to: '/bio', Icon: Users,
-    image: 'https://lh3.googleusercontent.com/d/1ujWt304YSwhQIHht7yrT4GNP18dQJ-fY', motion: 'pulse', wide: true },
-  { key: 'scholarship', title: 'Scholarship', line: 'Doctoral candidate. Lifelong student.', to: '/leadership', Icon: GraduationCap, motion: 'float' },
-  { key: 'business', title: 'Business', line: 'Building DonOra Global.', to: '/leadership', Icon: Building2, motion: 'drift' },
-  { key: 'wellness', title: 'Yoga & Meditation', line: 'Strength, stillness, staying grounded.', to: '/lifestyle', Icon: Flower2, motion: 'spin' },
-  { key: 'style', title: 'Air Jordans', line: 'Retros, royal blue and the hunt.', to: '/lifestyle', Icon: Footprints,
-    image: 'https://lh3.googleusercontent.com/d/19I2Izijp1jMdeVZgewWrnqxCDylxasxP', motion: 'swing' },
-  { key: 'travel', title: 'On the Move', line: 'New places, new perspective.', to: '/lifestyle', Icon: Plane,
-    image: 'https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&w=1200&auto=format&fit=crop', motion: 'drift' },
-  { key: 'journal', title: 'The Journal', line: 'Daily notes, newspaper style.', to: '/journal', Icon: Newspaper, motion: 'float' },
-  { key: 'following', title: "What I'm Following", line: 'Politics, AI, credit and culture.', to: '#following', Icon: Rss, motion: 'pulse', wide: true },
+  { key: 'brotherhood', title: 'Brotherhood', line: 'Since 1998, Phi Beta Sigma has been home. Life Member #2174.', to: '/bio', Icon: Users,
+    span: 'col-span-2 lg:row-span-2', motion: 'pulse', artMotion: 'turn' },
+  { key: 'scholarship', title: 'Scholarship', line: 'Chasing a doctorate because curiosity never retires.', to: '/leadership', Icon: GraduationCap,
+    span: '', motion: 'float', artMotion: 'breathe' },
+  { key: 'wellness', title: 'Yoga & Meditation', line: 'Breath first. Everything else second.', to: '/lifestyle', Icon: Flower2,
+    span: '', motion: 'spin', artMotion: 'breathe' },
+  { key: 'journal', title: 'The Journal', line: 'Daily notes, written like the morning paper.', to: '/journal', Icon: Newspaper,
+    span: 'col-span-2', motion: 'float', artMotion: 'drift' },
+  { key: 'jordans', title: 'Air Jordans', line: 'Retros, royal blue and the thrill of the hunt.', to: '/lifestyle', Icon: Footprints,
+    span: '', motion: 'swing', artMotion: 'drift', photo: 'https://lh3.googleusercontent.com/d/19I2Izijp1jMdeVZgewWrnqxCDylxasxP' },
+  { key: 'faith', title: 'Faith', line: 'It does not make the road easier. It makes me steadier.', to: '/lifestyle', Icon: Sunrise,
+    span: '', motion: 'pulse', artMotion: 'breathe' },
+  { key: 'travel', title: 'On the Move', line: 'New places keep my perspective honest.', to: '/lifestyle', Icon: Plane,
+    span: '', motion: 'drift', artMotion: 'drift' },
+  { key: 'following', title: "What I'm Following", line: 'Politics, AI, credit and culture, fresh daily.', to: '#following', Icon: Rss,
+    span: '', motion: 'pulse', artMotion: 'breathe' },
 ];
 
 const LifeTile = ({ t, i, onOpen, extra }: { t: Tile; i: number; onOpen: () => void; extra?: string }) => {
   const { Icon } = t;
+  const big = t.key === 'brotherhood';
+  // 3D tilt that follows the pointer
+  const rx = useMotionValue(0);
+  const ry = useMotionValue(0);
+  const srx = useSpring(rx, { stiffness: 200, damping: 18 });
+  const sry = useSpring(ry, { stiffness: 200, damping: 18 });
+  const onMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    ry.set(((e.clientX - r.left) / r.width - 0.5) * 10);
+    rx.set(-((e.clientY - r.top) / r.height - 0.5) * 10);
+  };
   return (
-    <motion.button onClick={onOpen}
-      initial={{ opacity: 0, y: 24, scale: 0.92 }}
+    <motion.button onClick={onOpen} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }}
+      initial={{ opacity: 0, y: 28, scale: 0.94 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ delay: (i % 4) * 0.08, type: 'spring', stiffness: 220, damping: 20 }}
-      whileHover={{ y: -6, rotate: i % 2 ? 0.8 : -0.8 }}
+      transition={{ delay: (i % 4) * 0.09, type: 'spring', stiffness: 200, damping: 20 }}
       whileTap={{ scale: 0.96 }}
-      className={`group relative overflow-hidden rounded-[26px] text-left border border-white/15 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)] ${
-        t.wide ? 'col-span-2' : ''} ${t.image ? 'bg-[#0e335e]' : 'bg-gradient-to-br from-[#1d5fa8] via-[#164f90] to-[#0e335e]'} aspect-[4/5] sm:aspect-[5/4] ${t.wide ? '!aspect-[2/1]' : ''}`}>
-      {t.image && (
-        <motion.img src={t.image} alt="" referrerPolicy="no-referrer" loading="lazy"
-          className={`absolute inset-0 h-full w-full ${t.key === 'brotherhood' ? 'object-contain p-6 opacity-40' : 'object-cover opacity-80'}`}
-          animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 14 + i, repeat: Infinity, ease: 'easeInOut' }} />
+      style={{ rotateX: srx, rotateY: sry, transformPerspective: 800 }}
+      className={`group relative overflow-hidden rounded-[26px] text-left border border-white/20 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.7)]
+        bg-gradient-to-br from-[#2a6ab5] via-[#164f90] to-[#0d3260] ${t.span}
+        ${big ? 'min-h-[220px] lg:min-h-0' : t.span.includes('col-span-2') ? 'min-h-[170px]' : 'min-h-[190px] sm:min-h-[210px]'}`}>
+      {t.photo && (
+        <motion.img src={t.photo} alt="" referrerPolicy="no-referrer" loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover opacity-55 mix-blend-luminosity"
+          animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} />
       )}
-      {/* soft glow orb that wanders behind the content */}
-      <motion.span aria-hidden="true" className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/15 blur-2xl"
-        animate={{ x: [0, -20, 0], y: [0, 16, 0] }} transition={{ duration: 8 + i, repeat: Infinity, ease: 'easeInOut' }} />
-      <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0b2a50]/95 via-[#0b2a50]/30 to-transparent" />
+      {big && (
+        <img src="https://lh3.googleusercontent.com/d/1ujWt304YSwhQIHht7yrT4GNP18dQJ-fY" alt="" referrerPolicy="no-referrer"
+          className="absolute right-4 top-4 z-10 h-24 lg:h-40 w-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)]" />
+      )}
+      {/* tile artwork */}
+      <motion.svg aria-hidden="true" viewBox="0 0 200 200"
+        className={`absolute ${big ? '-left-10 -bottom-16 h-72 w-72 lg:h-[26rem] lg:w-[26rem]' : '-right-8 -bottom-10 h-40 w-40 sm:h-44 sm:w-44'}`}
+        animate={ART_MOTION[t.artMotion]}
+        transition={t.artMotion === 'turn' ? { duration: 60, repeat: Infinity, ease: 'linear' } : { duration: 9 + i, repeat: Infinity, ease: 'easeInOut' }}>
+        {ART[t.key]}
+      </motion.svg>
+      <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0a2647]/90 via-[#0a2647]/25 to-transparent" />
       {/* light sweep every few seconds */}
       <motion.span aria-hidden="true" className="absolute inset-y-0 -left-1/2 w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]"
-        animate={{ x: ['0%', '400%'] }} transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 5 + i * 0.7, delay: 1 + i * 0.4 }} />
-      <span aria-hidden="true" className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+        animate={{ x: ['0%', '400%'] }} transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 6 + i * 0.7, delay: 1.5 + i * 0.5 }} />
+      <span aria-hidden="true" className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
 
-      <span className="relative flex h-full flex-col justify-between p-4 sm:p-5">
+      <span className="relative flex h-full flex-col justify-between gap-6 p-4 sm:p-5">
         <span className="flex items-start justify-between">
           <motion.span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-royal-blue shadow-lg"
-            animate={ICON_MOTION[t.motion]} transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}>
+            animate={ICON_MOTION[t.motion]} transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.25 }}>
             <Icon size={20} />
           </motion.span>
-          <ArrowUpRight size={18} className="text-white/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />
+          {!big && <ArrowUpRight size={18} className="text-white/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />}
         </span>
         <span>
-          <span className="block text-base sm:text-lg font-bold leading-tight text-white">{t.title}</span>
-          <span className="mt-1 block text-xs sm:text-sm leading-snug text-white/85">{extra || t.line}</span>
+          <span className={`font-display block font-bold leading-tight text-white ${big ? 'text-2xl lg:text-4xl' : 'text-base sm:text-lg'}`}>{t.title}</span>
+          <span className={`mt-1 block leading-snug text-white/90 ${big ? 'text-sm lg:text-base max-w-sm' : 'text-xs sm:text-sm'}`}>{extra || t.line}</span>
+          {big && (
+            <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold tracking-wide text-royal-blue">
+              My Journey <ArrowUpRight size={14} />
+            </span>
+          )}
         </span>
       </span>
     </motion.button>
@@ -282,10 +403,10 @@ const LifeTiles = () => {
     else navigate(to);
   };
   return (
-    <section className="px-4 sm:px-6 pt-10 md:pt-14">
+    <section className="px-4 sm:px-6 pt-10 md:pt-16">
       <div className="max-w-6xl mx-auto">
-        <DashLabel>Life in Motion</DashLabel>
-        <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+<SectionHead title="Life in Motion" note="Every part of the story, one tap away." />
+        <div className="grid grid-cols-2 lg:grid-cols-4 lg:auto-rows-[200px] gap-3 sm:gap-4 [grid-auto-flow:dense]">
           {TILES.map((t, i) => (
             <LifeTile key={t.key} t={t} i={i} onOpen={() => open(t.to)}
               extra={t.key === 'journal' && latest ? `Latest: ${latest}` : undefined} />
@@ -296,7 +417,17 @@ const LifeTiles = () => {
   );
 };
 
-/* ---------------- Apps (other sites) ---------------- */
+/* ---------------- Section heading (shared by sections 2-5) ---------------- */
+const SectionHead = ({ title, note }: { title: string; note?: string }) => (
+  <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+    className="mb-5 md:mb-7 flex items-end justify-between gap-4">
+    <h2 className="font-display text-display font-extrabold text-white tracking-tight">{title}</h2>
+    {note && <p className="hidden sm:block text-sm text-white/75 max-w-xs text-right">{note}</p>}
+  </motion.div>
+);
+
+/* ---------------- Section 3: My Apps ---------------- */
+// Phone-style app icons for Jack's other sites, on a frosted dock
 const APPS = [
   { name: 'MrJackDee', href: 'https://www.mrjackdee.com/', Icon: Globe, note: 'My corner of the web' },
   { name: 'BeVISIBLE', href: 'https://bevisible.work/', Icon: GraduationCap, note: 'My doctoral research' },
@@ -305,29 +436,38 @@ const APPS = [
 ];
 
 const Apps = () => (
-  <section className="px-4 sm:px-6 pt-10 md:pt-14">
+  <section className="px-4 sm:px-6 pt-12 md:pt-16">
     <div className="max-w-6xl mx-auto">
-      <DashLabel>My Apps</DashLabel>
-      <div className="mt-4 grid grid-cols-4 gap-2 sm:gap-4 max-w-2xl">
-        {APPS.map(({ name, href, Icon, note }, i) => (
-          <motion.a key={name} href={href} {...(href === BOOK_URL ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-            initial={{ opacity: 0, scale: 0.6 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-            transition={{ delay: i * 0.08, type: 'spring', stiffness: 380, damping: 18 }}
-            whileHover={{ y: -4 }} whileTap={{ scale: 0.9 }}
-            className="group flex flex-col items-center text-center" title={note}>
-            <span className="flex h-16 w-16 sm:h-[72px] sm:w-[72px] items-center justify-center rounded-[22px] bg-white text-royal-blue shadow-[0_14px_30px_-12px_rgba(0,0,0,0.6)] transition-shadow group-hover:shadow-[0_0_24px_rgba(255,255,255,0.5)]">
-              <Icon size={28} />
-            </span>
-            <span className="mt-2 text-[11px] sm:text-xs font-bold tracking-wide text-white leading-tight">{name}</span>
-            <span className="hidden sm:block text-[11px] text-[#c8c9c7] leading-tight">{note}</span>
-          </motion.a>
-        ))}
+      <SectionHead title="My Apps" note="The rest of my world, one tap away." />
+      <div className="glass rounded-[32px] px-3 py-6 sm:px-8 sm:py-8">
+        <div className="grid grid-cols-4 gap-2 sm:gap-6">
+          {APPS.map(({ name, href, Icon, note }, i) => (
+            <motion.a key={name} href={href} {...(href === BOOK_URL ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+              initial={{ opacity: 0, scale: 0.5, y: 12 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: i * 0.09, type: 'spring', stiffness: 380, damping: 18 }}
+              whileHover={{ y: -6, rotate: [0, -4, 4, 0], transition: { rotate: { duration: 0.4 } } }} whileTap={{ scale: 0.88 }}
+              className="group flex flex-col items-center text-center" aria-label={`${name}: ${note}`}>
+              <span className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-[22px] bg-gradient-to-br from-white to-[#dbe7fb] text-royal-blue shadow-[0_16px_32px_-12px_rgba(0,0,0,0.6)] transition-shadow group-hover:shadow-[0_0_28px_rgba(255,255,255,0.55)]">
+                <Icon size={30} />
+                {name === 'Book Time' && (
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-4 w-4 rounded-full border-2 border-white bg-emerald-400" />
+                  </span>
+                )}
+              </span>
+              <span className="mt-2.5 text-[11px] sm:text-sm font-bold tracking-wide text-white leading-tight">{name}</span>
+              <span className="hidden sm:block mt-0.5 text-xs text-[#c8c9c7] leading-tight">{note}</span>
+            </motion.a>
+          ))}
+        </div>
       </div>
     </div>
   </section>
 );
 
-/* ---------------- Quote widget ---------------- */
+/* ---------------- Section 4: Words I Live By ---------------- */
+// Jack's quotes on a frosted card; each one writes itself in word by word, with a progress bar per quote
 const QUOTES = [
   'Grief does not go away. It just becomes the fuel you learn to run on when everything else runs out.',
   'I stopped trying to prove I belonged in the room the moment I realized my job was to build a better one.',
@@ -335,32 +475,46 @@ const QUOTES = [
   'Fitness taught me what no degree could. That consistency in the uncomfortable is the only real credential that transfers everywhere.',
   'Paying it forward is not generosity. It is accountability. Someone invested in me before I earned it, and I owe that debt to the next person in line.',
 ];
+const QUOTE_MS = 8000;
 
 const QuoteWidget = () => {
   const [i, setI] = useState(0);
-  useEffect(() => { const t = setInterval(() => setI((n) => (n + 1) % QUOTES.length), 7000); return () => clearInterval(t); }, []);
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    if (paused) return;
+    const t = setTimeout(() => setI((n) => (n + 1) % QUOTES.length), QUOTE_MS);
+    return () => clearTimeout(t);
+  }, [i, paused]);
   return (
-    <section className="px-4 sm:px-6 pt-10 md:pt-14">
+    <section className="px-4 sm:px-6 pt-12 md:pt-16">
       <div className="max-w-6xl mx-auto">
-        <DashLabel>Words I Live By</DashLabel>
-        <div className="relative mt-4 overflow-hidden rounded-[26px] bg-white text-royal-blue px-6 py-7 sm:px-10 sm:py-9 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.6)]">
-          <span aria-hidden="true" className="absolute -top-6 left-4 font-serif text-[120px] leading-none text-royal-blue/10">"</span>
-          <div className="relative min-h-[120px] sm:min-h-[96px] flex items-center">
+        <SectionHead title="Words I Live By" />
+        <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
+          className="glass relative overflow-hidden rounded-[32px] px-6 py-8 sm:px-12 sm:py-12">
+          <span aria-hidden="true" className="absolute -top-10 left-3 sm:left-6 font-serif text-[160px] leading-none text-white/10">"</span>
+          <div className="relative min-h-[150px] sm:min-h-[120px] flex items-center" aria-live="polite">
             <AnimatePresence mode="wait">
-              <motion.p key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.5 }}
-                className="text-lg sm:text-2xl font-bold italic leading-snug" style={{ fontFamily: 'Georgia, serif' }}>
-                {QUOTES[i]}
+              <motion.p key={i} exit={{ opacity: 0, y: -10, transition: { duration: 0.3 } }}
+                className="font-display text-xl sm:text-3xl font-semibold leading-snug text-white">
+                {QUOTES[i].split(' ').map((w, n) => (
+                  <motion.span key={n} className="inline-block mr-[0.28em]"
+                    initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ delay: n * 0.045, duration: 0.35, ease: 'easeOut' }}>
+                    {w}
+                  </motion.span>
+                ))}
               </motion.p>
             </AnimatePresence>
           </div>
-          <div className="relative mt-5 flex items-center justify-between gap-4">
-            <span className="signature-text text-3xl">Jack Dee</span>
-            <div className="flex items-center gap-1.5" aria-hidden="true">
+          <div className="relative mt-6 flex items-center justify-between gap-4">
+            <span className="signature-text text-4xl text-white">Jack Dee</span>
+            <div className="flex items-center gap-1.5">
               {QUOTES.map((_, n) => (
-                <span key={n} className="relative h-1.5 w-6 overflow-hidden rounded-full bg-royal-blue/15">
-                  {n === i && <motion.span className="absolute inset-y-0 left-0 bg-royal-blue" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 7, ease: 'linear' }} />}
-                  {n < i && <span className="absolute inset-0 bg-royal-blue" />}
-                </span>
+                <button key={n} onClick={() => setI(n)} aria-label={`Quote ${n + 1}`}
+                  className="tap-target relative h-1.5 w-6 sm:w-8 overflow-hidden rounded-full bg-white/20">
+                  {n === i && !paused && <motion.span key={`p${i}`} className="absolute inset-y-0 left-0 bg-white" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: QUOTE_MS / 1000, ease: 'linear' }} />}
+                  {(n < i || (n === i && paused)) && <span className="absolute inset-0 bg-white" />}
+                </button>
               ))}
             </div>
           </div>
@@ -370,17 +524,18 @@ const QuoteWidget = () => {
   );
 };
 
-const DashLabel = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex items-center gap-3">
-    <span className="text-xs sm:text-sm font-bold tracking-wide text-white">{children}</span>
-    <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-white/40 to-transparent" />
-  </div>
-);
-
-// Built and approved one section at a time (Web Development README, section 9).
-// Section 1 (Welcome) is live; the remaining sections are added as each one is approved.
+// Home is built section by section per the Web Development README (section 9).
 export const HomePage = () => (
-  <motion.main initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-10">
+  <motion.main initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-6">
     <Welcome />
+    <LifeTiles />
+    <Apps />
+    <QuoteWidget />
+    <NewsFeed />
+    <div id="following" className="scroll-mt-24"><FollowingFeed /></div>
+    {/* Closing: save to home screen, then the shared footer */}
+    <section className="pt-4 pb-10 flex justify-center">
+      <InstallButton />
+    </section>
   </motion.main>
 );
