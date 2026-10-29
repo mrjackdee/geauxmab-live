@@ -11,7 +11,8 @@ import {
 import { BOOK_URL, IntroContext, InstallButton, ShareButton, SigDraw, SocialIcons } from './SiteChrome';
 import NewsFeed, { FollowingFeed } from './NewsFeed';
 
-const HEADSHOT = 'https://lh3.googleusercontent.com/d/1FNA4TdQp7d3gw7Hyp-HBzfKLGWup4YdD';
+// same suit headshot as book.geauxmab.com and both share cards
+const HEADSHOT = '/img/jack-dee.webp';
 
 /* ---------------- Greeting ---------------- */
 // Uses the visitor's own clock, and recognizes people who have been here before
