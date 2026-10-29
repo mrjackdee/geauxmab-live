@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
                 this.setState({ hasError: false, error: null });
                 window.location.reload();
               }}
-              className="px-6 py-2.5 bg-white text-[#164F90] font-bold text-xs uppercase tracking-widest rounded shadow hover:bg-blue-50 transition-colors"
+              className="px-6 py-2.5 bg-white text-[#164F90] font-bold text-xs tracking-wide rounded-full shadow hover:bg-blue-50 transition-colors"
             >
               Reload Experience
             </button>

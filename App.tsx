@@ -337,7 +337,7 @@ const AcademicCarousel = () => {
             key={idx}
             onClick={() => setCurrentIndex(idx)}
             aria-label={`Go to slide ${idx + 1}`}
-            className={`h-2 rounded-full transition-all shadow-sm ${idx === currentIndex ? 'bg-white w-6' : 'bg-white/50 w-2'}`}
+            className={`tap-target h-2 rounded-full transition-all shadow-sm ${idx === currentIndex ? 'bg-white w-6' : 'bg-white/50 w-2'}`}
           />
         ))}
       </div>
@@ -716,15 +716,15 @@ const BioPage = () => {
                   className="h-1 bg-white mt-2 rounded-full mx-auto" />
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-white mb-1">Zeta Iota</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 leading-tight">Zeta Iota</div>
                 <div className="text-[11px] tracking-wide text-[#c8c9c7]">Initiated Chapter</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-white mb-1">Omicron Sigma</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 leading-tight">Omicron Sigma</div>
                 <div className="text-[11px] tracking-wide text-[#c8c9c7]">Current Chapter</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-white mb-1">"Wizard" #6</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 leading-tight">"Wizard" #6</div>
                 <div className="text-[11px] tracking-wide text-[#c8c9c7]">Line Name and Number</div>
               </div>
             </div>
@@ -1140,7 +1140,7 @@ const LeadershipPage = () => {
                   { n: '$12.3M', t: 'Annual cost reduction' },
                 ].map((s) => (
                   <div key={s.t} className="rounded-2xl bg-white/[0.08] border border-white/15 p-4 text-center">
-                    <p className="text-2xl md:text-3xl font-bold text-white">{s.n}</p>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white tabular-nums">{s.n}</p>
                     <p className="mt-1 text-[11px] text-[#c8c9c7] leading-snug">{s.t}</p>
                   </div>
                 ))}
@@ -1459,7 +1459,8 @@ const AnimatedRoutes = () => {
 };
 
 export default function App() {
-  const [splash, setSplash] = useState(true); // opening screen plays on every load, like book.geauxmab.com
+  // Opening screen plays on every load, like book.geauxmab.com (?nosplash skips it for screenshots and testing)
+  const [splash, setSplash] = useState(() => !new URLSearchParams(window.location.search).has('nosplash'));
 
   useEffect(() => {
     if (!splash) return;

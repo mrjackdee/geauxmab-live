@@ -275,11 +275,18 @@ const FeedCarousel = ({ cfg }: { cfg: FeedConfig }) => {
                 className="tap-target w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-royal-blue transition-colors">
                 <ChevronLeft size={18} />
               </button>
-              <div className="flex items-center gap-1.5" aria-hidden="true">
-                {list.map((_, i) => (
-                  <span key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-white' : 'w-1.5 bg-white/35'}`} />
-                ))}
-              </div>
+              {/* Dots for short lists; a "3 / 27" counter keeps long lists inside small screens */}
+              {list.length <= 8 ? (
+                <div className="flex items-center gap-1.5" aria-hidden="true">
+                  {list.map((_, i) => (
+                    <span key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-white' : 'w-1.5 bg-white/35'}`} />
+                  ))}
+                </div>
+              ) : (
+                <span className="min-w-[4.5rem] text-center text-xs font-bold tabular-nums tracking-wide text-white/85" aria-live="polite">
+                  {active + 1} / {list.length}
+                </span>
+              )}
               <button onClick={() => goTo(active + 1)} aria-label="Next"
                 className="tap-target w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-royal-blue transition-colors">
                 <ChevronRight size={18} />
