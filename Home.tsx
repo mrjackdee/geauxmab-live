@@ -418,7 +418,7 @@ const LifeTiles = () => {
 };
 
 /* ---------------- Section heading (shared by sections 2-5) ---------------- */
-const SectionHead = ({ title, note }: { title: string; note?: string }) => (
+export const SectionHead = ({ title, note }: { title: string; note?: string }) => (
   <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
     className="mb-5 md:mb-7 flex items-end justify-between gap-4">
     <h2 className="font-display text-display font-extrabold text-white tracking-tight">{title}</h2>

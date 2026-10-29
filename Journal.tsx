@@ -78,9 +78,12 @@ const Masthead = ({ count }: { count: number }) => (
 );
 
 // Newspaper sheet: white paper with royal-blue ink, inside the app's blue frame
+// The sheet sits in a frosted glass bezel, so the paper reads like it is held in the app
 const Paper = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative rounded-[28px] bg-white text-royal-blue shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] px-5 py-6 sm:px-8 sm:py-8 md:px-12 md:py-10 overflow-hidden">
-    {children}
+  <div className="glass rounded-[34px] p-1.5 sm:p-2.5 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]">
+    <div className="relative rounded-[28px] bg-white text-royal-blue px-5 py-6 sm:px-8 sm:py-8 md:px-12 md:py-10 overflow-hidden">
+      {children}
+    </div>
   </div>
 );
 
@@ -240,7 +243,7 @@ export const JournalArticle = () => {
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               {more.map((e) => (
                 <Link key={e.slug} to={`/journal/${e.slug}`}
-                  className="block rounded-[22px] bg-[#113b6c] border border-white/15 p-5 hover:border-white/50 transition-colors">
+                  className="block glass rounded-[22px] p-5 hover:border-white/50 transition-colors">
                   <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">{e.category} · {shortDate(e.date)}</p>
                   <p className="newspaper-head mt-1 text-xl text-white leading-tight">{e.title}</p>
                 </Link>
@@ -361,7 +364,7 @@ export const JournalWrite = () => {
   if (auth === 'out') {
     return (
       <main className="px-4 pt-10 pb-16">
-        <div className="max-w-md mx-auto rounded-[28px] bg-[#113b6c] border border-white/15 p-8 text-center">
+        <div className="max-w-md mx-auto glass rounded-[28px] p-8 text-center">
           <PenLine className="mx-auto text-white/80" size={32} />
           <h1 className="mt-4 text-2xl font-bold text-white">Write in The Journal</h1>
           <p className="mt-2 text-sm text-white/80">This page is only for Jack Dee. Sign in with your email to continue.</p>
@@ -453,7 +456,7 @@ export const JournalWrite = () => {
             <h2 className="text-xs font-bold tracking-wide text-[#c8c9c7]">Published</h2>
             <ul className="mt-3 space-y-2">
               {list.map((e) => (
-                <li key={e.slug} className="flex items-center gap-3 rounded-2xl bg-[#113b6c] border border-white/15 px-4 py-3">
+                <li key={e.slug} className="flex items-center gap-3 glass rounded-2xl px-4 py-3">
                   <button onClick={() => navigate(`/journal/${e.slug}`)} className="min-w-0 flex-1 text-left">
                     <span className="block truncate font-bold text-white">{e.title}</span>
                     <span className="block text-[11px] text-[#c8c9c7]">{e.category} · {shortDate(e.date)}</span>

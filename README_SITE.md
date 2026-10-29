@@ -28,10 +28,10 @@ Open http://localhost:3000.
 
 | Menu | Route | What's on it |
 |------|-------|--------------|
-| Home | `#/` | Hero with photo and signature, pillars, Explore My Sites, latest Journal story, Follow Along, quotes, both live feeds |
-| The Brotherhood | `#/bio` | My Journey, SIGMA stats, timeline, Masonic affiliation |
-| The Scholarship | `#/leadership` | Disciplines, doctorate (status, milestones, BeVISIBLE™ model), DonOra Global and career highlights, education and certifications |
-| The Service | `#/lifestyle` | Perspective, wellness (strength, yoga, meditation), Air Jordans and the hunt, travel, community service |
+| Home | `#/` | Dashboard: welcome card with handwritten name and roles, Life in Motion tiles, My Apps dock, Words I Live By, both live feeds |
+| The Brotherhood | `#/bio` | Live "By the Numbers" counters, My Chapters, podcast card, scroll timeline since 1998, Brotherhood Beyond Sigma |
+| The Scholarship | `#/leadership` | Doctoral progress ring, the research question with EEOC chart, doctoral journey, BeVISIBLE™ model, A Lifelong Student (degrees), What I'm Building |
+| The Service | `#/lifestyle` | Lotus art opener, box-breathing widget, daily practice, Air Jordans and the hunt, On the Move, In the Community |
 | The Journal | `#/journal`, `#/journal/<story>` | Newspaper-style front page and articles |
 | (private) | `#/journal/write` | Write, edit and remove entries |
 
@@ -96,13 +96,38 @@ The entry appears on the Journal page at once and in the RSS feed at **https://g
 
 ## Content to review
 
-These sections were drafted in Jack's voice from his other sites and need his review:
-- The Service:
-  - the Yoga and Meditation cards
-  - the second Air Jordans paragraph
-  - the In the Community cards
-- The Scholarship:
-  - the DonOra Global summary and career highlights (from mrjackdee.com and donoraglobal.com)
-  - the doctoral milestones (from bevisible.work)
-  - the extra certification chips (CSPO, Google Project Management, Google Generative AI Leader, Anthropic AI Fluency)
-- Home: the "Explore My Sites" and "Follow Along" descriptions.
+All page copy was written new, in Jack's voice. Please read it and confirm the facts:
+- **Home:** the tile lines, the app notes, and the five quotes.
+- **The Brotherhood:**
+  - the page title and opening line
+  - both chapter descriptions
+  - the four timeline entries
+- **The Scholarship:**
+  - the research summary
+  - the BeVISIBLE™ dimension descriptions (rewritten in plain words)
+  - the degree list
+  - the three "What I'm Building" lines
+- **The Service:**
+  - the breathing card
+  - the four practice cards
+  - the Air Jordans copy and chips
+  - the travel line
+  - the three community cards
+
+Career content (disciplines, certifications, job history) stays off this site. mrjackdee.com covers it.
+
+## AI concierge: free options using what is already paid for
+
+Consumer plans (Google One AI Premium, Claude Max, ChatGPT Pro) cover the chat apps only. None of them give a website API access. These options cost nothing extra:
+
+1. **Cloudflare Workers AI (recommended).**
+   - Runs inside the Worker this site already uses, with a free daily allowance.
+   - Open models (Llama and others).
+   - No new account or API key to manage.
+   - Best fit for a small "Ask about Jack" chat that answers from the site's own content.
+2. **Gemini API free tier (Google AI Studio).**
+   - A free key with rate limits.
+   - Free-tier prompts may be used by Google to improve its products, so it is fine for public site content but not for anything private.
+3. **No-AI fallback.** An FAQ-style concierge with canned answers and a Book Time hand-off. No model, no cost.
+
+Paid APIs (Anthropic, OpenAI, Gemini paid tier) are only worth considering if the free options fall short.
