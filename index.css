@@ -211,3 +211,42 @@ html {
 .tap-target-y::before {
   inset: -14px -6px;
 }
+
+/* The Journal: newspaper typography (headlines in Playfair Display, body set like newsprint) */
+.newspaper-head {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+.journal-body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+.journal-body p { margin: 0 0 1.1em; }
+.journal-body h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  margin: 1.6em 0 0.6em;
+}
+.journal-body blockquote {
+  margin: 1.6em 0;
+  padding: 0.8em 0;
+  border-top: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-style: italic;
+  line-height: 1.4;
+  text-align: center;
+}
+.journal-body .drop-cap::first-letter {
+  float: left;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 3.6em;
+  line-height: 0.85;
+  padding: 0.06em 0.1em 0 0;
+}

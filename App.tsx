@@ -1,16 +1,15 @@
 // © MrJackDee™. All rights reserved.
 import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { motion, MotionConfig, useScroll, useSpring, useInView, useTransform, AnimatePresence } from 'motion/react';
-import { 
-  Menu, X, ArrowRight, Facebook, Instagram, Linkedin, Share2, 
-  MapPin, Globe, Award, TrendingUp, Users, Activity, 
-  Briefcase, GraduationCap, LayoutGrid, Heart, Twitter, PenTool,
-  Clock, Handshake, Building2, HandCoins, ArrowUp, Mail, ExternalLink
+import { motion, MotionConfig, useScroll, useInView, useTransform, AnimatePresence } from 'motion/react';
+import {
+  ArrowRight, ArrowUpRight, Globe, Award, TrendingUp, Users, Activity, Building2, Facebook, Instagram, Linkedin,
+  Briefcase, GraduationCap, Heart, Twitter, Clock,
 } from 'lucide-react';
 
-import LoadingScreen from './LoadingScreen';
-import NewsFeed from './NewsFeed';
+import { AppFrame, Footer, InstallButton, SocialIcons, Splash } from './SiteChrome';
+import NewsFeed, { FollowingFeed } from './NewsFeed';
+import { JournalArticle, JournalLatest, JournalPage, JournalWrite } from './Journal';
 
 // --- Utility ---
 
@@ -161,290 +160,31 @@ const LivingBackground = () => {
   );
 };
 
-const FlipCard = ({ front, back }: { front: React.ReactNode, back: React.ReactNode }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-
-  return (
-    <div 
-      className="relative w-full h-full perspective-1000 cursor-pointer group"
-      onMouseEnter={() => setIsFlipped(true)}
-      onMouseLeave={() => setIsFlipped(false)}
-    >
-      <motion.div
-        className="w-full h-full relative preserve-3d transition-all duration-500"
-        animate={{ rotateY: isFlipped ? 180 : 0 }}
-      >
-        {/* Front */}
-        <div 
-          className="absolute inset-0 backface-hidden bg-white border border-gray-200 shadow-sm p-6 flex flex-col justify-center"
-        >
-          {front}
-        </div>
-
-        {/* Back */}
-        <div 
-          className="absolute inset-0 backface-hidden bg-royal-blue text-white p-6 flex flex-col justify-center items-center text-center rotate-y-180"
-        >
-          {back}
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  };
-
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-50 bg-royal-blue text-white p-3 rounded-full shadow-lg hover:bg-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-royal-blue"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp size={24} />
-        </motion.button>
-      )}
-    </AnimatePresence>
-  );
-};
-
 const SubNav = ({ links }: { links: { label: string, id: string }[] }) => {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - 100;
+      const y = el.getBoundingClientRect().top + window.scrollY - 136;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
+  // Section jump bar: sits under the app bar, outlined pills that fill white on hover
   return (
-    <div className="sticky top-20 z-40 bg-white border-b border-gray-100 py-3 px-6 overflow-x-auto shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center gap-6 md:justify-center min-w-max">
+    <div className="sticky z-40 bg-royal-blue border-b border-white/10 py-2.5 px-4 overflow-x-auto shadow-[0_10px_24px_-14px_rgba(0,0,0,0.6)]"
+      style={{ top: 'calc(4rem + env(safe-area-inset-top))' }}>
+      <div className="max-w-7xl mx-auto flex items-center gap-2 md:justify-center min-w-max">
         {links.map(link => (
-          <button 
-            key={link.id} 
+          <button
+            key={link.id}
             onClick={() => scrollTo(link.id)}
-            className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-royal-blue transition-colors"
+            className="px-4 py-2 rounded-full border border-white/25 bg-white/[0.06] text-[11px] md:text-xs font-bold tracking-wide text-white/90 hover:bg-white hover:text-royal-blue hover:border-white transition-colors"
           >
             {link.label}
           </button>
         ))}
       </div>
     </div>
-  );
-};
-
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  const handleNavClick = (path: string) => {
-    navigate(path);
-    setIsOpen(false);
-  };
-
-  const isActive = (path: string) => location.pathname === path;
-  
-  return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-sigma-gray/30 h-20">
-      <motion.div
-        className="absolute bottom-0 left-0 right-0 h-[2px] bg-royal-blue origin-left"
-        style={{ scaleX }}
-      />
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-        <button onClick={() => handleNavClick('/')} className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-royal-blue flex items-center justify-center text-white font-bold text-lg rounded-sm group-hover:bg-blue-800 transition-colors">
-            JD
-          </div>
-          <div className="flex flex-col justify-center items-start">
-            <span className="text-royal-blue font-bold text-lg leading-none tracking-tighter uppercase">Jack Dee</span>
-          </div>
-        </button>
-
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {[
-            { name: 'Home', path: '/' },
-            { name: 'The Brotherhood', path: '/bio' },
-            { name: 'The Scholarship', path: '/leadership' },
-            { name: 'The Service', path: '/lifestyle' },
-          ].map((item) => (
-            <button 
-              key={item.name}
-              onClick={() => handleNavClick(item.path)}
-              className={`text-xs font-bold uppercase tracking-widest transition-colors ${
-                isActive(item.path) ? 'text-royal-blue border-b-2 border-royal-blue pb-1' : 'text-slate-500 hover:text-royal-blue'
-              }`}
-            >
-              {item.name}
-            </button>
-          ))}
-          <a href="https://book.geauxmab.com/" className="btn-pill px-5 py-2.5 rounded-full bg-royal-blue text-white text-xs font-bold uppercase tracking-widest hover:bg-blue-800 transition-colors">
-            Book Time
-          </a>
-        </div>
-
-        {/* Desktop Socials */}
-        <div className="hidden md:flex items-center gap-4">
-          <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors hover:scale-110" aria-label="Personal Website">
-            <Globe size={20} />
-          </a>
-          <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors hover:scale-110" aria-label="DonOra Global">
-            <Building2 size={20} />
-          </a>
-          <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 transition-colors hover:scale-110" aria-label="LinkedIn Profile">
-            <Linkedin size={20} />
-          </a>
-          <a href="mailto:jd@geauxmab.com" className="text-slate-600 hover:text-slate-800 transition-colors hover:scale-110" aria-label="Email Jack Dee">
-            <Mail size={20} />
-          </a>
-          <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition-colors hover:scale-110" aria-label="X Profile">
-            <Twitter size={20} />
-          </a>
-          <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors hover:scale-110" aria-label="Facebook Profile">
-            <Facebook size={20} />
-          </a>
-          <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-800 transition-colors hover:scale-110" aria-label="Instagram Profile">
-            <Instagram size={20} />
-          </a>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button className="md:hidden text-royal-blue" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Navigation Menu">
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden absolute top-20 left-0 w-full bg-white border-b border-sigma-gray shadow-xl py-8 px-6 flex flex-col gap-6">
-           {[
-            { name: 'Home', path: '/' },
-            { name: 'The Brotherhood', path: '/bio' },
-            { name: 'The Scholarship', path: '/leadership' },
-            { name: 'The Service', path: '/lifestyle' },
-          ].map((item) => (
-            <button 
-              key={item.name}
-              onClick={() => handleNavClick(item.path)}
-              className={`text-sm font-bold uppercase tracking-widest text-left ${
-                isActive(item.path) ? 'text-royal-blue' : 'text-slate-600'
-              }`}
-            >
-              {item.name}
-            </button>
-          ))}
-          <a href="https://book.geauxmab.com/" className="self-start px-6 py-3 rounded-full bg-royal-blue text-white text-sm font-bold uppercase tracking-widest">
-            Book Time
-          </a>
-          <div className="flex items-center gap-6 mt-4 pt-4 border-t border-gray-100">
-            <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors" aria-label="Personal Website">
-              <Globe size={24} />
-            </a>
-            <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors" aria-label="DonOra Global">
-              <Building2 size={24} />
-            </a>
-            <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 transition-colors" aria-label="LinkedIn Profile">
-              <Linkedin size={24} />
-            </a>
-            <a href="mailto:jd@geauxmab.com" className="text-slate-600 hover:text-slate-800 transition-colors" aria-label="Email Jack Dee">
-              <Mail size={24} />
-            </a>
-            <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition-colors" aria-label="X Profile">
-              <Twitter size={24} />
-            </a>
-            <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors" aria-label="Facebook Profile">
-              <Facebook size={24} />
-            </a>
-            <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-800 transition-colors" aria-label="Instagram Profile">
-              <Instagram size={24} />
-            </a>
-          </div>
-        </div>
-      )}
-    </nav>
-  );
-};
-
-const Footer = () => {
-  const navigate = useNavigate();
-  return (
-    <footer className="bg-royal-blue text-white py-12 relative">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col items-center justify-center gap-8">
-          <div className="flex flex-wrap justify-center gap-4 text-xs font-bold uppercase tracking-widest text-blue-200">
-             <button onClick={() => navigate('/bio')} className="border border-blue-200/30 px-4 py-2 hover:bg-white hover:text-royal-blue transition-all">The Brotherhood</button>
-             <button onClick={() => navigate('/leadership')} className="border border-blue-200/30 px-4 py-2 hover:bg-white hover:text-royal-blue transition-all">The Scholarship</button>
-             <button onClick={() => navigate('/lifestyle')} className="border border-blue-200/30 px-4 py-2 hover:bg-white hover:text-royal-blue transition-all">The Service</button>
-          </div>
-        </div>
-        
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[11px] uppercase tracking-wider text-blue-200 gap-8">
-          <div className="flex-1 hidden md:flex gap-4">
-            <button onClick={() => navigate('/privacy')} className="hover:text-white transition-colors">Privacy Policy</button>
-            <button onClick={() => navigate('/terms')} className="hover:text-white transition-colors">Terms of Service</button>
-          </div>
-          <p className="flex-1 text-center">&copy; 2026 MrJackDee™ | All Rights Reserved</p>
-          <div className="flex-1 flex justify-center md:justify-end">
-            <div className="grid grid-cols-3 gap-4">
-              <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Personal Website">
-                <Globe size={20} />
-              </a>
-              <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="DonOra Global">
-                <Building2 size={20} />
-              </a>
-              <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="LinkedIn Profile">
-                <Linkedin size={20} />
-              </a>
-              <a href="mailto:jd@geauxmab.com" className="text-blue-200 hover:text-white transition-colors" aria-label="Email Jack Dee">
-                <Mail size={20} />
-              </a>
-              <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="X Profile">
-                <Twitter size={20} />
-              </a>
-              <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Facebook Profile">
-                <Facebook size={20} />
-              </a>
-              <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Instagram Profile">
-                <Instagram size={20} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
   );
 };
 
@@ -485,13 +225,14 @@ const QuoteCarousel = () => {
   );
 };
 
+// Portrait carousel, framed like the booking app's photo: white border, rounded, gentle tilt-free shine
 const PhotoCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
     "https://lh3.googleusercontent.com/d/1Y4Xo-KtdunIotExKgifHwpCiwPe0-L8Z",
     "https://lh3.googleusercontent.com/d/1FNA4TdQp7d3gw7Hyp-HBzfKLGWup4YdD"
   ];
-  
+
   const captions = [
     "From curious...",
     "...to capable."
@@ -505,32 +246,37 @@ const PhotoCarousel = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full max-w-sm mx-auto">
-      <div className="relative w-full aspect-[4/5] overflow-hidden rounded-sm shadow-lg border-8 border-white bg-white mb-4">
+    <div className="flex flex-col items-center w-full max-w-[min(15rem,32svh)] sm:max-w-xs md:max-w-sm mx-auto">
+      <div className="relative w-full aspect-[4/5] overflow-hidden rounded-[32px] shadow-2xl border-8 border-white bg-white mb-4">
         <AnimatePresence mode="wait">
           <motion.img
             key={currentIndex}
             src={images[currentIndex]}
+            alt="Jack Dee"
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="absolute inset-0 w-full h-full object-contain bg-slate-50"
+            className="absolute inset-0 w-full h-full object-contain bg-white"
             referrerPolicy="no-referrer"
           />
         </AnimatePresence>
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+        <motion.div aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/25 to-transparent pointer-events-none"
+          initial={{ x: '-120%' }} animate={{ x: '120%' }}
+          transition={{ duration: 2.2, delay: 3.2, repeat: Infinity, repeatDelay: 6 }} />
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-10">
           {images.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-2 rounded-full transition-all shadow-sm ${idx === currentIndex ? 'bg-royal-blue w-6' : 'bg-royal-blue/30 w-2'}`}
+              className={`tap-target h-2 rounded-full transition-all shadow-sm ${idx === currentIndex ? 'bg-royal-blue w-6' : 'bg-royal-blue/30 w-2'}`}
             />
           ))}
         </div>
       </div>
-      <div className="h-8 flex items-center justify-center overflow-hidden">
+      <div className="h-7 flex items-center justify-center overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.p
             key={currentIndex}
@@ -538,7 +284,7 @@ const PhotoCarousel = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.5 }}
-            className="text-center text-blue-200 font-medium text-sm tracking-wide"
+            className="text-center text-[#c8c9c7] font-bold text-sm tracking-wide"
           >
             {captions[currentIndex]}
           </motion.p>
@@ -592,172 +338,250 @@ const AcademicCarousel = () => {
   );
 };
 
+/* ---------------- Shared building blocks (same as the booking app's panels) ---------------- */
+// Dark blue card with the white hairline glow along the top edge
+const Panel = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`relative rounded-[28px] bg-[#113b6c] border border-white/15 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] overflow-hidden ${className}`}>
+    <div aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+    {children}
+  </div>
+);
+
+// Small label with a line on each side, like the booking app's "To Quick Book" divider
+const SectionLabel = ({ children, align = 'center' }: { children: React.ReactNode; align?: 'center' | 'left' }) => (
+  <div className={`flex items-center gap-3 ${align === 'center' ? 'justify-center' : 'justify-center md:justify-start'}`}>
+    <span aria-hidden="true" className="h-px w-9 bg-white/40" />
+    <span className="text-[11px] sm:text-xs font-bold tracking-wide text-[#c8c9c7] whitespace-nowrap">{children}</span>
+    <span aria-hidden="true" className="h-px w-9 bg-white/40" />
+  </div>
+);
+
+const SectionTitle = ({ label, title, sub }: { label: string; title: string; sub?: string }) => (
+  <FadeIn className="text-center mb-8 md:mb-10">
+    <SectionLabel>{label}</SectionLabel>
+    <h2 className="mt-3 text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight">{title}</h2>
+    {sub && <p className="mt-3 text-sm md:text-base text-white/80 max-w-2xl mx-auto">{sub}</p>}
+  </FadeIn>
+);
+
+/* ---------------- My other sites ---------------- */
+const MY_SITES = [
+  { name: 'MrJackDee.com', href: 'https://www.mrjackdee.com/', tag: 'Personal & Professional', Icon: Globe,
+    text: 'My professional home: career highlights, portfolio, résumé and the work behind twenty-plus years of enterprise transformation.' },
+  { name: 'BeVISIBLE.work', href: 'https://bevisible.work/', tag: 'Doctoral Research', Icon: GraduationCap,
+    text: 'The BeVISIBLE™ Alliance Model, my applied doctoral research on advancing Black senior leadership in the technology industry.' },
+  { name: 'DonOra Global', href: 'https://www.donoraglobal.com/', tag: 'Business', Icon: Building2,
+    text: 'Strategic advisory for the AI era: enterprise transformation, AI governance and digital presence strategy for organizations ready to lead.' },
+];
+
+const MySites = ({ title = 'Explore My Sites' }: { title?: string }) => (
+  <section className="py-12 md:py-16 px-4 sm:px-6">
+    <div className="max-w-7xl mx-auto">
+      <SectionTitle label="Beyond GeauxMAB.com" title={title} sub="Each site tells a different part of the story: the professional, the scholar and the entrepreneur." />
+      <div className="grid gap-4 md:grid-cols-3">
+        {MY_SITES.map(({ name, href, tag, Icon, text }, i) => (
+          <FadeIn key={name} delay={i * 0.1}>
+            <a href={href} target="_blank" rel="noopener noreferrer" className="group block h-full">
+              <Panel className="h-full p-6 flex flex-col transition-colors group-hover:border-white/50">
+                <div className="flex items-center gap-4">
+                  <span className="w-12 h-12 shrink-0 rounded-2xl bg-white text-royal-blue flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                    <Icon size={22} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[11px] font-bold tracking-wide text-[#c8c9c7]">{tag}</span>
+                    <span className="block text-xl font-bold text-white">{name}</span>
+                  </span>
+                </div>
+                <p className="mt-4 text-sm leading-relaxed text-white/85">{text}</p>
+                <span className="mt-auto pt-5 inline-flex items-center gap-2 text-xs font-bold tracking-wide text-white">
+                  Visit {name} <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
+              </Panel>
+            </a>
+          </FadeIn>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+/* ---------------- Follow along (social) ---------------- */
+const XMark = ({ size = 22 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+const FOLLOW = [
+  { name: 'Instagram', handle: '@the.jackdee', href: 'https://www.instagram.com/the.jackdee', Icon: Instagram, note: 'Life in motion: fitness, style and travel' },
+  { name: 'Facebook', handle: 'GeauxMAB', href: 'https://www.facebook.com/geauxmab', Icon: Facebook, note: 'Brotherhood, community and family' },
+  { name: 'X', handle: '@MrKreducator', href: 'https://x.com/MrKreducator', Icon: XMark, note: 'Quick takes and deal hunting' },
+  { name: 'LinkedIn', handle: 'in/mrjackdee', href: 'https://www.linkedin.com/in/mrjackdee/', Icon: Linkedin, note: 'Leadership, strategy and AI' },
+];
+
+const FollowAlong = () => (
+  <section className="py-12 md:py-16 px-4 sm:px-6">
+    <div className="max-w-7xl mx-auto">
+      <SectionTitle label="Social" title="Follow Along" sub="Different platforms, same man in motion. Pick where you want to connect." />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {FOLLOW.map(({ name, handle, href, Icon, note }, i) => (
+          <FadeIn key={name} delay={i * 0.08}>
+            <a href={href} target="_blank" rel="noopener noreferrer" className="group block h-full">
+              <Panel className="h-full p-4 sm:p-5 flex flex-col items-center text-center transition-colors group-hover:border-white/50">
+                <span className="w-12 h-12 rounded-full bg-white/10 border border-white/25 text-white flex items-center justify-center transition-colors group-hover:bg-white group-hover:text-royal-blue">
+                  <Icon size={22} />
+                </span>
+                <span className="mt-3 text-sm sm:text-base font-bold text-white">{name}</span>
+                <span className="text-[11px] sm:text-xs font-bold tracking-wide text-[#c8c9c7] break-all">{handle}</span>
+                <span className="mt-2 hidden sm:block text-xs text-white/75">{note}</span>
+              </Panel>
+            </a>
+          </FadeIn>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
 const HomePage = () => {
   const navigate = useNavigate();
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 200]);
-  
-  const handleShare = (title: string, text: string) => {
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      navigator.share({
-        title,
-        text,
-        url: window.location.href,
-      }).catch((err) => console.log('Error sharing:', err));
-    } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href).catch(() => {});
-    }
-  };
 
   return (
-    <motion.main 
-      initial={{ opacity: 1 }} 
-      animate={{ opacity: 1 }} 
+    <motion.main
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="flex flex-col"
     >
-      {/* Hero */}
-      <section className="relative pt-8 md:pt-12 lg:pt-20 pb-8 md:pb-12 lg:pb-20 flex items-center overflow-hidden">
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <motion.div 
+      {/* Hero: photo first on phones (like the booking app), side by side on laptops */}
+      <section className="relative pt-7 md:pt-16 pb-10 md:pb-16">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 w-full grid md:grid-cols-2 gap-6 md:gap-12 items-center">
+          <div className="text-center md:text-left order-2 md:order-1">
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1 bg-transparent border border-white/30 rounded-full mb-8"
+              className="inline-flex items-center gap-2 px-3 py-1 border border-white/30 rounded-full mb-4"
             >
-              <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-              <span className="text-[11px] font-bold text-white uppercase tracking-widest">Welcome to GeauxMAB.com</span>
+              <span className="w-1.5 h-1.5 bg-white rounded-full" />
+              <span className="text-[11px] font-bold text-white tracking-wide">Welcome to GeauxMAB.com</span>
             </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="text-6xl md:text-8xl font-bold text-blue-200 leading-tight mb-6 tracking-tighter"
+
+            {/* Handwritten name, written in left to right like the opening screen */}
+            <motion.h1
+              initial={{ clipPath: 'inset(-30% 100% -30% 0)' }}
+              animate={{ clipPath: 'inset(-30% 0% -30% 0)' }}
+              transition={{ duration: 1.4, delay: 0.35, ease: [0.45, 0.05, 0.55, 0.95] }}
+              className="signature-text whitespace-nowrap text-6xl sm:text-7xl md:text-8xl text-white leading-tight loading-text-shadow"
             >
-              Man in Motion
+              Jack Dee
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="text-lg text-white font-normal mb-10 max-w-2xl"
+              className="text-base md:text-lg text-white/90 font-normal mt-2 mb-7 max-w-xl mx-auto md:mx-0"
             >
               Techie | Strategist | Life Student | Entrepreneur | SIGMA
             </motion.p>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.5 }}
-              className="flex flex-wrap gap-4"
+              className="flex flex-wrap justify-center md:justify-start gap-3"
             >
-              <button onClick={() => navigate('/bio')} className="px-6 py-3 bg-white text-royal-blue font-bold uppercase tracking-widest text-xs hover:bg-gray-100 transition-colors flex items-center gap-2">
-                My Journey <ArrowRight size={14} />
-              </button>
-              <button onClick={() => navigate('/leadership')} className="px-6 py-3 bg-transparent border border-white text-white font-bold uppercase tracking-widest text-xs hover:bg-white/10 transition-colors flex items-center gap-2">
-                Who Am I? <ArrowRight size={14} />
-              </button>
+              <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/bio')}
+                className="btn-pill btn-solid px-5 sm:px-7 py-3.5 rounded-full bg-white text-royal-blue font-bold tracking-wide text-[13px] sm:text-sm flex items-center gap-2">
+                My Journey <ArrowRight size={16} />
+              </motion.button>
+              <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/leadership')}
+                className="btn-pill btn-ghost px-5 sm:px-7 py-3.5 rounded-full bg-white/5 border border-white/60 text-white font-bold tracking-wide text-[13px] sm:text-sm hover:bg-white hover:text-royal-blue transition-all flex items-center gap-2">
+                Who Am I? <ArrowRight size={16} />
+              </motion.button>
             </motion.div>
           </div>
-          
+
           <motion.div
-            initial={{ opacity: 0, x: 15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="w-full max-w-md mx-auto md:max-w-none mt-12 md:mt-0 flex flex-col items-center"
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
+            className="order-1 md:order-2 w-full flex flex-col items-center"
           >
             <PhotoCarousel />
-            
-            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-6">
-              <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Personal Website">
-                <Globe size={20} />
-              </a>
-              <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="DonOra Global">
-                <Building2 size={20} />
-              </a>
-              <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="LinkedIn Profile">
-                <Linkedin size={20} />
-              </a>
-              <a href="mailto:jd@geauxmab.com" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 hover:bg-slate-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Email Jack Dee">
-                <Mail size={20} />
-              </a>
-              <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-400 hover:bg-blue-400 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="X Profile">
-                <Twitter size={20} />
-              </a>
-              <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Facebook Profile">
-                <Facebook size={20} />
-              </a>
-              <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-pink-600 hover:bg-pink-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Instagram Profile">
-                <Instagram size={20} />
-              </a>
+            <div className="mt-2">
+              <SocialIcons variant="header" />
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Cards Grid */}
-      <section className="pb-12 pt-8 bg-transparent">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { 
-                icon: <Briefcase size={32} />, 
-                title: "Leadership.", 
-                desc: "I drive innovation and digital transformation at the highest levels with strategy and innovation." 
-              },
-              { 
-                icon: <Award size={32} />, 
-                title: "Excellence.", 
-                desc: "I am deeply committed to the Phi Beta Sigma Fraternity principles of brotherhood, scholarship, and service." 
-              },
-              { 
-                icon: <Globe size={32} />, 
-                title: "Impact.", 
-                desc: "As a servant leader and lifelong learner, I believe in the importance of sharing knowledge and opportunities to improve the world." 
-              }
-            ].map((card, idx) => (
-              <FadeIn key={idx} delay={idx * 0.2} className="p-8 border border-slate-100 shadow-sm hover:shadow-md hover:scale-[1.02] hover:border-royal-blue/30 transition-all duration-300 group rounded-sm bg-white">
-                <div className="w-16 h-16 bg-royal-blue text-white flex items-center justify-center rounded-sm mb-6 group-hover:scale-110 transition-transform">
+      {/* Pillars */}
+      <section className="pb-12 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4">
+          {[
+            {
+              icon: <Briefcase size={24} />,
+              title: "Leadership.",
+              desc: "I drive innovation and digital transformation at the highest levels with strategy and innovation."
+            },
+            {
+              icon: <Award size={24} />,
+              title: "Excellence.",
+              desc: "I am deeply committed to the Phi Beta Sigma Fraternity principles of brotherhood, scholarship, and service."
+            },
+            {
+              icon: <Globe size={24} />,
+              title: "Impact.",
+              desc: "As a servant leader and lifelong learner, I believe in the importance of sharing knowledge and opportunities to improve the world."
+            }
+          ].map((card, idx) => (
+            <FadeIn key={idx} delay={idx * 0.15}>
+              <Panel className="h-full p-6 md:p-7 group">
+                <div className="w-12 h-12 bg-white text-royal-blue flex items-center justify-center rounded-2xl mb-5 shadow-lg group-hover:scale-110 transition-transform">
                   {card.icon}
                 </div>
-                <h3 className="text-xl font-bold text-royal-blue mb-3 uppercase">{card.title}</h3>
-                <p className="text-slate-600 leading-relaxed text-sm">{card.desc}</p>
-              </FadeIn>
-            ))}
-          </div>
+                <h3 className="text-xl font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-white/85 leading-relaxed text-sm">{card.desc}</p>
+              </Panel>
+            </FadeIn>
+          ))}
         </div>
       </section>
 
-      {/* Live Phi Beta Sigma news */}
-      <NewsFeed />
+      <MySites />
+
+      {/* Latest from The Journal */}
+      <JournalLatest />
+
+      <FollowAlong />
 
       {/* Quote Carousel */}
-      <section className="py-8 bg-transparent text-white text-center px-6">
+      <section className="py-12 text-white text-center px-6">
         <FadeIn className="max-w-4xl mx-auto">
-          <div className="mb-4 opacity-50"><span className="text-4xl font-serif">"</span></div>
+          <div className="mb-2 opacity-50"><span className="text-5xl font-serif">"</span></div>
           <QuoteCarousel />
-          <img 
-            src="https://lh3.googleusercontent.com/d/1ujWt304YSwhQIHht7yrT4GNP18dQJ-fY" 
-            alt="Jack Dee Signature" 
-            className="mx-auto mb-4 max-h-20 object-contain" 
+          <img
+            src="https://lh3.googleusercontent.com/d/1ujWt304YSwhQIHht7yrT4GNP18dQJ-fY"
+            alt="Jack Dee Signature"
+            className="mx-auto mb-3 max-h-20 object-contain"
             referrerPolicy="no-referrer"
             width="200"
             height="80"
             loading="lazy"
           />
-          <p className="text-sm font-bold uppercase tracking-widest">Jack Dee</p>
+          <p className="text-sm font-bold tracking-wide">Jack Dee</p>
         </FadeIn>
       </section>
 
+      {/* Both live feeds sit at the bottom of the home page */}
+      <NewsFeed />
+      <FollowingFeed />
 
+      {/* Save to Home Screen sits just above the footer, like the booking app */}
+      <section className="pb-10 flex justify-center">
+        <InstallButton />
+      </section>
     </motion.main>
   );
 };
@@ -1542,13 +1366,19 @@ const TermsOfServicePage = () => {
 const AnimatedRoutes = () => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
-      <motion.div key={location.pathname}>
+    <AnimatePresence mode="wait" initial={false}>
+      {/* Screens slide like the booking app */}
+      <motion.div key={location.pathname}
+        initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0, transition: { duration: 0.45, ease: [0.2, 0.8, 0.2, 1] } }}
+        exit={{ opacity: 0, x: -60, transition: { duration: 0.3 } }}>
         <Routes location={location}>
           <Route path="/" element={<HomePage />} />
           <Route path="/bio" element={<BioPage />} />
           <Route path="/leadership" element={<LeadershipPage />} />
           <Route path="/lifestyle" element={<LifeStylePage />} />
+          <Route path="/journal" element={<JournalPage />} />
+          <Route path="/journal/write" element={<JournalWrite />} />
+          <Route path="/journal/:slug" element={<JournalArticle />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
         </Routes>
@@ -1557,56 +1387,25 @@ const AnimatedRoutes = () => {
   );
 };
 
-const safeStorage = {
-  getItem: (key: string): string | null => {
-    try {
-      if (typeof window !== 'undefined' && window.sessionStorage) {
-        return window.sessionStorage.getItem(key);
-      }
-    } catch {
-      // Gracefully handle iframe sandboxing / blocked storage
-    }
-    return null;
-  },
-  setItem: (key: string, value: string): void => {
-    try {
-      if (typeof window !== 'undefined' && window.sessionStorage) {
-        window.sessionStorage.setItem(key, value);
-      }
-    } catch {
-      // Gracefully handle iframe sandboxing / blocked storage
-    }
-  }
-};
-
 export default function App() {
-  const [isLoading, setIsLoading] = useState(() => {
-    // Only show the loading screen once per session if storage is permitted
-    const alreadyLoaded = safeStorage.getItem('geauxmab_loaded');
-    return !alreadyLoaded;
-  });
+  const [splash, setSplash] = useState(true); // opening screen plays on every load, like book.geauxmab.com
 
   useEffect(() => {
-    if (isLoading) {
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-        safeStorage.setItem('geauxmab_loaded', 'true');
-      }, 1800);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading]);
+    if (!splash) return;
+    const t = setTimeout(() => setSplash(false), 3000);
+    return () => clearTimeout(t);
+  }, [splash]);
 
   return (
     <HashRouter>
-      <LoadingScreen isLoading={isLoading} />
+      <MotionConfig reducedMotion="user">
+      <Splash show={splash} />
       <ScrollToTop />
       <PageMetadata />
-      <ScrollToTopButton />
-      <MotionConfig reducedMotion="user">
-      <div className="font-sans antialiased text-slate-900 bg-royal-blue selection:bg-royal-blue selection:text-white">
+      <div className="min-h-[100dvh] font-sans antialiased text-white bg-royal-blue selection:bg-white selection:text-royal-blue overflow-x-hidden">
         <LivingBackground />
         <div className="relative z-10">
-          <Navbar />
+          <AppFrame />
           <main>
             <AnimatedRoutes />
           </main>
