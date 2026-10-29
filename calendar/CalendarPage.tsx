@@ -943,7 +943,7 @@ export default function CalendarPage() {
           <p>&copy; {new Date().getFullYear()} MrJackDee™</p>
         </div>
         <p className="max-w-6xl mx-auto px-6 mt-6 text-center text-[11px] leading-relaxed text-[#c8c9c7]">
-          Personal booking page of a member. Not an official site of Phi Beta Sigma Fraternity, Inc.
+          Not an official site of Phi Beta Sigma Fraternity, Inc.
         </p>
         <nav aria-label="Legal" className="max-w-6xl mx-auto px-6 mt-4 flex justify-center gap-5 text-[11px] tracking-wider">
           <a href="#privacy" className="tap-target-y text-white/80 underline-offset-4 hover:underline hover:text-white">Privacy Policy</a>
