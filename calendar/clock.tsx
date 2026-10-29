@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 
+// "Click" with a mouse, "Tap" on touch screens, for the little how-to hints
+export const TAP = typeof window !== 'undefined' && window.matchMedia?.('(hover: hover) and (pointer: fine)').matches ? 'Click' : 'Tap';
+
 // 12-hour / 24-hour preference, shared by every time on the page and remembered on this device
 const KEY = 'geauxmab_24h';
 const EVT = 'geauxmab:clock';

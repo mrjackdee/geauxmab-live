@@ -1,6 +1,6 @@
 // Service worker for the "Book Time with Jack Dee" home-screen app.
 // Network first so bookings always see live availability; falls back to the cached shell offline.
-const CACHE = 'book-jackdee-v2';
+const CACHE = 'book-jackdee-v3';
 const SHELL = ['/', '/img/jack-dee.webp', '/img/pbs-seal.webp', '/img/pbs-seal-watermark.webp'];
 
 self.addEventListener('install', (e) => {

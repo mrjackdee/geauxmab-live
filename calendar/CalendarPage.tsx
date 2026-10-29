@@ -13,10 +13,10 @@ import {
 import {
   ArrowLeft, Menu, X, ArrowUpRight,
   Globe, Building2, Linkedin, Mail, Facebook, Instagram,
-  CalendarCheck, Smartphone, Share, Share2, SquarePlus, Check, House, Zap,
+  CalendarCheck, Smartphone, Share, Share2, SquarePlus, Check, House, Zap, Clock, Video,
 } from 'lucide-react';
 import Booking from './Booking';
-import { ClockToggle, formatClock, useClock24, useViewZone, zoneLabel, UseMyTime } from './clock';
+import { ClockToggle, formatClock, useClock24, useViewZone, zoneLabel, UseMyTime, TAP } from './clock';
 import { PrivacyPolicy, TermsOfService } from './Legal';
 
 // Booking app for https://book.geauxmab.com (standalone build: npm run build:book)
@@ -140,6 +140,19 @@ const SHARE = {
   url: 'https://book.geauxmab.com/',
 };
 
+// Desktop mode: 1024px and wider gets a website layout; phones and tablets keep the app layout
+const DESKTOP = '(min-width: 1024px)';
+const useDesktop = () => {
+  const [on, setOn] = useState(() => window.matchMedia(DESKTOP).matches);
+  useEffect(() => {
+    const m = window.matchMedia(DESKTOP);
+    const sync = () => setOn(m.matches);
+    m.addEventListener('change', sync);
+    return () => m.removeEventListener('change', sync);
+  }, []);
+  return on;
+};
+
 type View = 'home' | 'book' | 'privacy' | 'terms';
 const viewFromHash = (): View => {
   const h = window.location.hash.replace('#', '');
@@ -220,15 +233,16 @@ const Splash = ({ show }: { show: boolean }) => (
             </motion.picture>
           </div>
 
-          {/* Handwritten: the signature is revealed left to right, as if a pen is writing it */}
-          <motion.h1
-            initial={{ clipPath: 'inset(-30% 100% -30% 0)' }}
-            animate={{ clipPath: 'inset(-30% 0% -30% 0)' }}
-            transition={{ duration: 1.6, delay: 0.55, ease: [0.45, 0.05, 0.55, 0.95] }}
-            className="signature-text text-6xl md:text-8xl text-white mt-6 px-6 loading-text-shadow"
-          >
-            Jack Dee
-          </motion.h1>
+          {/* Handwritten: a pen traces each letter's outline left to right, then the ink fills in */}
+          <h1 className="mt-6 px-6">
+            <svg viewBox="0 0 400 90" role="img" aria-label="Jack Dee" className="sig-draw block w-[16rem] md:w-[24rem] h-auto overflow-visible">
+              <text x="200" y="62" textAnchor="middle" fontSize="60" letterSpacing="1.2" className="signature-text">
+                {'Jack Dee'.split('').map((ch, i) => (
+                  <tspan key={i} style={{ '--i': i } as React.CSSProperties}>{ch}</tspan>
+                ))}
+              </text>
+            </svg>
+          </h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 0.8, y: 0 }}
@@ -252,7 +266,7 @@ const Splash = ({ show }: { show: boolean }) => (
 );
 
 /* ---------------- Tilt portrait ---------------- */
-const Portrait = () => {
+const Portrait = ({ desktop = false }: { desktop?: boolean }) => {
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -267,7 +281,7 @@ const Portrait = () => {
   };
 
   return (
-    <div className="w-full max-w-[min(16.5rem,36svh)] sm:max-w-sm mx-auto my-7 md:my-12" style={{ perspective: 1000 }}>
+    <div className={desktop ? 'w-full' : 'w-full max-w-[min(16.5rem,36svh)] sm:max-w-sm mx-auto my-7'} style={{ perspective: 1000 }}>
       <motion.div
         ref={ref}
         onPointerMove={onMove}
@@ -292,7 +306,7 @@ const Portrait = () => {
 
         {/* Gold Life Member insignia sits fixed and upright on the photo's lower-right corner */}
         <motion.div
-          className="absolute -bottom-5 -right-3 h-15 md:-bottom-6 md:-right-5 md:h-18 pointer-events-none"
+          className="absolute -bottom-5 -right-3 h-15 lg:-bottom-6 lg:-right-5 lg:h-18 pointer-events-none"
           style={{ translateZ: 60 }}
         >
           <picture>
@@ -480,7 +494,7 @@ const LiveClocks = () => {
 /* ---------------- Next available slots ---------------- */
 // Quick picks only: the Let's Connect button above opens the full calendar
 const SlotsDivider = ({ delay }: { delay: number }) => (
-  <div className="flex items-center justify-center md:justify-start gap-3">
+  <div className="flex items-center justify-center gap-3">
     <motion.span aria-hidden="true" className="h-px w-9 bg-white/40 origin-right"
       initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay, duration: 0.5, ease: 'easeOut' }} />
     <motion.span className="text-[11px] font-bold tracking-wide text-[#c8c9c7] whitespace-nowrap"
@@ -492,7 +506,7 @@ const SlotsDivider = ({ delay }: { delay: number }) => (
   </div>
 );
 
-const NextOpen = ({ av, onPick }: { av: Availability; onPick: (iso: string) => void }) => {
+const NextOpen = ({ av, onPick, row = false }: { av: Availability; onPick: (iso: string) => void; row?: boolean }) => {
   const { tz: localTz } = useViewZone();
   const dayOf = (d: Date) => new Intl.DateTimeFormat('en-CA', { timeZone: localTz }).format(d);
   const fmtDay = (iso: string) => {
@@ -504,31 +518,45 @@ const NextOpen = ({ av, onPick }: { av: Availability; onPick: (iso: string) => v
   const [h24] = useClock24();
   const fmtT = (iso: string) => formatClock(iso, localTz, h24);
 
+  const slots = av.state === 'checking' && !av.upcoming.length
+    ? [0, 1, 2, 3].map((i) => (
+      <motion.div key={i} className={`h-[58px] rounded-2xl bg-white/[0.06] ${row ? '' : 'w-28'}`}
+        animate={{ opacity: [0.4, 0.9, 0.4] }} transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.1 }} />
+    ))
+    : av.upcoming.map((t, i) => (
+      <motion.button key={t} onClick={() => onPick(t)}
+        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+        whileTap={{ scale: 0.96 }}
+        className="group rounded-2xl border border-white/20 bg-white/[0.06] px-3 py-2.5 text-left hover:bg-white hover:border-white transition-colors">
+        <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7] group-hover:text-royal-blue/70">{fmtDay(t)}</p>
+        <p className="text-base font-bold tabular-nums text-white group-hover:text-royal-blue whitespace-nowrap">
+          {fmtT(t)} <span className="text-[11px] font-bold tracking-wide text-[#c8c9c7] group-hover:text-royal-blue/60">{tzAbbr(localTz, new Date(t))}</span>
+        </p>
+      </motion.button>
+    ));
+
+  // Desktop: one row of quick picks under the intro, no card
+  if (row) {
+    return (
+      <div>
+        <p className="flex items-center gap-2 text-[11px] font-bold tracking-wide text-[#c8c9c7]">
+          <Zap size={13} /> Next openings &middot; {TAP} one to book it
+        </p>
+        <div className="mt-3 grid grid-cols-4 gap-2 max-w-xl">{slots}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-fit max-w-full rounded-[28px] bg-[#113b6c] border border-white/15 p-5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] overflow-hidden text-center">
       <div aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
       <h2 className="flex items-center justify-center gap-2 whitespace-nowrap text-sm sm:text-base md:text-lg font-bold tracking-wide  text-white">
         <Zap size={16} /> Next Openings
       </h2>
-      <p className="mt-1 text-xs text-white/70">Click to select</p>
+      <p className="mt-1 text-xs text-white/70">{TAP} to select</p>
       <div className="mt-3"><ClockToggle /></div>
       <div className="mt-4 grid grid-cols-[repeat(2,auto)] justify-center gap-2 text-left">
-        {av.state === 'checking' && !av.upcoming.length
-          ? [0, 1, 2, 3].map((i) => (
-            <motion.div key={i} className="h-[58px] w-28 rounded-2xl bg-white/[0.06]"
-              animate={{ opacity: [0.4, 0.9, 0.4] }} transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.1 }} />
-          ))
-          : av.upcoming.map((t, i) => (
-            <motion.button key={t} onClick={() => onPick(t)}
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
-              whileTap={{ scale: 0.96 }}
-              className="group rounded-2xl border border-white/20 bg-white/[0.06] px-3 py-2.5 text-left hover:bg-white hover:border-white transition-colors">
-              <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7] group-hover:text-royal-blue/70">{fmtDay(t)}</p>
-              <p className="text-base font-bold tabular-nums text-white group-hover:text-royal-blue whitespace-nowrap">
-                {fmtT(t)} <span className="text-[11px] font-bold tracking-wide text-[#c8c9c7] group-hover:text-royal-blue/60">{tzAbbr(localTz, new Date(t))}</span>
-              </p>
-            </motion.button>
-          ))}
+        {slots}
       </div>
       <div className="mt-7">
         <LiveClocks />
@@ -709,7 +737,7 @@ const Tab = ({ active, label, Icon, onClick }: { active: boolean; label: string;
 );
 
 const TabBar = ({ view, onHome, onBook, onMenu }: { view: TabId; onHome: () => void; onBook: () => void; onMenu: () => void }) => (
-  <nav aria-label="App" className="md:hidden fixed inset-x-0 bottom-0 z-[60] bg-royal-blue border-t border-white/15 shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
+  <nav aria-label="App" className="lg:hidden fixed inset-x-0 bottom-0 z-[60] bg-royal-blue border-t border-white/15 shadow-[0_-10px_30px_rgba(0,0,0,0.35)]"
     style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
     <div aria-hidden="true" className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
     <div className="h-16 flex">
@@ -765,17 +793,27 @@ const AppBar = ({ view, onBack, onMenu }: { view: View; onBack: () => void; onMe
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Desktop: links back to geauxmab.com sit in the header, like a website */}
+      <nav aria-label="GeauxMAB.com" className="hidden lg:flex flex-1 items-center justify-center gap-1">
+        {SITE_LINKS.map((l) => (
+          <a key={l.name} href={l.href}
+            className="px-3.5 py-2 rounded-full text-xs font-bold tracking-wide text-white/85 hover:text-white hover:bg-white/10 transition-colors">
+            {l.name}
+          </a>
+        ))}
+      </nav>
       <AnimatePresence mode="wait" initial={false}>
         <motion.p key={view} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-          className="absolute left-1/2 -translate-x-1/2 text-[11px] font-bold tracking-wide text-white/80 hidden sm:block">
+          className="absolute left-1/2 -translate-x-1/2 text-[11px] font-bold tracking-wide text-white/80 hidden sm:block lg:hidden">
           {VIEW_TITLE[view]}
         </motion.p>
       </AnimatePresence>
       <div className="flex items-center gap-2">
-        <div className="hidden md:block"><ShareButton /></div>
-        <InstallButton compact />
+        <div className="hidden lg:block"><ShareButton /></div>
+        {/* Saving to the home screen is a phone and tablet thing */}
+        <div className="lg:hidden"><InstallButton compact /></div>
         <motion.button whileTap={{ scale: 0.94 }} onClick={onMenu} aria-label="Open GeauxMAB.com menu"
-          className="hidden md:flex w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white items-center justify-center hover:bg-white hover:text-royal-blue transition-colors">
+          className="hidden lg:flex w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white items-center justify-center hover:bg-white hover:text-royal-blue transition-colors">
           <Menu size={18} />
         </motion.button>
       </div>
@@ -790,6 +828,10 @@ export default function CalendarPage() {
   const [quick, setQuick] = useState<string | null>(null);
   const av = useAvailability();
   const [view, setView] = useState<View>(viewFromHash);
+  const desktop = useDesktop();
+  const bookingRef = useRef<HTMLElement>(null);
+  // On desktop the calendar lives on the home page, so #book just scrolls down to it
+  const shown: View = desktop && view === 'book' ? 'home' : view;
   const { scrollY } = useScroll();
   const bgY = useTransform(scrollY, [0, 600], [0, 140]);
 
@@ -806,7 +848,13 @@ export default function CalendarPage() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  const openBook = (time?: string) => { setQuick(time ?? null); window.location.hash = 'book'; window.scrollTo({ top: 0 }); };
+  const toBooking = () => setTimeout(() => bookingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  const openBook = (time?: string) => {
+    setQuick(time ?? null);
+    if (desktop) { toBooking(); return; }
+    window.location.hash = 'book'; window.scrollTo({ top: 0 });
+  };
+  useEffect(() => { if (desktop && view === 'book') toBooking(); }, [desktop, view]); // eslint-disable-line react-hooks/exhaustive-deps
   const goHome = () => { if (window.location.hash) window.location.hash = ''; else setView('home'); };
 
   const heroDelay = splash ? 3.1 : 0.1;
@@ -816,7 +864,7 @@ export default function CalendarPage() {
     animate: { opacity: 1, x: 0, transition: { duration: 0.45, ease: [0.2, 0.8, 0.2, 1] as const } },
     exit: (dir: number) => ({ opacity: 0, x: dir * -60, transition: { duration: 0.3 } }),
   };
-  const dir = view === 'home' ? -1 : 1;
+  const dir = shown === 'home' ? -1 : 1;
 
   return (
     <MotionConfig reducedMotion="user">
@@ -826,7 +874,7 @@ export default function CalendarPage() {
       {/* Living background */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <motion.div style={{ y: bgY }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:left-[62%] w-[150vw] max-w-[1100px] md:w-[78vw] aspect-square">
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 lg:left-[62%] w-[150vw] max-w-[1100px] lg:w-[78vw] aspect-square">
           <SealWatermark className="opacity-30" />
         </motion.div>
         <motion.div className="absolute -top-32 -right-32 w-[520px] h-[520px] rounded-full bg-white/10 blur-[100px]"
@@ -835,14 +883,14 @@ export default function CalendarPage() {
           animate={{ x: [0, 40, 0], y: [0, -30, 0] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} />
       </div>
 
-      <AppBar view={view} onBack={goHome} onMenu={() => setMenu(true)} />
+      <AppBar view={shown} onBack={goHome} onMenu={() => setMenu(true)} />
       <TabBar view={view} onHome={() => { if (view !== 'home') goHome(); else window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onBook={() => openBook()} onMenu={() => setMenu(true)} />
       <SiteMenu open={menu} onClose={() => setMenu(false)} />
 
       <main className="relative z-10">
         <AnimatePresence mode="wait" custom={dir} initial={false}>
-          {view === 'home' ? (
+          {shown === 'home' ? (
             <motion.div key="home" custom={dir} variants={screen} initial="initial" animate="animate" exit="exit">
               {/* Social row sits under the header and scrolls away with the page */}
               <div className="border-b border-white/10">
@@ -850,64 +898,118 @@ export default function CalendarPage() {
                   <SocialIcons variant="header" />
                 </div>
               </div>
-              {/* Home screen */}
-              <section className="pt-6 md:pt-16 pb-16">
-                <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-4 md:gap-12 items-center">
-                  <div className="text-center md:text-left order-2 md:order-1">
-                    {/* Only shows when Calendly confirms real open times; otherwise nothing takes up space */}
-                    <AnimatePresence>
-                      {av.state === 'open' && (
-                        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                          transition={{ delay: heroDelay, duration: 0.5 }} className="mb-7">
-                          <BookingStatus state={av.state} />
+              {desktop ? (
+                <>
+                  {/* Desktop hero: who, what, and the next open times, balanced against the photo */}
+                  <section className="pt-16 xl:pt-20 pb-14">
+                    <div className="max-w-6xl mx-auto px-8 grid grid-cols-[minmax(0,1fr)_auto] gap-16 xl:gap-24 items-center">
+                      <div>
+                        <AnimatePresence>
+                          {av.state === 'open' && (
+                            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                              transition={{ delay: heroDelay, duration: 0.5 }} className="mb-5">
+                              <BookingStatus state={av.state} />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: heroDelay + 0.2, duration: 0.6 }}>
+                          <h1 className="signature-text text-6xl xl:text-7xl text-white leading-tight">Jack Dee</h1>
+                          <p className="mt-4 max-w-lg text-lg leading-relaxed text-white/85">
+                            Book a 60-minute Zoom session with me. Pick a time that works for you, add your info, and you’re booked.
+                          </p>
+                          <div className="mt-5 flex flex-wrap items-center gap-2 text-[11px] font-bold tracking-wide text-white/90">
+                            <span className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5"><Clock size={12} /> 60 min</span>
+                            <span className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5"><Video size={12} /> Zoom</span>
+                            <span className="rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5">Life Member #2174</span>
+                          </div>
                         </motion.div>
-                      )}
-                    </AnimatePresence>
+                        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: heroDelay + 0.45, duration: 0.5 }}
+                          className="mt-8 flex items-center gap-4">
+                          <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} onClick={() => openBook()}
+                            className="btn-pill btn-solid px-9 py-4 rounded-full bg-white text-royal-blue font-bold tracking-wide text-sm flex items-center justify-center gap-3">
+                            <CalendarCheck size={18} /> Pick a Time
+                          </motion.button>
+                          <ShareButton variant="pill" />
+                        </motion.div>
+                        {(av.state === 'checking' || av.upcoming.length > 0) && (
+                          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: heroDelay + 0.7, duration: 0.5 }}
+                            className="mt-10">
+                            <NextOpen row av={av} onPick={(t) => openBook(t)} />
+                          </motion.div>
+                        )}
+                      </div>
+                      <motion.div initial={{ opacity: 0, y: 20, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ delay: heroDelay + 0.3, duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
+                        className="w-[22rem] xl:w-[26rem]">
+                        <Portrait desktop />
+                      </motion.div>
+                    </div>
+                  </section>
 
-
-
-                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: heroDelay + 0.65, duration: 0.5 }}
-                      className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 justify-center md:justify-start">
-                      <div className="inline-flex flex-col items-center gap-2">
+                  {/* Desktop booking: the full calendar right on the page */}
+                  <section ref={bookingRef} aria-labelledby="pick-a-time" className="scroll-mt-20 pb-20">
+                    <div className="max-w-6xl mx-auto px-8">
+                      <div className="mb-6 flex items-end justify-between gap-6">
+                        <h2 id="pick-a-time" className="text-3xl font-bold tracking-tight text-white">Pick a time</h2>
+                        <p className="text-sm text-white/70">Times show in your time zone. Change it under the open times.</p>
+                      </div>
+                      <Booking key={quick || 'pick'} initialTime={quick} />
+                    </div>
+                  </section>
+                </>
+              ) : (
+                <>
+                  {/* App home screen (phones and tablets): photo, then the booking buttons, one column */}
+                  <section className="pt-6 sm:pt-10 pb-16">
+                    <div className="max-w-xl mx-auto px-6 flex flex-col items-center text-center">
+                      <motion.div initial={{ opacity: 0, y: 20, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ delay: heroDelay + 0.3, duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
+                        className="w-full flex flex-col items-center">
+                        <Portrait />
+                      </motion.div>
+                      {/* Only shows when Calendly confirms real open times; otherwise nothing takes up space */}
+                      <AnimatePresence>
+                        {av.state === 'open' && (
+                          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                            transition={{ delay: heroDelay, duration: 0.5 }} className="mb-5">
+                            <BookingStatus state={av.state} />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: heroDelay + 0.65, duration: 0.5 }}
+                        className="inline-flex flex-col items-center gap-2">
                         <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} onClick={() => openBook()}
                           className="btn-pill btn-solid px-9 py-4 rounded-full bg-white text-royal-blue font-bold tracking-wide text-sm flex items-center justify-center gap-3">
                           <CalendarCheck size={18} /> My Calendar
                         </motion.button>
-                        <p className="text-[11px] font-bold tracking-wide text-white/70">Click to Schedule</p>
-                      </div>
-                      <div className="hidden md:block"><ShareButton variant="pill" /></div>
-                    </motion.div>
+                        <p className="text-[11px] font-bold tracking-wide text-white/70">{TAP} to Schedule</p>
+                      </motion.div>
 
-                    {/* Hidden entirely when there are no near-term slots, so nothing points at an empty panel */}
-                    {(av.state === 'checking' || av.upcoming.length > 0) && (
-                      <>
-                        <div className="mt-7">
-                          <SlotsDivider delay={heroDelay + 0.75} />
-                        </div>
-                        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: heroDelay + 1.1, duration: 0.5 }}
-                          className="mt-5 flex justify-center md:justify-start">
-                          <NextOpen av={av} onPick={(t) => openBook(t)} />
-                        </motion.div>
-                      </>
-                    )}
-                  </div>
+                      {/* Hidden entirely when there are no near-term slots, so nothing points at an empty panel */}
+                      {(av.state === 'checking' || av.upcoming.length > 0) && (
+                        <>
+                          <div className="mt-7">
+                            <SlotsDivider delay={heroDelay + 0.75} />
+                          </div>
+                          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: heroDelay + 1.1, duration: 0.5 }}
+                            className="mt-5 flex justify-center">
+                            <NextOpen av={av} onPick={(t) => openBook(t)} />
+                          </motion.div>
+                        </>
+                      )}
+                    </div>
+                  </section>
 
-                  <motion.div initial={{ opacity: 0, y: 20, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: heroDelay + 0.3, duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
-                    className="order-1 md:order-2 flex flex-col items-center">
-                    <Portrait />
-                  </motion.div>
-                </div>
-              </section>
-
-              {/* Save to Home Screen sits just above the footer */}
-              <section className="pb-10 flex justify-center">
-                <InstallButton />
-              </section>
+                  {/* Save to Home Screen sits just above the footer */}
+                  <section className="pb-10 flex justify-center">
+                    <InstallButton />
+                  </section>
+                </>
+              )}
             </motion.div>
-          ) : view === 'privacy' || view === 'terms' ? (
-            <motion.div key={view} custom={dir} variants={screen} initial="initial" animate="animate" exit="exit">
-              {view === 'privacy' ? <PrivacyPolicy /> : <TermsOfService />}
+          ) : shown === 'privacy' || shown === 'terms' ? (
+            <motion.div key={shown} custom={dir} variants={screen} initial="initial" animate="animate" exit="exit">
+              {shown === 'privacy' ? <PrivacyPolicy /> : <TermsOfService />}
             </motion.div>
           ) : (
             <motion.div key="book" custom={dir} variants={screen} initial="initial" animate="animate" exit="exit">
@@ -915,7 +1017,7 @@ export default function CalendarPage() {
               <section className="pt-5 md:pt-14 pb-16">
                 <div className="max-w-5xl mx-auto px-3 sm:px-5">
                   <div className="text-center mb-5 md:mb-8">
-                    <h2 className="signature-text whitespace-nowrap text-5xl sm:text-6xl md:text-7xl text-white leading-tight">Jack Dee</h2>
+                    <h2 className="signature-text whitespace-nowrap text-3xl sm:text-4xl md:text-5xl text-white leading-tight">Jack Dee</h2>
                   </div>
                   <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}>
                     <Booking key={quick || 'pick'} initialTime={quick} />
@@ -928,7 +1030,7 @@ export default function CalendarPage() {
       </main>
 
       {/* App footer */}
-      <footer className="relative z-10 border-t border-white/10 pt-8 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-[calc(2rem+env(safe-area-inset-bottom))]">
+      <footer className="relative z-10 border-t border-white/10 pt-8 pb-[calc(6rem+env(safe-area-inset-bottom))] lg:pb-[calc(2rem+env(safe-area-inset-bottom))]">
         <div className="max-w-6xl mx-auto px-6 flex flex-wrap justify-center gap-3 mb-8">
           {SITE_LINKS.map((l) => (
             <a key={l.name} href={l.href}
@@ -937,7 +1039,7 @@ export default function CalendarPage() {
             </a>
           ))}
         </div>
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-5 text-[11px] tracking-wider text-white">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 flex flex-col lg:flex-row items-center justify-between gap-5 text-[11px] tracking-wider text-white">
           <a href="https://geauxmab.com/" className="tap-target-y hover:text-white transition-colors">A GeauxMAB.com experience</a>
           <SocialIcons variant="footer" />
           <p>&copy; {new Date().getFullYear()} MrJackDee™</p>

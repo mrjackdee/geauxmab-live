@@ -45,6 +45,52 @@
   filter: none;
 }
 
+/* "Jack Dee" uses a squared, wide font here instead of the main site's script signature */
+:root {
+  --font-signature: 'Michroma', 'Arial', sans-serif;
+  /* Everything else: a squared font that pairs with Michroma but stays readable small */
+  --font-sans: 'Oxanium', ui-sans-serif, system-ui, sans-serif;
+  --font-primary: 'Oxanium', 'Arial', sans-serif;
+}
+.signature-text {
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+/* Headings share the name's font; body text, buttons and the calendar grid stay in Inter */
+.book-app :is(h1, h2, h3),
+.heading-font {
+  font-family: var(--font-signature);
+  letter-spacing: 0.01em;
+}
+
+/* Splash name: each letter's outline is traced like a pen stroke, then filled */
+.sig-draw {
+  filter: drop-shadow(0 0 30px rgba(191, 219, 254, 0.4));
+}
+.sig-draw tspan {
+  fill: transparent;
+  stroke: #fff;
+  stroke-width: 1.2;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation:
+    sig-stroke 0.8s ease-in-out calc(0.5s + var(--i) * 0.13s) forwards,
+    sig-fill 0.45s ease-out calc(1s + var(--i) * 0.13s) forwards;
+}
+@keyframes sig-stroke {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes sig-fill {
+  to { fill: #fff; stroke-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sig-draw tspan {
+    animation: none;
+    fill: #fff;
+    stroke-width: 0;
+  }
+}
+
 /* Phones: the main site's stylesheet shrinks "text-xs" to 9px; restore a readable 12px here */
 :root {
   --text-xs: 0.75rem;

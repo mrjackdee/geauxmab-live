@@ -1,7 +1,7 @@
 // © MrJackDee™. All rights reserved.
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ClockToggle, formatClock, useClock24, useViewZone, zoneLabel, ZoneLabel, UseMyTime } from './clock';
+import { ClockToggle, formatClock, useClock24, useViewZone, zoneLabel, ZoneLabel, UseMyTime, TAP } from './clock';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, ChevronRight, ChevronDown, Clock, Video, Zap, ArrowRight,
@@ -111,7 +111,7 @@ const MonthGrid = ({
         </motion.button>
         <AnimatePresence mode="wait" initial={false}>
           <motion.h3 key={title} initial={{ opacity: 0, y: dir * 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: dir * -8 }}
-            className="text-lg md:text-xl font-bold tracking-tight text-white">{title}</motion.h3>
+            className="whitespace-nowrap text-lg md:text-base lg:text-xl font-bold tracking-tight text-white">{title}</motion.h3>
         </AnimatePresence>
         <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setDir(1); onNext(); }} aria-label="Next month"
           className="w-10 h-10 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white hover:bg-white hover:text-royal-blue transition-colors">
@@ -198,7 +198,7 @@ const keyToShort = (key: string) => {
 };
 
 const Panel = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative mx-auto w-fit max-w-full rounded-[28px] bg-[#113b6c] border border-white/15 p-5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] overflow-hidden text-center">
+  <div className="relative mx-auto w-fit max-w-full md:w-full md:h-full md:flex md:flex-col md:justify-center rounded-[28px] bg-[#113b6c] border border-white/15 p-5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] overflow-hidden text-center">
     <div aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
     {children}
   </div>
@@ -246,7 +246,7 @@ const TimeList = ({ dayKeyStr, times, tz, zones, onTz, chosen, onChoose, onNext,
     return (
       <Panel>
         <CalendarDays size={32} className="mx-auto mb-3 text-[#c8c9c7]" />
-        <p className="text-sm text-white/70">Tap a day with a dot to see when I’m free.</p>
+        <p className="text-sm text-white/70">{TAP} a day with a dot to see when I’m free.</p>
         <div className="mt-6"><LocalTimePill tz={tz} zones={zones} onTz={onTz} /></div>
       </Panel>
     );
@@ -258,7 +258,7 @@ const TimeList = ({ dayKeyStr, times, tz, zones, onTz, chosen, onChoose, onNext,
   const list = showFilter && active ? times.filter((t) => active.test(hourIn(t, tz))) : times;
 
   return (
-    <motion.div key={dayKeyStr} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }}>
+    <motion.div key={dayKeyStr} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }} className="md:h-full">
       <Panel>
         <h3 className="flex items-center justify-center gap-2 whitespace-nowrap text-sm sm:text-base md:text-lg font-bold tracking-wide  text-white">
           <Zap size={16} /> Open Times
@@ -267,11 +267,11 @@ const TimeList = ({ dayKeyStr, times, tz, zones, onTz, chosen, onChoose, onNext,
           <DayArrow dir={-1} disabled={!canPrevDay} onClick={onPrevDay} />
           <AnimatePresence mode="wait" initial={false}>
             <motion.p key={dayKeyStr} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-              className="text-xl md:text-2xl font-bold text-white tracking-tight whitespace-nowrap">{keyToShort(dayKeyStr)}</motion.p>
+              className="heading-font text-xl md:text-2xl font-bold text-white tracking-tight whitespace-nowrap">{keyToShort(dayKeyStr)}</motion.p>
           </AnimatePresence>
           <DayArrow dir={1} disabled={!canNextDay} onClick={onNextDay} />
         </div>
-        <p className="mt-1 text-xs text-white/70">Click to select</p>
+        <p className="mt-1 text-xs text-white/70">{TAP} to select</p>
         <div className="mt-3"><ClockToggle /></div>
 
         {showFilter && (
@@ -286,7 +286,7 @@ const TimeList = ({ dayKeyStr, times, tz, zones, onTz, chosen, onChoose, onNext,
           </div>
         )}
 
-        <div className="mt-4 grid grid-cols-[repeat(2,auto)] sm:grid-cols-[repeat(3,auto)] justify-center gap-2 text-left">
+        <div className={`mt-4 grid grid-cols-[repeat(2,auto)] ${list.length === 3 || list.length > 4 ? 'sm:grid-cols-[repeat(3,auto)] md:grid-cols-[repeat(2,auto)] lg:grid-cols-[repeat(3,auto)]' : ''} justify-center gap-2 text-left`}>
           {list.map((t, i) => {
             const sel = chosen === t;
             return (
@@ -313,7 +313,7 @@ const TimeList = ({ dayKeyStr, times, tz, zones, onTz, chosen, onChoose, onNext,
                 className="mt-5 px-8 py-3.5 rounded-full bg-white text-royal-blue font-bold tracking-wide text-sm inline-flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.35)]">
                 {fmtTime(chosen, tz, h24)} works for me <ArrowRight size={18} />
               </motion.button>
-              <p className="mt-2 text-xs text-white/80">Click to continue and add your details.</p>
+              <p className="mt-2 text-xs text-white/80">{TAP} to continue and add your details.</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -582,7 +582,7 @@ export default function Booking({ onBooked, initialTime }: { onBooked?: () => vo
               {!touched && (
                 <motion.p key="hint" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden text-center text-sm text-white/85">
-                  <span className="block pb-5">Tap a day with a dot, then pick a time.</span>
+                  <span className="block pb-5">{TAP} a day with a dot, then pick a time.</span>
                 </motion.p>
               )}
             </AnimatePresence>
@@ -604,7 +604,7 @@ export default function Booking({ onBooked, initialTime }: { onBooked?: () => vo
                   <p className="mt-4 text-sm text-[#c8c9c7] text-center">I’m booked up this month. Check next month.</p>
                 )}
               </div>
-              <div ref={timesRef} className="scroll-mt-24">
+              <div ref={timesRef} className="scroll-mt-24 md:h-full">
                 <AnimatePresence mode="wait">
                   <TimeList key={day || 'none'} dayKeyStr={day} times={day ? byDay.get(day) || [] : []} tz={tz}
                     zones={zones} onTz={(z) => { setTz(z); setTime(null); }}
