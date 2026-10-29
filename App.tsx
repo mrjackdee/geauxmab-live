@@ -1,7 +1,7 @@
 // © MrJackDee™. All rights reserved.
 import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useSpring, useInView, useTransform, AnimatePresence } from 'motion/react';
+import { motion, MotionConfig, useScroll, useSpring, useInView, useTransform, AnimatePresence } from 'motion/react';
 import { 
   Menu, X, ArrowRight, Facebook, Instagram, Linkedin, Share2, 
   MapPin, Globe, Award, TrendingUp, Users, Activity, 
@@ -137,6 +137,30 @@ const Counter = ({ from, to, duration = 2, suffix = "" }: { from: number, to: nu
 
 // --- Components ---
 
+// Same living background as book.geauxmab.com: the seal stays upright and only drifts and breathes,
+// with two soft glows. Pages with their own solid background sit on top of it.
+const LivingBackground = () => {
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 600], [0, 140]);
+  return (
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+      <motion.div style={{ y: bgY }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:left-[62%] w-[150vw] max-w-[1100px] md:w-[78vw] aspect-square">
+        <motion.div className="w-full h-full"
+          animate={{ scale: [1, 1.06, 1], x: [0, 18, 0], y: [0, -14, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}>
+          <img src="/img/pbs-seal-watermark.webp" alt="" width={900} height={900} decoding="async"
+            className="w-full h-full select-none opacity-30" />
+        </motion.div>
+      </motion.div>
+      <motion.div className="absolute -top-32 -right-32 w-[520px] h-[520px] rounded-full bg-white/10 blur-[100px]"
+        animate={{ x: [0, -40, 0], y: [0, 30, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="absolute -bottom-40 -left-32 w-[480px] h-[480px] rounded-full bg-white/[0.07] blur-[110px]"
+        animate={{ x: [0, 40, 0], y: [0, -30, 0] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} />
+    </div>
+  );
+};
+
 const FlipCard = ({ front, back }: { front: React.ReactNode, back: React.ReactNode }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -219,13 +243,13 @@ const SubNav = ({ links }: { links: { label: string, id: string }[] }) => {
   };
 
   return (
-    <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 py-3 px-6 overflow-x-auto shadow-sm">
+    <div className="sticky top-20 z-40 bg-white border-b border-gray-100 py-3 px-6 overflow-x-auto shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center gap-6 md:justify-center min-w-max">
         {links.map(link => (
           <button 
             key={link.id} 
             onClick={() => scrollTo(link.id)}
-            className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-royal-blue transition-colors"
+            className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-royal-blue transition-colors"
           >
             {link.label}
           </button>
@@ -254,7 +278,7 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
   
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-sigma-gray/30 h-20">
+    <nav className="sticky top-0 z-50 bg-white border-b border-sigma-gray/30 h-20">
       <motion.div
         className="absolute bottom-0 left-0 right-0 h-[2px] bg-royal-blue origin-left"
         style={{ scaleX }}
@@ -387,7 +411,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-wider text-blue-200 gap-8">
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[11px] uppercase tracking-wider text-blue-200 gap-8">
           <div className="flex-1 hidden md:flex gap-4">
             <button onClick={() => navigate('/privacy')} className="hover:text-white transition-colors">Privacy Policy</button>
             <button onClick={() => navigate('/terms')} className="hover:text-white transition-colors">Terms of Service</button>
@@ -590,15 +614,10 @@ const HomePage = () => {
       initial={{ opacity: 1 }} 
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }}
-      className="flex flex-col bg-royal-blue"
+      className="flex flex-col"
     >
       {/* Hero */}
       <section className="relative pt-8 md:pt-12 lg:pt-20 pb-8 md:pb-12 lg:pb-20 flex items-center overflow-hidden">
-        {/* Background Overlay */}
-        <div 
-          className="absolute inset-0 z-0 opacity-15 bg-no-repeat pointer-events-none mix-blend-soft-light hero-bg-overlay"
-        ></div>
-        
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid md:grid-cols-2 gap-12 items-center">
           <div>
             <motion.div 
@@ -609,7 +628,7 @@ const HomePage = () => {
               className="inline-flex items-center gap-2 px-3 py-1 bg-transparent border border-white/30 rounded-full mb-8"
             >
               <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-              <span className="text-[10px] font-bold text-white uppercase tracking-widest">Welcome to GeauxMAB.com</span>
+              <span className="text-[11px] font-bold text-white uppercase tracking-widest">Welcome to GeauxMAB.com</span>
             </motion.div>
             
             <motion.h1 
@@ -657,7 +676,7 @@ const HomePage = () => {
           >
             <PhotoCarousel />
             
-            <div className="flex items-center gap-4 md:gap-6 mt-6">
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-6">
               <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Personal Website">
                 <Globe size={20} />
               </a>
@@ -767,7 +786,7 @@ const BioPage = () => {
           >
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="w-2 h-2 bg-royal-blue rounded-full"></span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-royal-blue">The Brotherhood</span>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-royal-blue">The Brotherhood</span>
             </div>
             <h1 className="text-6xl font-bold text-royal-blue uppercase leading-none tracking-tighter mb-6">
               My Journey.
@@ -780,14 +799,14 @@ const BioPage = () => {
               <div className="flex flex-col items-center w-full max-w-md">
                 <div className="flex items-center gap-8 md:gap-12 mb-8 justify-center w-full border-2 border-royal-blue/20 bg-white p-6 rounded-sm shadow-sm">
                   <div className="flex flex-col text-center">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-sigma-gray mb-1">Initiated</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-sigma-gray mb-1">Initiated</span>
                     <span className="block text-3xl md:text-4xl font-bold text-royal-blue">Fall 1998</span>
                   </div>
                   
                   <div className="w-px bg-sigma-gray h-12"></div>
 
                   <div className="flex flex-col text-center">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-sigma-gray mb-1">Membership Status</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-sigma-gray mb-1">Membership Status</span>
                     <span className="block text-3xl md:text-4xl font-bold text-[#D4AF37]">Gold</span>
                   </div>
                 </div>
@@ -809,7 +828,7 @@ const BioPage = () => {
                   <div className="mt-8 relative z-20 bg-white p-4 border border-gray-200 shadow-sm rounded-sm w-full">
                     <h4 className="font-bold text-royal-blue text-[11px] uppercase mb-3 text-center leading-tight">The History of Phi Beta Sigma:<br/>A Podcast Discussion</h4>
                     <div className="text-center">
-                      <a href="https://jumpshare.com/share/1nor4VeRITOkr6vXCJw1" target="_blank" rel="noopener noreferrer" className="inline-block bg-royal-blue text-white px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold hover:bg-blue-800 transition-colors shadow-md">
+                      <a href="https://jumpshare.com/share/1nor4VeRITOkr6vXCJw1" target="_blank" rel="noopener noreferrer" className="inline-block bg-royal-blue text-white px-6 py-2 rounded-full text-[11px] uppercase tracking-widest font-bold hover:bg-blue-800 transition-colors shadow-md">
                         Listen
                       </a>
                     </div>
@@ -851,7 +870,7 @@ const BioPage = () => {
         <FadeIn className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
           <div className="relative group">
             <div className="text-3xl font-bold mb-1"><Counter from={0} to={25} suffix="+" /></div>
-            <div className="text-[10px] uppercase tracking-widest opacity-70">Years In SIGMA</div>
+            <div className="text-[11px] uppercase tracking-widest opacity-70">Years In SIGMA</div>
             <motion.div 
               initial={{ width: 0 }}
               whileInView={{ width: '100%' }}
@@ -863,15 +882,15 @@ const BioPage = () => {
           </div>
           <div>
             <div className="text-3xl font-bold mb-1">Zeta Iota</div>
-            <div className="text-[10px] uppercase tracking-widest opacity-70">Initiated Chapter</div>
+            <div className="text-[11px] uppercase tracking-widest opacity-70">Initiated Chapter</div>
           </div>
           <div>
             <div className="text-3xl font-bold mb-1">Omicron Sigma</div>
-            <div className="text-[10px] uppercase tracking-widest opacity-70">Current Chapter</div>
+            <div className="text-[11px] uppercase tracking-widest opacity-70">Current Chapter</div>
           </div>
           <div>
             <div className="text-3xl font-bold mb-1">"Wizard" #6</div>
-            <div className="text-[10px] uppercase tracking-widest opacity-70">Line Name and Number</div>
+            <div className="text-[11px] uppercase tracking-widest opacity-70">Line Name and Number</div>
           </div>
         </FadeIn>
       </div>
@@ -951,12 +970,12 @@ const BioPage = () => {
                       <div className="w-full flex justify-center">
                         {item.type === 'Life Member' ? (
                           <span 
-                            className="px-3 py-1 bg-royal-blue text-[#D4AF37] text-[10px] font-bold uppercase tracking-wider rounded-sm shadow-md animate-pulse gold-text-shadow"
+                            className="px-3 py-1 bg-royal-blue text-[#D4AF37] text-[11px] font-bold uppercase tracking-wider rounded-sm shadow-md animate-pulse gold-text-shadow"
                           >
                             {item.type}
                           </span>
                         ) : (
-                          <span className="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-sm">{item.type}</span>
+                          <span className="px-3 py-1 bg-gray-100 text-gray-600 text-[11px] font-bold uppercase tracking-wider rounded-sm">{item.type}</span>
                         )}
                       </div>
                     </div>
@@ -1014,7 +1033,7 @@ const BioPage = () => {
                     <img src="https://image2url.com/r2/default/images/1772167739816-2dcaa4ec-2705-4500-9574-7f7005b4a02e.png" className="w-full aspect-square object-contain mx-auto" alt="Masonic Logo" referrerPolicy="no-referrer" width="280" height="280" loading="lazy" />
                     <div className="bg-royal-blue p-4 text-white w-full text-center shadow-lg">
                       <h4 className="font-bold uppercase text-sm">Brotherhood</h4>
-                      <p className="text-[10px] uppercase tracking-widest opacity-70">Strength in Unity</p>
+                      <p className="text-[11px] uppercase tracking-widest opacity-70">Strength in Unity</p>
                     </div>
                  </div>
               </FadeIn>
@@ -1130,14 +1149,14 @@ const LeadershipPage = () => {
                   loading="lazy"
                 />
                 <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop" alt="Research Papers and Glasses" className="w-full grayscale hover:grayscale-0 transition-all duration-500" width="800" height="533" loading="lazy" />
-                <div className="absolute bottom-8 left-8 bg-white/95 backdrop-blur border-l-4 border-royal-blue p-6 max-w-xs shadow-lg">
-                   <p className="text-[10px] font-bold text-royal-blue uppercase tracking-widest mb-1">William Howard Taft University</p>
+                <div className="absolute bottom-8 left-8 bg-white border-l-4 border-royal-blue p-6 max-w-xs shadow-lg">
+                   <p className="text-[11px] font-bold text-royal-blue uppercase tracking-widest mb-1">William Howard Taft University</p>
                    <p className="text-sm font-serif italic text-slate-900">"Developing a Strategic Advisory Framework to Advance Black Senior Leadership in the Technology Industry: The BeVISIBLE Alliance Model"</p>
                 </div>
              </FadeIn>
              
              <FadeIn delay={0.2} className="space-y-8">
-                <span className="inline-block px-4 py-1 border border-royal-blue text-royal-blue text-[10px] font-bold uppercase tracking-widest">Doctor of Business Administration Candidate</span>
+                <span className="inline-block px-4 py-1 border border-royal-blue text-royal-blue text-[11px] font-bold uppercase tracking-widest">Doctor of Business Administration Candidate</span>
                 <h3 className="text-4xl font-bold text-royal-blue uppercase leading-tight">ADVANCING BLACK LEADERSHIP IN TECHNOLOGY</h3>
                 <div className="text-slate-600 leading-relaxed space-y-4 text-sm">
                   <p>
@@ -1186,7 +1205,7 @@ const LeadershipPage = () => {
                           >
                              {item.l}
                           </div>
-                          <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          <span className={`text-[11px] font-bold uppercase tracking-widest transition-colors ${
                             hoveredLetter === item.t ? 'text-royal-blue' : 'text-slate-500'
                           }`}>{item.t}</span>
                        </motion.div>
@@ -1386,7 +1405,7 @@ const LifeStylePage = () => {
                </div>
                <div className="p-8 flex-grow flex flex-col justify-between">
                   <div>
-                    <span className="bg-slate-100 text-royal-blue px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full mb-4 inline-block">WELLNESS</span>
+                    <span className="bg-slate-100 text-royal-blue px-3 py-1 text-[11px] font-bold uppercase tracking-widest rounded-full mb-4 inline-block">WELLNESS</span>
                     <h3 className="text-2xl font-bold text-royal-blue leading-tight mb-6">Strength, Stillness, and Taking Care of My Mind</h3>
                     <p className="text-slate-600 text-sm leading-relaxed mb-6">
                       Weight training keeps me connected to my body and reminds me of what I am capable of. Meditation slows things down and gives me space to breathe. Therapy keeps my mental health strong and my perspective honest. None of this feels trendy to me. It feels necessary. Taking care of my body and mind is how I stay steady, present, and fully myself.
@@ -1405,7 +1424,7 @@ const LifeStylePage = () => {
                  <img src="https://lh3.googleusercontent.com/d/19I2Izijp1jMdeVZgewWrnqxCDylxasxP" alt="Air Jordan 1 Royal Blue Sneakers" className="w-full h-full object-cover object-center" referrerPolicy="no-referrer" width="600" height="400" loading="lazy" />
                </div>
                <div className="md:w-1/2 p-8 flex flex-col justify-center">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-royal-blue mb-2">STYLE</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-royal-blue mb-2">STYLE</span>
                   <h3 className="text-3xl font-bold text-royal-blue mb-4">Sneakers and the Joy of the Hunt</h3>
                   <p className="text-slate-600 text-sm leading-relaxed mb-6">
                     I am a sneakerhead, always have been. Air Jordans, especially the classics, take me back. They remind me of growing up, paying attention to details, and understanding how style carries memory. I love a clean pair that just works.
@@ -1430,7 +1449,7 @@ const LifeStylePage = () => {
                  <img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&w=2831&auto=format&fit=crop" alt="Airplane flying over ocean" className="w-full h-full object-cover" width="800" height="400" loading="lazy" />
                  <div className="absolute inset-0 bg-black/40"></div>
                  <div className="absolute top-6 left-6">
-                   <span className="bg-white/95 backdrop-blur text-royal-blue px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm">Perspective</span>
+                   <span className="bg-white text-royal-blue px-3 py-1 text-[11px] font-bold uppercase tracking-widest rounded-full shadow-sm">Perspective</span>
                  </div>
                </div>
                <div className="p-8 flex flex-col justify-center flex-grow">
@@ -1583,13 +1602,18 @@ export default function App() {
       <ScrollToTop />
       <PageMetadata />
       <ScrollToTopButton />
-      <div className="font-sans antialiased text-slate-900 bg-white selection:bg-royal-blue selection:text-white">
-        <Navbar />
-        <main>
-          <AnimatedRoutes />
-        </main>
-        <Footer />
+      <MotionConfig reducedMotion="user">
+      <div className="font-sans antialiased text-slate-900 bg-royal-blue selection:bg-royal-blue selection:text-white">
+        <LivingBackground />
+        <div className="relative z-10">
+          <Navbar />
+          <main>
+            <AnimatedRoutes />
+          </main>
+          <Footer />
+        </div>
       </div>
+      </MotionConfig>
     </HashRouter>
   );
 }

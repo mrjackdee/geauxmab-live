@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-royal-blue: #19468D;
+  --color-royal-blue: #164F90;
   --color-sigma-gray: #BCBEBE;
   --color-gold: #D4AF37;
 }
@@ -13,7 +13,7 @@
 }
 
 :root {
-  --text-xs: 9px;
+  --text-xs: 0.75rem; /* 12px: readable on phones (was 9px) */
   --text-sm: 0.95em;
   --text-base: 16px;
   --text-lg: 18px;
@@ -38,7 +38,7 @@
   --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
   --shadow-lg: 0 16px 40px rgba(0,0,0,0.16);
 
-  --color-royal-blue: #19468D;
+  --color-royal-blue: #164F90;
   --color-sigma-gray: #BCBEBE;
   --color-gold: #D4AF37;
 
@@ -65,13 +65,6 @@
 
 .rotate-y-180 {
   transform: rotateY(180deg);
-}
-
-.hero-bg-overlay {
-  background-image: url('https://phibetasigma1914.org/wp-content/uploads/2023/02/Phi-Beta-Sigma-clipart_white-1.png');
-  background-position: center;
-  background-size: auto 80%;
-  filter: drop-shadow(0px 4px 24px rgba(255,255,255,0.1));
 }
 
 .gold-text-shadow {
@@ -167,3 +160,54 @@ html {
 .btn-pill:hover { box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.55); }
 .btn-solid { background-image: linear-gradient(180deg, #ffffff 0%, #e8f0ff 100%); }
 .btn-ghost::after { background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.25) 50%, transparent 70%); }
+
+/* Touch and hover feedback for every button and link on geauxmab.com (same feel as book.geauxmab.com).
+   Uses the separate `translate` / `scale` properties so it stacks with motion's own transforms. */
+.site-app :is(button, a):not(:disabled) {
+  transition: translate 0.2s ease, scale 0.15s ease, filter 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .site-app :is(button, a):not(:disabled):hover {
+    translate: 0 -2px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
+  }
+}
+
+.site-app :is(button, a):not(:disabled):active {
+  translate: 0 0;
+  scale: 0.95;
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.5));
+}
+
+/* currentColor keeps the ring visible on both blue and white sections */
+.site-app :is(button, a):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-app :is(button, a):not(:disabled):hover,
+  .site-app :is(button, a):not(:disabled):active {
+    translate: none;
+    scale: none;
+  }
+}
+
+/* Invisible padding so small icons and links are at least ~44px to tap, without changing how they look */
+.tap-target,
+.tap-target-y {
+  position: relative;
+}
+.tap-target::before,
+.tap-target-y::before {
+  content: '';
+  position: absolute;
+}
+.tap-target::before {
+  inset: -6px;
+}
+.tap-target-y::before {
+  inset: -14px -6px;
+}

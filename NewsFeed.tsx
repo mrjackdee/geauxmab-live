@@ -137,7 +137,7 @@ const NewsFeed = () => {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-white opacity-75 animate-ping"></span>
                 <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-white"></span>
               </span>
-              <span className="text-[10px] font-bold text-white uppercase tracking-widest">Live Feed</span>
+              <span className="text-[11px] font-bold text-white uppercase tracking-widest">Live Feed</span>
             </div>
             <h2 id="sigma-news-heading" className="text-4xl md:text-5xl font-bold text-blue-200 tracking-tighter">
               Sigma in the News
@@ -149,7 +149,7 @@ const NewsFeed = () => {
           <button
             onClick={() => load(true)}
             disabled={refreshing}
-            className="self-start md:self-auto btn-pill btn-ghost px-7 py-3.5 rounded-full bg-white/5 backdrop-blur-sm border border-white/60 text-white font-bold uppercase tracking-widest text-xs hover:bg-white/15 transition-all flex items-center gap-2 disabled:opacity-60"
+            className="self-start md:self-auto btn-pill btn-ghost px-7 py-3.5 rounded-full bg-white/5 border border-white/60 text-white font-bold uppercase tracking-widest text-xs hover:bg-white/15 transition-all flex items-center gap-2 disabled:opacity-60"
           >
             <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} /> Refresh
           </button>
@@ -182,10 +182,10 @@ const NewsFeed = () => {
                 className="group flex flex-col p-6 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md hover:scale-[1.02] hover:border-royal-blue/30 transition-all duration-300"
               >
                 <div className="flex items-center justify-between gap-3 mb-4">
-                  <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-royal-blue truncate">
+                  <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-royal-blue truncate">
                     <Newspaper size={14} className="shrink-0" /> {item.source}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-slate-400 shrink-0">{timeAgo(item.date)}</span>
+                  <span className="text-[11px] uppercase tracking-wider text-slate-400 shrink-0">{timeAgo(item.date)}</span>
                 </div>
                 <h3 className="text-slate-900 font-bold leading-snug mb-6 group-hover:text-royal-blue transition-colors">
                   {item.title}
