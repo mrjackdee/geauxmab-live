@@ -73,6 +73,18 @@ Formatting for the story:
 
 The entry appears on the Journal page at once and in the RSS feed at **https://geauxmab.com/journal/rss.xml**. Readers can subscribe to that link in any RSS reader, Feedly, or an email-by-RSS service. Drafts save on the device as you type. You can edit or remove published entries from the same page.
 
+## Share card (link preview)
+
+- The image is `public/img/share-card.jpg` (1200×630), built from `tools/share-card.html`. It uses the same layout as the booking site's card. The `tools/` folder is not deployed.
+- To change it, edit the template, then render it with headless Chrome (stay online so the fonts load) and save it as JPEG:
+  ```bash
+  "/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --hide-scrollbars --virtual-time-budget=5000 --window-size=1200,630 --screenshot="C:\temp\card.png" "file:///C:/Users/drjac/code/geauxmab-live/tools/share-card.html"
+  ```
+  ```bash
+  python -c "from PIL import Image; Image.open('C:/temp/card.png').convert('RGB').save('public/img/share-card.jpg', quality=88, optimize=True)"
+  ```
+- The `og:` and `twitter:card` tags in `index.html` point at `https://geauxmab.com/img/share-card.jpg`. Link previews only show it after the site is published. Facebook's Sharing Debugger and LinkedIn's Post Inspector refresh old previews.
+
 ## Go-live checklist (one time)
 
 1. **Publish the site to Hostinger.**
