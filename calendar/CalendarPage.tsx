@@ -135,7 +135,7 @@ const SocialIcons = ({ variant }: { variant: SocialVariant }) => {
 };
 
 const SHARE = {
-  title: 'Jack Dee | GeauxMAB.com',
+  title: 'ΦΒΣ Calendar | Jack Dee',
   text: 'Book time with Jack Dee. Pick a time and lock it in.',
   url: 'https://book.geauxmab.com/',
 };
@@ -378,7 +378,7 @@ const InstallButton = ({ compact = false }: { compact?: boolean }) => {
               <div className="flex items-center gap-4 mb-6">
                 <img src="/apple-touch-icon.png" alt="" width={56} height={56} className="w-14 h-14 rounded-2xl shadow-md" />
                 <div>
-                  <p className="font-bold text-royal-blue">Jack Dee | GeauxMAB.com</p>
+                  <p className="font-bold text-royal-blue">ΦΒΣ Jack Dee</p>
                   <p className="text-xs text-royal-blue/70">Save it like an app. One tap to book next time.</p>
                 </div>
               </div>
