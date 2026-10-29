@@ -15,8 +15,8 @@
   "vars": {
     "JOURNAL_AUTHOR": "jd@geauxmab.com",
     "SITE_URL": "https://geauxmab.com",
-    "ACCESS_TEAM_DOMAIN": "REPLACE_WITH_TEAM.cloudflareaccess.com",
-    "ACCESS_AUD": "REPLACE_WITH_ACCESS_APPLICATION_AUD"
+    "ACCESS_TEAM_DOMAIN": "mrjackdee.cloudflareaccess.com",
+    "ACCESS_AUD": "2c2a490c786b9dc091f2758018d51eb13146f592e8ea6d3da07a16fa2f84033a" // Access app "GeauxMAB Journal admin" (jd@geauxmab.com only)
   },
   "routes": [
     { "pattern": "geauxmab.com/api/*", "zone_name": "geauxmab.com" },
