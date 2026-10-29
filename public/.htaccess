@@ -1,0 +1,9 @@
+# © MrJackDee™. All rights reserved.
+# Pages and the app manifest are checked with the server on every visit, so returning
+# visitors get each new build right away. Files in /assets have a new name every build,
+# so they keep Hostinger's normal caching.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
