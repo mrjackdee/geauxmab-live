@@ -261,3 +261,51 @@ html {
 .legal-body h2:first-child { margin-top: 0; }
 .legal-body p { margin: 0 0 1em; }
 .legal-body a { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---------- Home redesign: display type, fluid sizes, glass, theme variables ---------- */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.22);
+  --glass-blur: 18px;
+  --glow: rgba(255, 255, 255, 0.55);
+  /* fluid type: scales smoothly between phone and desktop */
+  --fs-display: clamp(1.6rem, 1.1rem + 2.2vw, 2.75rem);
+  --fs-signature: clamp(3.5rem, 2.6rem + 4.5vw, 6rem);
+  --fs-lead: clamp(1rem, 0.92rem + 0.4vw, 1.2rem);
+}
+.font-display {
+  font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+  font-optical-sizing: auto;
+}
+.text-display { font-size: var(--fs-display); line-height: 1.08; }
+.text-signature { font-size: var(--fs-signature); }
+.text-lead { font-size: var(--fs-lead); }
+
+/* Frosted glass. Kept on its own compositing layer so it does not repaint against the moving background (flicker fix). */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  transform: translateZ(0);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Glowing, slowly turning border for the single most important action */
+@property --spin { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+.glow-border {
+  position: relative;
+  isolation: isolate;
+}
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(from var(--spin), rgba(255,255,255,0.15), #fff, rgba(147,197,253,0.9), rgba(255,255,255,0.15) 60%);
+  animation: glow-spin 4s linear infinite;
+  filter: blur(1px);
+}
+@keyframes glow-spin { to { --spin: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .glow-border::before { animation: none; } }

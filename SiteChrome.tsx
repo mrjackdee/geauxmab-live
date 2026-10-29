@@ -23,6 +23,9 @@ export const IMG = {
 
 export const BOOK_URL = 'https://book.geauxmab.com/';
 
+// true once the opening screen has cleared, so intro animations play where people can see them
+export const IntroContext = React.createContext(true);
+
 export const NAV = [
   { name: 'Home', path: '/' },
   { name: 'The Brotherhood', path: '/bio' },
