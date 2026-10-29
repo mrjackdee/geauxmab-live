@@ -43,6 +43,7 @@ const SITE_LINKS = [
   { name: 'The Brotherhood', href: `${SITE}/#/bio` },
   { name: 'The Scholarship', href: `${SITE}/#/leadership` },
   { name: 'The Service', href: `${SITE}/#/lifestyle` },
+  { name: 'The Journal', href: `${SITE}/#/journal` },
 ];
 
 // X's current logo (lucide only ships the old Twitter bird)
