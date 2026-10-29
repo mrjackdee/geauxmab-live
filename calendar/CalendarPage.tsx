@@ -915,7 +915,7 @@ export default function CalendarPage() {
               <section className="pt-5 md:pt-14 pb-16">
                 <div className="max-w-5xl mx-auto px-3 sm:px-5">
                   <div className="text-center mb-5 md:mb-8">
-                    <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white tracking-tighter">Jack Dee <span className="font-normal text-white/60">|</span> Calendar</h2>
+                    <h2 className="signature-text whitespace-nowrap text-5xl sm:text-6xl md:text-7xl text-white leading-tight">Jack Dee</h2>
                   </div>
                   <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}>
                     <Booking key={quick || 'pick'} initialTime={quick} />

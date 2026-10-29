@@ -51,7 +51,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 /* ---------------- Progress rail ---------------- */
 const STEPS: { id: Step; label: string }[] = [
-  { id: 'pick', label: 'Pick a Time' },
+  { id: 'pick', label: 'Select a Date' },
   { id: 'info', label: 'About You' },
   { id: 'done', label: 'Complete' },
 ];
@@ -313,6 +313,7 @@ const TimeList = ({ dayKeyStr, times, tz, zones, onTz, chosen, onChoose, onNext,
                 className="mt-5 px-8 py-3.5 rounded-full bg-white text-royal-blue font-bold tracking-wide text-sm inline-flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.35)]">
                 {fmtTime(chosen, tz, h24)} works for me <ArrowRight size={18} />
               </motion.button>
+              <p className="mt-2 text-xs text-white/80">Click to continue and add your details.</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -327,14 +328,23 @@ const TimeList = ({ dayKeyStr, times, tz, zones, onTz, chosen, onChoose, onNext,
               className="md:hidden fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-[65] px-4 pt-3 bg-royal-blue border-t border-white/20 shadow-[0_-12px_40px_rgba(0,0,0,0.45)]"
               style={{ paddingBottom: '0.75rem' }}>
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+              <p className="mb-2 flex items-center gap-1.5 text-[12px] font-bold tracking-wide text-white">
+                <Check size={14} strokeWidth={3} /> Time selected. Tap Next to Continue.
+              </p>
               <div className="flex items-center gap-3">
                 <div className="min-w-0 flex-1 leading-tight">
                   <p className="text-[11px] font-bold tracking-wide text-white/80 truncate">{keyToLabel(dayKeyStr)}</p>
-                  <p className="text-lg font-bold text-white tabular-nums">{fmtTime(chosen, tz, h24)} <span className="text-[#c8c9c7] text-sm font-medium">· 60 min</span></p>
+                  <p className="text-lg font-bold text-white tabular-nums">{fmtTime(chosen, tz, h24)} <span className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">{tzAbbr(tz, new Date(chosen))}</span> <span className="text-[#c8c9c7] text-sm font-medium">· 60 min</span></p>
                 </div>
-                <motion.button onClick={onNext} whileTap={{ scale: 0.95 }}
-                  className="shrink-0 h-12 pl-5 pr-4 rounded-full bg-white text-royal-blue font-bold tracking-wide text-xs flex items-center gap-2 shadow-[0_0_22px_rgba(255,255,255,0.5)]">
-                  Next <ArrowRight size={16} />
+                <motion.button onClick={onNext} whileTap={{ scale: 0.95 }} aria-label="Next: add your details"
+                  className="relative shrink-0 h-12 pl-6 pr-5 rounded-full bg-white text-royal-blue font-bold tracking-wide text-sm flex items-center gap-2 shadow-[0_0_22px_rgba(255,255,255,0.5)]">
+                  {/* soft pulse draws the eye to the next step */}
+                  <motion.span aria-hidden="true" className="absolute inset-0 rounded-full ring-2 ring-white"
+                    animate={{ scale: [1, 1.18], opacity: [0.7, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
+                  Next
+                  <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }} className="flex">
+                    <ArrowRight size={16} />
+                  </motion.span>
                 </motion.button>
               </div>
             </motion.div>

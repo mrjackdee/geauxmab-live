@@ -40,7 +40,7 @@ This README holds the complete development notes for the approved version so the
 ## 1. What the app does
 
 - **Home screen:** introduces Jack Dee with photo, credentials (Life Member #2174, fraternity, region and chapter insignia), social links, a **My Calendar** button, and a **Next Openings** panel of the four soonest open times that can be booked in one tap.
-- **Calendar screen:** a custom month calendar showing only days with real availability, an **Open Times** panel for the selected day, and a three-step flow: **Pick a Time → About You → Complete**.
+- **Calendar screen:** a custom month calendar showing only days with real availability, an **Open Times** panel for the selected day, and a three-step flow: **Select a Date → About You → Complete**.
 - **Booking:** collects name, email, optional phone (with optional SMS consent) and optional notes, requires agreement to the Terms and Privacy Policy, then books the session directly in Calendly through a server API.
 - **Confirmation:** shows the booked time, reschedule and cancel links from Calendly, and Jack's Life Member credential.
 - **Legal:** Privacy Policy and Terms of Service pages (Texas law, Dallas County venue, recording consent and release, content ownership).
@@ -142,12 +142,13 @@ Event type used: `https://api.calendly.com/event_types/dc9fc8cf-9a0c-4902-8035-3
 6. **Next Openings** panel: four soonest openings as two auto-width columns ("Today 10:00 am EDT"), "Click to select", 12/24-hour toggle, and the **Your Local Time** pill (plus "My Time" in Eastern when zones differ). Tapping a time jumps straight to the About You step with that time preselected. Hidden entirely when there are no near-term openings.
 7. **Save to Home Screen** button, then footer.
 
-### 6.4 Calendar screen ("Jack Dee | Calendar")
-- **Progress rail:** Pick a Time → About You → Complete. Steps size to their labels; connecting lines fill remaining space.
+### 6.4 Calendar screen (heading "Jack Dee" in the signature script)
+- **Heading:** "Jack Dee" in the same signature script as the opening screen.
+- **Progress rail:** Select a Date → About You → Complete. Steps size to their labels; connecting lines fill remaining space.
 - **Hint:** "Tap a day with a dot, then pick a time." Hidden after the visitor taps a day or time (the auto-selected first day does not hide it).
 - **Calendar card:** month grid; only days with openings are tappable (dot under the date); today has a thin white outline; selected day is a glowing white tile that animates between days. Month arrows; previous disabled on current month. First open day auto-selected; if this month has none, it advances one month.
 - **Open Times card:** "⚡ Open Times", **‹ day ›** arrows that step through open days across months, "Click to select", 12/24-hour toggle, Morning/Afternoon/Evening filter (only when a day has 7+ times), time buttons in 2 (phone) or 3 (wider) auto-width columns, and the **Your Local Time** pill which doubles as the time-zone picker.
-- **Next action:** laptops get an inline "10:30 am works for me →" button; phones get a dock above the tab bar with day, time, "60 min" and **Next**.
+- **Next action:** laptops get an inline "10:30 am works for me →" button with "Click to continue and add your details." under it; phones get a dock above the tab bar that says "Time selected. Tap Next to Continue.", shows the day, time with time-zone abbreviation and "60 min", and a **Next** button with a soft pulse and nudging arrow.
 
 ### 6.5 About You
 - Summary card: date tile (month + day), **weekday** only (month/day already on the tile), time range **with time-zone abbreviation**, "60 min · Zoom", and **Change**.
@@ -258,7 +259,7 @@ Body: `{ start_time, name, email, timezone, notes?, phone?, sms? }`
 
 ### Typography
 - Body/UI: system sans via Tailwind `font-sans` (fonts were intentionally **not** switched to Arial).
-- Signature: Allura (Google Fonts) via `.signature-text`, used only for "Jack Dee" on the opening screen.
+- Signature: Allura (Google Fonts) via `.signature-text`, used for "Jack Dee" on the opening screen and the calendar screen heading.
 - **Mixed case everywhere.** No `uppercase` styling. Letter spacing `tracking-wide` at most.
 - Minimum text size **11 px**; body copy 14 to 16 px; form inputs 16 px (prevents iOS zoom).
 
@@ -322,8 +323,9 @@ Verified at **320 px** (iPhone SE) and 375/390 px:
 | Home button / caption | My Calendar / Click to Schedule |
 | Divider | To Quick Book |
 | Quick-pick panel | Next Openings / Click to select |
-| Calendar heading | Jack Dee \| Calendar |
-| Steps | Pick a Time · About You · Complete |
+| Calendar heading | Jack Dee (signature script) |
+| Steps | Select a Date · About You · Complete |
+| After picking a time (phone) | Time selected. Tap Next to Continue. |
 | Time panel | Open Times |
 | Local time | Your Local Time / Showing {Zone} / Use my time ({Zone}) |
 | Name placeholder | A Langston Taylor |
