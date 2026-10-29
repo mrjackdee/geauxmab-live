@@ -1,3 +1,4 @@
+// © MrJackDee™. All rights reserved.
 import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useSpring, useInView, useTransform, AnimatePresence } from 'motion/react';
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react';
 
 import LoadingScreen from './LoadingScreen';
+import NewsFeed from './NewsFeed';
 
 // --- Utility ---
 
@@ -285,26 +287,32 @@ const Navbar = () => {
               {item.name}
             </button>
           ))}
+          <a href="https://book.geauxmab.com/" className="btn-pill px-5 py-2.5 rounded-full bg-royal-blue text-white text-xs font-bold uppercase tracking-widest hover:bg-blue-800 transition-colors">
+            Book Time
+          </a>
         </div>
 
         {/* Desktop Socials */}
         <div className="hidden md:flex items-center gap-4">
-          <a href="http://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors hover:scale-110" aria-label="Personal Website">
+          <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors hover:scale-110" aria-label="Personal Website">
             <Globe size={20} />
           </a>
-          <a href="http://www.tinyurl.com/MrJackDee-LI" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 transition-colors hover:scale-110" aria-label="LinkedIn Profile">
+          <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors hover:scale-110" aria-label="DonOra Global">
+            <Building2 size={20} />
+          </a>
+          <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 transition-colors hover:scale-110" aria-label="LinkedIn Profile">
             <Linkedin size={20} />
           </a>
-          <a href="mailto:JackDee@att.net" className="text-slate-600 hover:text-slate-800 transition-colors hover:scale-110" aria-label="Email Jack Dee">
+          <a href="mailto:jd@geauxmab.com" className="text-slate-600 hover:text-slate-800 transition-colors hover:scale-110" aria-label="Email Jack Dee">
             <Mail size={20} />
           </a>
-          <a href="http://www.tinyurl.com/MrJackDee-X" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition-colors hover:scale-110" aria-label="X Profile">
+          <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition-colors hover:scale-110" aria-label="X Profile">
             <Twitter size={20} />
           </a>
-          <a href="http://www.tinyurl.com/MrJackDee-FB" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors hover:scale-110" aria-label="Facebook Profile">
+          <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors hover:scale-110" aria-label="Facebook Profile">
             <Facebook size={20} />
           </a>
-          <a href="http://www.tinyurl.com/MrJackDee-IG" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-800 transition-colors hover:scale-110" aria-label="Instagram Profile">
+          <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-800 transition-colors hover:scale-110" aria-label="Instagram Profile">
             <Instagram size={20} />
           </a>
         </div>
@@ -334,23 +342,29 @@ const Navbar = () => {
               {item.name}
             </button>
           ))}
+          <a href="https://book.geauxmab.com/" className="self-start px-6 py-3 rounded-full bg-royal-blue text-white text-sm font-bold uppercase tracking-widest">
+            Book Time
+          </a>
           <div className="flex items-center gap-6 mt-4 pt-4 border-t border-gray-100">
-            <a href="http://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors" aria-label="Personal Website">
+            <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors" aria-label="Personal Website">
               <Globe size={24} />
             </a>
-            <a href="http://www.tinyurl.com/MrJackDee-LI" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 transition-colors" aria-label="LinkedIn Profile">
+            <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-800 transition-colors" aria-label="DonOra Global">
+              <Building2 size={24} />
+            </a>
+            <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 transition-colors" aria-label="LinkedIn Profile">
               <Linkedin size={24} />
             </a>
-            <a href="mailto:JackDee@att.net" className="text-slate-600 hover:text-slate-800 transition-colors" aria-label="Email Jack Dee">
+            <a href="mailto:jd@geauxmab.com" className="text-slate-600 hover:text-slate-800 transition-colors" aria-label="Email Jack Dee">
               <Mail size={24} />
             </a>
-            <a href="http://www.tinyurl.com/MrJackDee-X" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition-colors" aria-label="X Profile">
+            <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition-colors" aria-label="X Profile">
               <Twitter size={24} />
             </a>
-            <a href="http://www.tinyurl.com/MrJackDee-FB" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors" aria-label="Facebook Profile">
+            <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors" aria-label="Facebook Profile">
               <Facebook size={24} />
             </a>
-            <a href="http://www.tinyurl.com/MrJackDee-IG" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-800 transition-colors" aria-label="Instagram Profile">
+            <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-800 transition-colors" aria-label="Instagram Profile">
               <Instagram size={24} />
             </a>
           </div>
@@ -381,22 +395,25 @@ const Footer = () => {
           <p className="flex-1 text-center">&copy; 2026 MrJackDee™ | All Rights Reserved</p>
           <div className="flex-1 flex justify-center md:justify-end">
             <div className="grid grid-cols-3 gap-4">
-              <a href="http://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Personal Website">
+              <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Personal Website">
                 <Globe size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-LI" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="LinkedIn Profile">
+              <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="DonOra Global">
+                <Building2 size={20} />
+              </a>
+              <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="LinkedIn Profile">
                 <Linkedin size={20} />
               </a>
-              <a href="mailto:JackDee@att.net" className="text-blue-200 hover:text-white transition-colors" aria-label="Email Jack Dee">
+              <a href="mailto:jd@geauxmab.com" className="text-blue-200 hover:text-white transition-colors" aria-label="Email Jack Dee">
                 <Mail size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-X" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="X Profile">
+              <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="X Profile">
                 <Twitter size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-FB" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Facebook Profile">
+              <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Facebook Profile">
                 <Facebook size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-IG" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Instagram Profile">
+              <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors" aria-label="Instagram Profile">
                 <Instagram size={20} />
               </a>
             </div>
@@ -641,22 +658,25 @@ const HomePage = () => {
             <PhotoCarousel />
             
             <div className="flex items-center gap-4 md:gap-6 mt-6">
-              <a href="http://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Personal Website">
+              <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Personal Website">
                 <Globe size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-LI" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="LinkedIn Profile">
+              <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="DonOra Global">
+                <Building2 size={20} />
+              </a>
+              <a href="https://www.linkedin.com/in/mrjackdee/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="LinkedIn Profile">
                 <Linkedin size={20} />
               </a>
-              <a href="mailto:JackDee@att.net" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 hover:bg-slate-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Email Jack Dee">
+              <a href="mailto:jd@geauxmab.com" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 hover:bg-slate-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Email Jack Dee">
                 <Mail size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-X" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-400 hover:bg-blue-400 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="X Profile">
+              <a href="https://x.com/MrKreducator" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-400 hover:bg-blue-400 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="X Profile">
                 <Twitter size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-FB" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Facebook Profile">
+              <a href="https://www.facebook.com/geauxmab" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Facebook Profile">
                 <Facebook size={20} />
               </a>
-              <a href="http://www.tinyurl.com/MrJackDee-IG" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-pink-600 hover:bg-pink-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Instagram Profile">
+              <a href="https://www.instagram.com/the.jackdee" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-pink-600 hover:bg-pink-600 hover:text-white transition-all hover:scale-110 shadow-lg" aria-label="Instagram Profile">
                 <Instagram size={20} />
               </a>
             </div>
@@ -696,6 +716,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Live Phi Beta Sigma news */}
+      <NewsFeed />
 
       {/* Quote Carousel */}
       <section className="py-8 bg-transparent text-white text-center px-6">
@@ -1076,7 +1099,7 @@ const LeadershipPage = () => {
        {/* Digital Platforms */}
        <section className="py-8 max-w-7xl mx-auto px-6">
           <FadeIn className="flex flex-wrap justify-center items-center gap-4">
-             <a href="http://www.MrJackDee.com" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-royal-blue text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
+             <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-royal-blue text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
                 Professional Digital Page
              </a>
              <a href="https://donoraglobal.netlify.app/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-royal-blue text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
@@ -1452,7 +1475,7 @@ const PrivacyPolicyPage = () => {
             <p className="mb-4">We may use cookies and similar tracking technologies (like web beacons and pixels) to access or store information. Specific information about how we use such technologies and how you can refuse certain cookies is set out in our Cookie Notice.</p>
             
             <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">5. Contact Us</h2>
-            <p className="mb-4">If you have questions or comments about this notice, you may email us at JackDee@att.net.</p>
+            <p className="mb-4">If you have questions or comments about this notice, you may email us at jd@geauxmab.com.</p>
           </div>
         </div>
       </section>
@@ -1487,7 +1510,7 @@ const TermsOfServicePage = () => {
             <p className="mb-4">We reserve the right to change, modify, or remove the contents of the Site at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Site.</p>
             
             <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">5. Contact Us</h2>
-            <p className="mb-4">In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at: JackDee@att.net.</p>
+            <p className="mb-4">In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at: jd@geauxmab.com.</p>
           </div>
         </div>
       </section>

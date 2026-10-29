@@ -1,0 +1,68 @@
+/* © MrJackDee™. All rights reserved. */
+/* Touch and hover feedback for every button and link in the booking app.
+   Uses the separate `translate` / `scale` properties so it stacks with motion's own transforms. */
+.book-app :is(button, a):not(:disabled) {
+  transition: translate 0.2s ease, scale 0.15s ease, filter 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .book-app :is(button, a):not(:disabled):hover {
+    translate: 0 -2px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
+  }
+}
+
+.book-app :is(button, a):not(:disabled):active {
+  translate: 0 0;
+  scale: 0.95;
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.5));
+}
+
+.book-app :is(button, a):focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book-app :is(button, a):not(:disabled):hover,
+  .book-app :is(button, a):not(:disabled):active {
+    translate: none;
+    scale: none;
+  }
+}
+
+/* Official Phi Beta Sigma royal blue (brand standards, Rev. 2026.09.09) */
+:root {
+  --color-royal-blue: #164f90;
+}
+
+/* The photo has its own tilt effect, so it skips the generic lift and glow */
+.book-app a.photo-link:hover,
+.book-app a.photo-link:active {
+  translate: none;
+  scale: none;
+  filter: none;
+}
+
+/* Phones: the main site's stylesheet shrinks "text-xs" to 9px; restore a readable 12px here */
+:root {
+  --text-xs: 0.75rem;
+}
+
+/* Invisible padding so small icons and links are at least ~44px to tap, without changing how they look */
+.tap-target,
+.tap-target-y {
+  position: relative;
+}
+.tap-target::before,
+.tap-target-y::before {
+  content: '';
+  position: absolute;
+}
+.tap-target::before {
+  inset: -6px;
+}
+.tap-target-y::before {
+  inset: -14px -6px;
+}

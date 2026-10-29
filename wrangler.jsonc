@@ -1,0 +1,21 @@
+{
+  // © MrJackDee™. All rights reserved.
+  // Cloudflare Worker that serves the booking app at https://book.geauxmab.com
+  // Build: npm run build:book   Deploy: npx wrangler deploy
+  // One-time secret: npx wrangler secret put CALENDLY_TOKEN   (Calendly Personal Access Token)
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "book-jackdee",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist-book",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "vars": {
+    // "Jack Dee | ΦΒΣ Calendar" (60 min, Zoom)
+    "CALENDLY_EVENT_TYPE": "https://api.calendly.com/event_types/dc9fc8cf-9a0c-4902-8035-35437aaa16fa"
+  },
+  "routes": [{ "pattern": "book.geauxmab.com", "custom_domain": true }]
+}

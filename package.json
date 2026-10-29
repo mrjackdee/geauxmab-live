@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "dev:book": "vite --config vite.book.config.ts",
+    "build:book": "vite build --config vite.book.config.ts",
+    "preview:book": "vite preview --config vite.book.config.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
