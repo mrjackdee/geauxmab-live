@@ -2,9 +2,9 @@
 
 # Booking Page: book.geauxmab.com
 
-**Owner:** Jack Dee (MrJackDee™) · **Status:** Final approved design, October 29, 2026 · **Branch:** `main`
+**Owner:** Jack Dee (MrJackDee™) · **Status:** Final approved design, October 29, 2026 (rev. 2: desktop mode, Σ icon, share card, Michroma/Oxanium type, pen-trace splash, per-site naming) · **Branch:** `main`
 
-A branded, mobile-first scheduling app that lets visitors book a one-on-one session with Jack Dee without ever seeing a third-party scheduling page. Calendly is the scheduling engine behind the scenes; every screen the visitor sees is custom.
+A branded, mobile-first scheduling app (with an automatic desktop mode) that lets visitors book a one-on-one session with Jack Dee without ever seeing a third-party scheduling page. Calendly is the scheduling engine behind the scenes; every screen the visitor sees is custom.
 
 This README holds the complete development notes for the approved version so the design and functionality can be **replicated for other sites**. Companion documents (Business Requirements, Technical Design, Test Cases) are in Google Drive under `GeauxMAB / Booking Page Kit`.
 
@@ -34,6 +34,10 @@ This README holds the complete development notes for the approved version so the
 20. [Replicating this for another site](#20-replicating-this-for-another-site)
 21. [Go-live checklist](#21-go-live-checklist)
 22. [Known limitations and decisions log](#22-known-limitations-and-decisions-log)
+23. [Desktop mode](#23-desktop-mode)
+24. [Naming, icon and link preview (per site)](#24-naming-icon-and-link-preview-per-site)
+25. [Testing matrix](#25-testing-matrix)
+26. [Deploying from a shared repo](#26-deploying-from-a-shared-repo)
 
 ---
 
@@ -45,6 +49,7 @@ This README holds the complete development notes for the approved version so the
 - **Confirmation:** shows the booked time, reschedule and cancel links from Calendly, and Jack's Life Member credential.
 - **Legal:** Privacy Policy and Terms of Service pages (Texas law, Dallas County venue, recording consent and release, content ownership).
 - **App-like behavior:** bottom tab bar on phones, share sheet, save to home screen (PWA), live availability status, 12/24-hour toggle, viewer-selectable time zone.
+- **Desktop mode (1024 px and wider):** switches automatically to a website layout: header navigation, a hero with the next four openings beside the photo, and the full calendar on the home page. No manual toggle. See [§23](#23-desktop-mode).
 
 ---
 
@@ -80,7 +85,8 @@ The booking app lives alongside the main geauxmab.com site in the same repo but 
 | `calendar/clock.tsx` | Shared 12/24-hour preference and viewing time zone (hooks + small components) |
 | `calendar/Legal.tsx` | Privacy Policy and Terms of Service content |
 | `calendar/app.css` | App-only CSS: hover/tap feedback, tap-target padding, brand color and text-size overrides |
-| `calendar/public/` | Static assets: icons, manifest, service worker, images |
+| `calendar/public/` | Static assets: icons, manifest, service worker, images, share card |
+| `calendar/tools/` | **Not deployed.** `make-icons.py` (builds all icons from one letter) and `share-card.html` (1200×630 link-preview template) |
 | `worker/index.ts` | Cloudflare Worker: static assets + `/api/slots` + `/api/book` |
 | `vite.book.config.ts` | Vite config for the booking build; runs the Worker API in dev |
 | `wrangler.jsonc` | Worker name, assets, custom domain, event type variable |
@@ -121,33 +127,42 @@ Event type used: `https://api.calendly.com/event_types/dc9fc8cf-9a0c-4902-8035-3
 ## 6. Screens and user flow
 
 ### 6.1 Opening screen (splash)
-- Plays on **every** page load (~3 s). Fraternity seal scales in, **"Jack Dee" is written in left to right** (clip-path reveal on the script font), "Book Time · GeauxMAB" fades in, a light bar sweeps.
+- Plays on **every** page load (~3 s). Fraternity seal scales in, **"Jack Dee" is handwritten**: an SVG `<text>` with one `<tspan>` per letter; each letter's outline is traced with an animated `stroke-dashoffset` (left to right, 0.13 s apart), then fills white. Finishes at ~2.4 s. Reduced motion shows the filled name at once. CSS: `.sig-draw` in `calendar/app.css`. "Book Time · GeauxMAB" fades in, a light bar sweeps.
+- Why not a clip-path wipe: with a block font (Michroma) a left-to-right wipe reads as a reveal, not as handwriting. The stroke trace looks like a pen with any font.
 - Sits above everything (`z-[100]`), including the tab bar.
 
 ### 6.2 Header (sticky)
 - Left: **Jack Dee / Life Member #2174**.
 - Then three linked insignia (same size, same centerline): **Phi Beta Sigma seal** → phibetasigma1914.org, **Gulf Coast Region** → pbsgulfcoastregion.org, **North Dallas Sigmas** (Omicron Sigma Alumni Chapter) → omicronsigma1914.org. Each has a hover label.
-- Right: **Save** (icon-only on phones, "Save App" on wider screens). On laptops also Share and Menu.
-- On non-home views the left side becomes a back arrow; laptop center title shows the view name.
+- Right: **Save** (icon-only on phones, "Save App" on wider screens). In desktop mode Save is hidden (it is an app feature) and Share and Menu show instead.
+- Desktop mode (≥ 1024 px) adds center navigation pills: Home, The Brotherhood, The Scholarship, The Service.
+- On non-home views the left side becomes a back arrow; tablet center title shows the view name (hidden in desktop mode, where nav takes its place).
 
-### 6.3 Home screen
+### 6.3 Home screen (phones and tablets, under 1024 px)
+One centered column, `max-w-xl`. Desktop mode replaces this with the hero in [§23](#23-desktop-mode).
+
 1. **Social row** (scrolls away, not sticky): grouped **Personal | Social | Business** with thin dividers and hover labels.
    - Personal: MrJackDee.com
    - Social: Facebook (geauxmab), Instagram (the.jackdee), X (MrKreducator)
    - Business: DonOra Global, LinkedIn (mrjackdee), Email (jd@geauxmab.com)
 2. **Photo** (links to MrJackDee.com, new tab) with subtle 3D tilt and shine; **gold Life Member pin** fixed upright on the lower-right corner. Photo width = `min(16.5rem, 36svh)` on phones so the main button stays visible.
 3. **Time Available** badge (green glow) appears **only** when Calendly confirms real openings in this month or next. Otherwise nothing renders.
-4. **My Calendar** button with caption "Click to Schedule" → calendar screen.
+4. **My Calendar** button with caption "Tap to Schedule" ("Click" with a mouse; see `TAP` below) → calendar screen. No Share pill here; the tab bar has Share.
 5. Divider: "To Quick Book".
 6. **Next Openings** panel: four soonest openings as two auto-width columns ("Today 10:00 am EDT"), "Click to select", 12/24-hour toggle, and the **Your Local Time** pill (plus "My Time" in Eastern when zones differ). Tapping a time jumps straight to the About You step with that time preselected. Hidden entirely when there are no near-term openings.
 7. **Save to Home Screen** button, then footer.
 
-### 6.4 Calendar screen (heading "Jack Dee" in the signature script)
-- **Heading:** "Jack Dee" in the same signature script as the opening screen.
+### 6.4 Calendar screen (heading "Jack Dee" in Michroma)
+- **Heading:** "Jack Dee" in Michroma (`.signature-text`), `text-3xl sm:text-4xl md:text-5xl`, one line.
+- In desktop mode this screen does not exist on its own: `#book` scrolls to the calendar section on the home page.
+- **Tap/Click wording:** every how-to hint uses `TAP` from `clock.tsx`: "Click" when the device has a mouse (`(hover: hover) and (pointer: fine)`), otherwise "Tap".
 - **Progress rail:** Select a Date → About You → Complete. Steps size to their labels; connecting lines fill remaining space.
 - **Hint:** "Tap a day with a dot, then pick a time." Hidden after the visitor taps a day or time (the auto-selected first day does not hide it).
 - **Calendar card:** month grid; only days with openings are tappable (dot under the date); today has a thin white outline; selected day is a glowing white tile that animates between days. Month arrows; previous disabled on current month. First open day auto-selected; if this month has none, it advances one month.
-- **Open Times card:** "⚡ Open Times", **‹ day ›** arrows that step through open days across months, "Click to select", 12/24-hour toggle, Morning/Afternoon/Evening filter (only when a day has 7+ times), time buttons in 2 (phone) or 3 (wider) auto-width columns, and the **Your Local Time** pill which doubles as the time-zone picker.
+- **Month title:** one line (`whitespace-nowrap`), `text-lg md:text-base lg:text-xl`. The `md` step down exists because Michroma is wide: at tablet width "September 2026" (the longest month) must fit between the arrows.
+- **Open Times card:** "⚡ Open Times", **‹ day ›** arrows that step through open days across months (day label in Michroma via `.heading-font`), "Tap to select", 12/24-hour toggle, Morning/Afternoon/Evening filter (only when a day has 7+ times), and the **Your Local Time** pill which doubles as the time-zone picker.
+- **Time button columns:** 2 on phones; 3 from 640 px; **back to 2 at 768–1023 px** (tablet, where the calendar and times sit side by side and 3 columns overflowed and were cut off); 3 again in desktop mode. With exactly 4 times it stays 2×2 so no time sits alone on a row.
+- **Equal heights:** from 768 px the times card stretches to the calendar card's height (`md:h-full`, content centered).
 - **Next action:** laptops get an inline "10:30 am works for me →" button with "Click to continue and add your details." under it; phones get a dock above the tab bar that says "Time selected. Tap Next to Continue.", shows the day, time with time-zone abbreviation and "60 min", and a **Next** button with a soft pulse and nudging arrow.
 
 ### 6.5 About You
@@ -258,10 +273,20 @@ Body: `{ start_time, name, email, timezone, notes?, phone?, sms? }`
 - `--text-xs` is reset to `0.75rem` in `app.css` because the shared stylesheet shrinks it to 9 px.
 
 ### Typography
-- Body/UI: system sans via Tailwind `font-sans` (fonts were intentionally **not** switched to Arial).
-- Signature: Allura (Google Fonts) via `.signature-text`, used for "Jack Dee" on the opening screen and the calendar screen heading.
-- **Mixed case everywhere.** No `uppercase` styling. Letter spacing `tracking-wide` at most.
+Two Google Fonts, loaded in `calendar/index.html` (`family=Michroma&family=Oxanium:wght@400;500;600;700;800`) and wired in `calendar/app.css`:
+
+| Role | Font | How it is applied |
+|---|---|---|
+| "Jack Dee" and all headings | **Michroma** (one weight; wide, squared) | `--font-signature`; `.book-app :is(h1,h2,h3)` and `.heading-font` (for non-heading titles such as the Open Times day label). Letter-spacing `0.01em` (`0.02em` on `.signature-text`), line-height 1.2. Keep existing bold classes; the browser thickens Michroma, which is the approved look. |
+| Everything else: body, buttons, links, form fields, labels | **Oxanium** (400–800; squared, readable small) | `--font-sans` and `--font-primary` overridden in `app.css`, so Tailwind's `font-sans` and plain `body` text both use it. Buttons and inputs inherit. |
+
+- **Sizing rule:** Michroma is about 1.6× wider than a script font. "Jack Dee" sizes: splash `w-[16rem] md:w-[24rem]` (SVG), calendar heading `text-3xl sm:text-4xl md:text-5xl`, desktop hero `text-6xl xl:text-7xl`. Any `whitespace-nowrap` heading must be checked at 375 and 768 px with the longest real text.
+- **Text 11 px and smaller stays in Oxanium** (e.g. the tablet header view title). Michroma is too wide to read that small.
+- **Michroma has no Greek letters.** The Σ in the icon and share card uses Georgia Bold.
+- The fonts are set in `calendar/app.css`, not in the shared `index.css`, so the booking build never depends on the main site's stylesheet.
+- **Mixed case everywhere.** No `uppercase` styling except the share card's small "BOOK TIME WITH" kicker. Letter spacing `tracking-wide` at most.
 - Minimum text size **11 px**; body copy 14 to 16 px; form inputs 16 px (prevents iOS zoom).
+- History: the original signature font was Brittany Signature with Allura as fallback. Brittany was installed only on the owner's PC (never hosted), so every visitor actually saw Allura. Rejected alternatives: masculine scripts (Mr Dafoe, Yellowtail), Play, Russo One; Michroma was chosen for headings and Oxanium for small text (Exo 2, Saira, Titillium Web, Chakra Petch, Play also compared).
 
 ### Components and patterns
 - **Pills and buttons size to their content.** No fixed widths; grids use `repeat(n, auto)` so panels shrink-wrap.
@@ -288,6 +313,8 @@ From the fraternity's Brand Standards (Rev. 2026.09.09):
 
 ## 14. Mobile-first and accessibility rules
 
+Breakpoints: under 1024 px = **app layout** (phones and tablets, bottom tab bar); 1024 px and wider = **desktop mode**. Full test matrix in [§25](#25-testing-matrix).
+
 Verified at **320 px** (iPhone SE) and 375/390 px:
 - No horizontal scrolling on any screen; nothing clipped inside cards (grid columns use `minmax(0, 1fr)`).
 - Sticky header is a single row; the social row scrolls away.
@@ -303,7 +330,8 @@ Verified at **320 px** (iPhone SE) and 375/390 px:
 
 ## 15. Motion and animation rules
 
-- Splash: seal scale-in, handwritten signature reveal, loading sweep.
+- Splash: seal scale-in, pen-trace "Jack Dee" (each letter outlined left to right, then filled; see §6.1), loading sweep.
+- Desktop mode: quick picks and "Pick a Time" smooth-scroll to the calendar section.
 - Screen transitions: horizontal slide.
 - Calendar: days pop in, month slides, selected-day pill uses a shared layout animation.
 - Lists: short staggered fade/slide-in (≤ 0.5 s total).
@@ -318,12 +346,16 @@ Verified at **320 px** (iPhone SE) and 375/390 px:
 
 | Element | Final copy |
 |---|---|
-| App name | Jack Dee \| GeauxMAB.com |
+| Home-screen app name (`short_name`, iOS app title) | ΦΒΣ Jack Dee |
+| Browser tab, bookmark, `manifest.name`, Share title | ΦΒΣ Calendar \| Jack Dee |
+| Link preview title / description | Book Time with Jack Dee / Pick a time and let's connect. |
 | Header subtitle | Life Member #2174 |
-| Home button / caption | My Calendar / Click to Schedule |
+| Home button / caption | My Calendar / Tap to Schedule ("Click" with a mouse) |
 | Divider | To Quick Book |
-| Quick-pick panel | Next Openings / Click to select |
-| Calendar heading | Jack Dee (signature script) |
+| Quick-pick panel | Next Openings / Tap to select |
+| Desktop hero | Jack Dee · "Book a 60-minute Zoom session with me. Pick a time that works for you, add your info, and you're booked." · chips 60 min / Zoom / Life Member #2174 · Pick a Time · Share · "Next openings · Click one to book it" |
+| Desktop calendar section | Pick a time · "Times show in your time zone. Change it under the open times." |
+| Calendar heading | Jack Dee (Michroma) |
 | Steps | Select a Date · About You · Complete |
 | After picking a time (phone) | Time selected. Tap Next to Continue. |
 | Time panel | Open Times |
@@ -348,7 +380,9 @@ Verified at **320 px** (iPhone SE) and 375/390 px:
 | `img/region-gulf-coast.png/.webp` | Gulf Coast Region seal, trimmed to its circle |
 | `img/chapter-omicron-sigma.png/.webp` | North Dallas Sigmas chapter seal, circular mask |
 | `img/jack-dee.jpg/.webp` | Headshot |
-| `icon-*.png`, `apple-touch-icon.png` | PWA icons |
+| `favicon.ico` (16/32/48), `favicon-32.png`, `icon-192.png`, `icon-512.png` | Royal blue Σ on a rounded white tile. Generated by `calendar/tools/make-icons.py` |
+| `icon-maskable-512.png`, `apple-touch-icon.png` | Same Σ on a full-bleed white square (Android masks, iOS rounds the corners itself) |
+| `img/share-card.jpg` | 1200×630 link preview (og:image). Rendered from `calendar/tools/share-card.html`; see [§24](#24-naming-icon-and-link-preview-per-site) |
 
 Images are served at ~2 to 4× display size, WebP with PNG/JPG fallback via `<picture>`.
 
@@ -356,8 +390,10 @@ Images are served at ~2 to 4× display size, WebP with PNG/JPG fallback via `<pi
 
 ## 18. PWA (save to home screen)
 
-- `manifest.webmanifest`: name "Jack Dee | GeauxMAB.com", `display: standalone`, theme/background `#164F90`.
-- `sw.js`: network-first, cache fallback offline; **never caches `/api/*`** (availability must be live). Bump `CACHE` when shell assets change.
+- `manifest.webmanifest`: `name` "ΦΒΣ Calendar | Jack Dee", `short_name` "ΦΒΣ Jack Dee", `display: standalone`, theme/background `#164F90`. iPhones read the home-screen name from `<meta name="apple-mobile-web-app-title">` in `index.html`, so set both. Naming rule in [§24](#24-naming-icon-and-link-preview-per-site).
+- `sw.js`: network-first, cache fallback offline; **never caches `/api/*`** (availability must be live). Bump `CACHE` when shell assets or icons change (currently `book-jackdee-v3`).
+- The "Save to Home Screen" sheet previews the icon and the exact home-screen name ("ΦΒΣ Jack Dee").
+- Phones keep the name and icon a visitor saved; changes only show after they remove and re-save the app.
 - Save button uses the `beforeinstallprompt` event where supported, otherwise shows an iOS "Share → Add to Home Screen" sheet.
 
 ---
@@ -368,7 +404,7 @@ Images are served at ~2 to 4× display size, WebP with PNG/JPG fallback via `<pi
 |---|---|---|
 | `geauxmab_24h` | localStorage | 12/24-hour preference |
 | `geauxmab_tz` | sessionStorage | Time-zone override for this visit |
-| Service worker cache `book-jackdee-v2` | Cache Storage | Offline shell |
+| Service worker cache `book-jackdee-v3` | Cache Storage | Offline shell |
 
 All access is wrapped in try/catch; the app works with storage blocked. No cookies, analytics, or ad tracking.
 
@@ -381,9 +417,11 @@ All access is wrapped in try/catch; the app works with storage blocked. No cooki
 3. **Identity:** update `IMG`, `LINKS`, `SITE_LINKS`, `SOCIAL_GROUPS`, `AFFILIATIONS`, `JACK_TZ` (host time zone), header name/subtitle, splash text, `SHARE`, and the copy table above.
 4. **Brand:** change `--color-royal-blue` in `app.css` and the panel blue `#113b6c` / gray `#c8c9c7` utility values; check any organization brand rules (colors, symbol handling, disclaimers).
 5. **Legal:** update `OWNER`, `CONTACT`, `SITE`, jurisdiction and venue in `Legal.tsx`; bump `TERMS_VERSION`; get local legal review.
-6. **PWA:** update `manifest.webmanifest`, icons, `index.html` meta, and the service worker cache name.
-7. **Cloudflare:** rename the Worker in `wrangler.jsonc`, set the custom domain route, add the `CALENDLY_TOKEN` secret, connect the repo with the build/deploy commands.
-8. **Test:** run the Test Case Document (Google Drive) at 320/375/1280 px in mock mode, then one real booking in production.
+6. **Naming, icon, link preview:** follow [§24](#24-naming-icon-and-link-preview-per-site). Each booking site gets its own purpose-first name, its own icon mark and color, and its own share card, so bookmarks never get confused between sites.
+7. **Fonts:** keep Michroma (headings) and Oxanium (everything else) for the family look, or swap both in `calendar/index.html` and `calendar/app.css`. If the heading font changes, re-check every `whitespace-nowrap` heading and the time-button columns at 768 px.
+8. **PWA:** update `manifest.webmanifest`, `apple-mobile-web-app-title`, icons, `index.html` meta, and the service worker cache name.
+9. **Cloudflare:** rename the Worker in `wrangler.jsonc`, set the custom domain route, add the `CALENDLY_TOKEN` secret, connect the repo with the build/deploy commands.
+10. **Test:** run the full matrix in [§25](#25-testing-matrix) in mock mode, then one real booking in production.
 
 ---
 
@@ -399,6 +437,8 @@ All access is wrapped in try/catch; the app works with storage blocked. No cooki
 - [ ] Texas attorney review of Terms and Privacy Policy.
 - [ ] Real test booking: confirmation email, Zoom link, notes (agreement + phone), cancel test booking.
 - [ ] Main site (geauxmab.com) rebuilt and redeployed to Hostinger for the updated social links and email.
+- [ ] Link preview refreshed after any share-card change: Facebook Sharing Debugger and LinkedIn Post Inspector ("scrape again").
+- [ ] Icons and names checked in a private window (browsers cache icons) and by re-saving to a phone home screen.
 
 ---
 
@@ -411,5 +451,108 @@ All access is wrapped in try/catch; the app works with storage blocked. No cooki
 - Time-zone override resets each visit by design.
 - `*.workers.dev` URL may be disabled by deploys while a custom domain is configured.
 - The Calendly embed was removed entirely; there is no fallback to Calendly's hosted page.
-- Fonts: the brand guide recommends Arial, but the owner chose to keep the existing fonts.
+- Fonts: the brand guide recommends Arial; the owner chose Michroma (headings) and Oxanium (everything else), applied to both book.geauxmab.com and geauxmab.com for one family look. The Journal on geauxmab.com mixes them with Georgia for article text.
 - Main site and booking app share `index.css`; booking-specific overrides live only in `calendar/app.css`.
+- Desktop mode switches automatically at 1024 px; there is no manual toggle (fewer choices, and it always matches the screen).
+- Home-screen names are limited to ~12 visible characters, so the distinguishing word comes first ("ΦΒΣ Jack Dee").
+- No emoji in names: emoji render differently on each phone, and 📅 shows a fixed date (Apple's says July 17).
+- Link previews are cached by social apps; old posts can show the old card until re-scraped.
+
+---
+
+## 23. Desktop mode
+
+The app is built mobile-first, but at **1024 px and wider** it becomes a desktop website automatically. Phones and tablets (including tablet portrait at 768 px) keep the app layout.
+
+- **Switch:** `useDesktop()` in `CalendarPage.tsx`, a `matchMedia('(min-width: 1024px)')` listener. Layout utilities that belong to the switch use the `lg:` prefix (not `md:`), so tablets never get a half-desktop layout.
+- **Header:** center nav pills (Home, The Brotherhood, The Scholarship, The Service); Share and Menu on the right; Save hidden.
+- **Tab bar:** hidden (`lg:hidden`).
+- **Hero** (`max-w-6xl px-8`, grid `minmax(0,1fr) auto`, gap 16 to 24): left column has the Time Available badge (only when real openings exist), "Jack Dee" (`text-6xl xl:text-7xl`), the one-line description, chips (60 min · Zoom · Life Member #2174), **Pick a Time** + **Share**, then **Next openings** as one row of four time buttons (`NextOpen row`). Right column: the photo at `w-[22rem] xl:w-[26rem]`.
+  - This layout replaced a 2-column grid where a narrow card sat left-aligned in its column and the photo was centered in the other, leaving ~377 px of dead space at 1440 px.
+- **Calendar on the home page:** a "Pick a time" section (`id="pick-a-time"`, `scroll-mt-20`) holds the full `<Booking>` flow, left-aligned with the hero.
+  - **Pick a Time** smooth-scrolls to it.
+  - A quick-pick time scrolls down and opens **About You** with that time already chosen (`<Booking key={quick} initialTime={quick}>`).
+  - `#book` links (old bookmarks, shared links) land on the home page and scroll to the section: `shown = desktop && view === 'book' ? 'home' : view`.
+- **Wording:** hints say "Click" with a mouse and "Tap" on touch (`TAP` in `clock.tsx`).
+
+---
+
+## 24. Naming, icon and link preview (per site)
+
+When this format is reused across several sites, each with its own Calendly event and availability, every site must be **instantly distinguishable** in bookmarks, browser tabs and on phone home screens.
+
+### Naming rule
+| Where | Rule | This site |
+|---|---|---|
+| Phone home screen (`short_name` and `apple-mobile-web-app-title`) | ≤ 12 characters, **distinguishing word first** | ΦΒΣ Jack Dee |
+| Browser tab, bookmark, `manifest.name`, `SHARE.title` | "[Calendar name] \| [Person]" | ΦΒΣ Calendar \| Jack Dee |
+| Calendly event type name | Match the tab name so emails and invites line up | Jack Dee \| ΦΒΣ Calendar |
+| Link preview `og:title` | An invitation, not a label | Book Time with Jack Dee |
+
+Phones and bookmark lists cut names off at the end, so names that all start with the person's name look identical. Greek letters render reliably everywhere; emoji do not (see §22).
+
+### Icon
+- One mark per site (a letter or symbol), in the site's brand color on white. **Never reuse another site's mark**; the icon is what people recognize first.
+- Generate every size at once (Windows, Pillow installed):
+  ```bash
+  python calendar/tools/make-icons.py calendar/public "Σ" 164f90
+  ```
+  The script uses Georgia Bold (it has Greek letters). It writes the favicon (16/32/48), 32 px, 192, 512, maskable 512 (mark kept inside Android's safe zone) and the 180 px Apple icon (no transparency).
+- `index.html` links: `favicon.ico` (48), `favicon-32.png`, `icon-192.png`, `apple-touch-icon.png`. The manifest lists 192, 512 and maskable 512.
+- Bump the service-worker `CACHE` name after changing icons.
+
+### Share card (link preview)
+- Template: `calendar/tools/share-card.html` (1200×630). Edit the four marked values (brand colors, mark, name, domain); the photo comes from `calendar/public/img/jack-dee.jpg`.
+- Render with headless Chrome. It loads the Google Fonts online, so stay connected. Then save as JPEG (about 65 KB):
+  ```bash
+  "/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --hide-scrollbars --virtual-time-budget=5000 --window-size=1200,630 --screenshot="C:\temp\card.png" "file:///C:/Users/drjac/code/geauxmab-live/calendar/tools/share-card.html"
+  ```
+  ```bash
+  python -c "from PIL import Image; Image.open('C:/temp/card.png').convert('RGB').save('calendar/public/img/share-card.jpg', quality=88, optimize=True)"
+  ```
+- Card content rules: name in Michroma, one short line ("Pick a time that works for you"), the domain pill, the site mark. **No session length on the card** (owner decision).
+- `index.html` tags: `og:image` (absolute URL), `og:image:width` 1200, `og:image:height` 630, `og:image:alt`, `twitter:card` = `summary_large_image`. A small square image would only get the small thumbnail layout.
+
+---
+
+## 25. Testing matrix
+
+Run before every deploy, in mock mode (`npm run dev:book`) and again on the live site.
+
+| Size | Device | Layout |
+|---|---|---|
+| 320×568 | Small phone | App |
+| 375×812 and 390×844 | Phone portrait | App |
+| 812×375 | Phone landscape | App |
+| 768×1024 | Tablet portrait | App |
+| 1024×768 | Tablet landscape | Desktop |
+| 1280×800 | Laptop | Desktop |
+| 1440×900 | Desktop | Desktop |
+
+Screens: home, `#book` (Select a Date with a day selected), About You (pick a time, press Next), Complete (mock booking), `#privacy`, `#terms`, the splash.
+
+At each size check:
+1. **No sideways scroll:** `document.documentElement.scrollWidth <= innerWidth`.
+2. **Nothing off-screen or cut off.** Walk every text element and flag any that crosses the viewport edge or the edge of its nearest `overflow: hidden` parent. The second check matters: at 768 px three time-button columns overflowed and were silently clipped by the card, and only that check caught it.
+3. **Longest content fits:** "September 2026", longest weekday and date, longest time with zone ("12:30 EDT").
+4. **Fonts loaded:** `document.fonts.check('16px Michroma')` and `document.fonts.check('16px Oxanium')` are both true; computed `font-family` is Michroma on headings and Oxanium on body text and buttons.
+5. **Splash animation:** screenshots lag behind fast animation, so verify by pausing. Run `document.getAnimations()`, filter to the `tspan` targets, pause them, set `currentTime` to 900 / 1500 / 2600 and read `stroke-dashoffset` and `fill`: letters should draw in order and all be filled by 2600 ms (the splash closes at 3000 ms).
+6. **Desktop mode:** quick pick opens About You with that time; `#book` scrolls to the calendar; no tab bar; no Save button.
+7. **Live only:** `GET /api/slots?month=YYYY-MM` returns real slots; the icons, `share-card.jpg` and `sw.js` return 200; the page title and manifest names are correct.
+
+---
+
+## 26. Deploying from a shared repo
+
+This repo also holds geauxmab.com, which another person or session may be editing at the same time. The booking build imports the shared `index.css`, so a deploy from the working folder could ship someone else's unfinished edits. Deploy from a clean, temporary copy instead:
+
+```bash
+git worktree add --detach ../book-deploy HEAD          # last committed shared files
+rm -rf ../book-deploy/calendar && cp -r calendar ../book-deploy/calendar   # your booking changes
+cmd //c mklink //J "..\book-deploy\node_modules" "node_modules"            # reuse installed packages
+cd ../book-deploy && npm run build:book && npx wrangler deploy
+cmd //c rmdir "..\book-deploy\node_modules"            # remove the link first so packages are not deleted
+cd ../geauxmab-live && git worktree remove --force ../book-deploy
+```
+
+Then commit **only** booking paths: `git add -- calendar README_BOOKINGPAGE.md && git commit -- calendar README_BOOKINGPAGE.md`. Never `git add -A` in a shared folder.

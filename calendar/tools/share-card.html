@@ -1,0 +1,30 @@
+<!doctype html>
+<!-- © MrJackDee™. All rights reserved. -->
+<!-- 1200x630 link-preview card (og:image). Not deployed: render it to calendar/public/img/share-card.jpg.
+     Edit the four marked values for another site, then follow "Share card" in README_BOOKINGPAGE.md. -->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Michroma&display=swap" rel="stylesheet">
+<style>
+:root { --brand: #164f90; --brand-light: #2a6bb5; --brand-dark: #0f3a6b; } /* EDIT 1: brand colors */
+html,body{margin:0;width:1200px;height:630px;overflow:hidden}
+body{font-family:Inter,sans-serif;color:#fff;background:radial-gradient(circle at 78% 45%,var(--brand-light) 0%,var(--brand) 45%,var(--brand-dark) 100%);position:relative}
+.mark-bg{position:absolute;right:-60px;top:-120px;font:700 760px Georgia,serif;color:rgba(255,255,255,.05);line-height:1}
+.left{position:absolute;left:84px;top:0;bottom:0;width:600px;display:flex;flex-direction:column;justify-content:center}
+.badge{width:72px;height:72px;border-radius:16px;background:#fff;color:var(--brand);font:700 50px Georgia,serif;display:flex;align-items:center;justify-content:center;margin-bottom:34px}
+.kicker{font-weight:600;font-size:26px;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
+h1{font-family:Michroma,sans-serif;font-weight:400;font-size:78px;letter-spacing:.02em;line-height:1.15;margin:14px 0 24px;white-space:nowrap}
+.meta{font-weight:500;font-size:28px;opacity:.92}
+.url{margin-top:30px;display:inline-block;align-self:flex-start;padding:12px 26px;border-radius:999px;background:#fff;color:var(--brand);font-weight:700;font-size:24px}
+.photo{position:absolute;right:96px;top:105px;width:400px;height:420px;border-radius:32px;overflow:hidden;border:6px solid rgba(255,255,255,.9);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.photo img{width:100%;height:100%;object-fit:cover}
+</style></head><body>
+<div class="mark-bg">Σ</div>                     <!-- EDIT 2: site mark (same as the icon) -->
+<div class="left">
+  <div class="badge">Σ</div>
+  <div class="kicker">Book time with</div>
+  <h1>Jack Dee</h1>                              <!-- EDIT 3: name -->
+  <div class="meta">Pick a time that works for you</div>
+  <div class="url">book.geauxmab.com</div>        <!-- EDIT 4: domain -->
+</div>
+<div class="photo"><img src="../public/img/jack-dee.jpg" alt=""></div>
+</body></html>
