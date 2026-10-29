@@ -9,8 +9,8 @@
   "main": "site-worker/index.ts",
   "compatibility_date": "2026-10-01",
   "kv_namespaces": [
-    // Create with: npx wrangler kv namespace create JOURNAL   then paste its id here
-    { "binding": "JOURNAL", "id": "REPLACE_WITH_JOURNAL_KV_ID" }
+    // Created 2026-10-29 with: npx wrangler kv namespace create JOURNAL -c wrangler.site.jsonc
+    { "binding": "JOURNAL", "id": "f2fb337b56af49c78bc4bbe418bf871b" }
   ],
   "vars": {
     "JOURNAL_AUTHOR": "jd@geauxmab.com",
