@@ -4,7 +4,7 @@ import { HashRouter, Routes, Route, useLocation, useNavigate } from 'react-route
 import { motion, MotionConfig, useScroll, useInView, useTransform, AnimatePresence } from 'motion/react';
 import {
   ArrowRight, ArrowUpRight, Globe, Award, TrendingUp, Users, Activity, Building2, Facebook, Instagram, Linkedin,
-  Briefcase, GraduationCap, Heart, Twitter, Clock,
+  Briefcase, GraduationCap, Heart, Twitter, Clock, Headphones, Check, Flower2, Sparkles, Handshake,
 } from 'lucide-react';
 
 import { AppFrame, Footer, InstallButton, SocialIcons, Splash } from './SiteChrome';
@@ -50,6 +50,13 @@ const PageMetadata = () => {
       }
     };
 
+    metaData['/journal'] = {
+      title: 'The Journal | GeauxMAB.com',
+      description: 'Daily notes from Jack Dee on brotherhood, scholarship, service and life in motion.',
+      keywords: 'Jack Dee Journal, Daily Journal, GeauxMAB, Phi Beta Sigma, Leadership'
+    };
+    // Article pages set their own title once the story loads
+    if (pathname.startsWith('/journal/') && pathname !== '/journal/write') return;
     const current = metaData[pathname] || metaData['/'];
     document.title = current.title;
     
@@ -311,7 +318,7 @@ const AcademicCarousel = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden rounded-sm shadow-md mt-16">
+    <div className="relative w-full h-[240px] sm:h-[300px] md:h-[400px] overflow-hidden rounded-[28px] border border-white/15 shadow-2xl mt-10">
       <AnimatePresence mode="wait">
         <motion.img
           key={currentIndex}
@@ -586,224 +593,217 @@ const HomePage = () => {
   );
 };
 
+// Page heading in the booking app's style: small label with lines, big mixed-case title
+const PageHero = ({ label, title, children }: { label: string; title: string; children?: React.ReactNode }) => (
+  <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
+    <SectionLabel>{label}</SectionLabel>
+    <h1 className="mt-3 text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.05]">{title}</h1>
+    {children}
+  </motion.div>
+);
+
+// White tile that holds a logo or photo so it reads cleanly on the blue panels
+const LogoTile = ({ src, alt, size = 'w-16 h-16' }: { src: string; alt: string; size?: string }) => (
+  <div className={`${size} shrink-0 flex items-center justify-center p-1.5 bg-white rounded-2xl shadow-lg`}>
+    <img src={src} alt={alt} className="w-full h-full object-contain" referrerPolicy="no-referrer" loading="lazy" />
+  </div>
+);
+
+/* ============================== The Brotherhood ============================== */
 const BioPage = () => {
   return (
-    <motion.main 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="bg-white"
     >
       <SubNav links={[
         { label: 'My Journey', id: 'journey' },
         { label: 'Timeline', id: 'timeline' },
         { label: 'Masonic', id: 'masonic' }
       ]} />
+
       {/* Header */}
-      <header id="journey" className="relative py-8 md:py-12 lg:py-20 bg-slate-50 border-b border-sigma-gray/20">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="inline-flex items-center gap-2 mb-6">
-              <span className="w-2 h-2 bg-royal-blue rounded-full"></span>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-royal-blue">The Brotherhood</span>
-            </div>
-            <h1 className="text-6xl font-bold text-royal-blue uppercase leading-none tracking-tighter mb-6">
-              My Journey.
-            </h1>
-            <div className="flex flex-col items-start mt-12 w-full">
-              <blockquote className="border-l-4 border-royal-blue pl-4 mb-12 text-slate-700 italic font-serif text-lg">
+      <header id="journey" className="relative pt-8 md:pt-14 pb-10 md:pb-16 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <PageHero label="The Brotherhood" title="My Journey." />
+          <div className="mt-8 md:mt-12 grid md:grid-cols-2 gap-8 md:gap-12 items-start">
+            <div className="flex flex-col items-center md:items-start gap-6">
+              <blockquote className="border-l-4 border-white pl-4 text-white/90 italic font-serif text-lg md:text-xl leading-relaxed text-left">
                 "Service is the responsibility that comes with taking up space in the world. We should aim to ensure space leaves people stronger, clearer, and better prepared to move forward on their own."
               </blockquote>
 
-              <div className="flex flex-col items-center w-full max-w-md">
-                <div className="flex items-center gap-8 md:gap-12 mb-8 justify-center w-full border-2 border-royal-blue/20 bg-white p-6 rounded-sm shadow-sm">
+              <Panel className="w-full p-5 md:p-6">
+                <div className="flex items-center justify-center gap-6 md:gap-10">
                   <div className="flex flex-col text-center">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-sigma-gray mb-1">Initiated</span>
-                    <span className="block text-3xl md:text-4xl font-bold text-royal-blue">Fall 1998</span>
+                    <span className="text-[11px] font-bold tracking-wide text-[#c8c9c7] mb-1">Initiated</span>
+                    <span className="block text-3xl md:text-4xl font-bold text-white">Fall 1998</span>
                   </div>
-                  
-                  <div className="w-px bg-sigma-gray h-12"></div>
+                  <div className="w-px bg-white/25 h-14" />
+                  <div className="flex flex-col items-center text-center">
+                    <span className="text-[11px] font-bold tracking-wide text-[#c8c9c7] mb-1">Membership Status</span>
+                    {/* Brand rule: gold only on official insignia, so the word is white beside the gold pin */}
+                    <span className="flex items-center gap-2">
+                      <picture className="shrink-0">
+                        <source srcSet="/img/life-member.webp" type="image/webp" />
+                        <img src="/img/life-member.png" alt="Phi Beta Sigma Life Member insignia" width={122} height={176} className="h-10 w-auto" />
+                      </picture>
+                      <span className="text-3xl md:text-4xl font-bold text-white">Gold</span>
+                    </span>
+                  </div>
+                </div>
+              </Panel>
 
-                  <div className="flex flex-col text-center">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-sigma-gray mb-1">Membership Status</span>
-                    <span className="block text-3xl md:text-4xl font-bold text-[#D4AF37]">Gold</span>
-                  </div>
-                </div>
-                
-                <div className="w-full flex justify-center flex-col items-center">
-                  <a href="https://phibetasigma1914.org/" target="_blank" rel="noopener noreferrer" className="inline-block hover:scale-105 transition-transform duration-300" aria-label="Phi Beta Sigma Fraternity Website">
-                    <img 
-                      src="https://lh3.googleusercontent.com/d/1ujWt304YSwhQIHht7yrT4GNP18dQJ-fY" 
-                      alt="Phi Beta Sigma Fraternity Shield" 
-                      className="h-48 object-contain"
-                      referrerPolicy="no-referrer"
-                      width="200"
-                      height="192"
-                      loading="lazy"
-                    />
+              <div className="w-full flex flex-col items-center">
+                <a href="https://phibetasigma1914.org/" target="_blank" rel="noopener noreferrer" className="inline-block" aria-label="Phi Beta Sigma Fraternity Website">
+                  <img
+                    src="https://lh3.googleusercontent.com/d/1ujWt304YSwhQIHht7yrT4GNP18dQJ-fY"
+                    alt="Phi Beta Sigma Fraternity Shield"
+                    className="h-40 md:h-48 object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.4)]"
+                    referrerPolicy="no-referrer"
+                    width="200"
+                    height="192"
+                    loading="lazy"
+                  />
+                </a>
+
+                {/* Podcast */}
+                <Panel className="mt-6 w-full p-5 text-center">
+                  <h4 className="font-bold text-white text-sm leading-tight">The History of Phi Beta Sigma:<br />A Podcast Discussion</h4>
+                  <a href="https://jumpshare.com/share/1nor4VeRITOkr6vXCJw1" target="_blank" rel="noopener noreferrer"
+                    className="btn-pill btn-solid mt-4 inline-flex items-center gap-2 bg-white text-royal-blue px-7 py-3 rounded-full text-xs tracking-wide font-bold">
+                    <Headphones size={15} /> Listen
                   </a>
-                  
-                  {/* Audio Player */}
-                  <div className="mt-8 relative z-20 bg-white p-4 border border-gray-200 shadow-sm rounded-sm w-full">
-                    <h4 className="font-bold text-royal-blue text-[11px] uppercase mb-3 text-center leading-tight">The History of Phi Beta Sigma:<br/>A Podcast Discussion</h4>
-                    <div className="text-center">
-                      <a href="https://jumpshare.com/share/1nor4VeRITOkr6vXCJw1" target="_blank" rel="noopener noreferrer" className="inline-block bg-royal-blue text-white px-6 py-2 rounded-full text-[11px] uppercase tracking-widest font-bold hover:bg-blue-800 transition-colors shadow-md">
-                        Listen
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                </Panel>
               </div>
             </div>
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative max-w-[280px] mx-auto"
-          >
-            <div className="aspect-[3/4] bg-slate-200 rounded-sm overflow-hidden shadow-2xl relative z-10">
-               <img 
-                 src="https://lh3.googleusercontent.com/d/1V3EMOWRsbopmMpif2quU70DvPPongmC7" 
-                 alt="Jack Dee Portrait" 
-                 className="w-full h-full object-cover" 
-                 referrerPolicy="no-referrer"
-                 width="280"
-                 height="373"
-                 loading="lazy"
-               />
-            </div>
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-sigma-gray/20 rounded-full blur-3xl z-0"></div>
-            <div className="mt-8 text-center relative z-20">
-                <p className="font-bold text-royal-blue uppercase tracking-widest text-sm">Bro. Jack D. Givens</p>
-                <p className="font-bold text-royal-blue uppercase tracking-widest text-sm mt-1">ZI-FA-98</p>
-            </div>
-            
-          </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative w-full max-w-[280px] mx-auto"
+            >
+              <div className="aspect-[3/4] bg-white rounded-[32px] border-8 border-white overflow-hidden shadow-2xl relative z-10">
+                <img
+                  src="https://lh3.googleusercontent.com/d/1V3EMOWRsbopmMpif2quU70DvPPongmC7"
+                  alt="Jack Dee Portrait"
+                  className="w-full h-full object-cover rounded-[24px]"
+                  referrerPolicy="no-referrer"
+                  width="280"
+                  height="373"
+                  loading="lazy"
+                />
+              </div>
+              <div className="mt-6 text-center relative z-20">
+                <p className="font-bold text-white tracking-wide">Bro. Jack D. Givens</p>
+                <p className="font-bold text-[#c8c9c7] tracking-wide text-sm mt-1">ZI-FA-98</p>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </header>
 
-      {/* Stats Bar */}
-      <div className="bg-royal-blue text-white py-12 border-b border-white/10 relative overflow-hidden">
-        <FadeIn className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
-          <div className="relative group">
-            <div className="text-3xl font-bold mb-1"><Counter from={0} to={25} suffix="+" /></div>
-            <div className="text-[11px] uppercase tracking-widest opacity-70">Years In SIGMA</div>
-            <motion.div 
-              initial={{ width: 0 }}
-              whileInView={{ width: '100%' }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              className="h-1 bg-white/30 mt-2 rounded-full overflow-hidden"
-            >
-              <div className="h-full bg-white w-full origin-left"></div>
-            </motion.div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold mb-1">Zeta Iota</div>
-            <div className="text-[11px] uppercase tracking-widest opacity-70">Initiated Chapter</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold mb-1">Omicron Sigma</div>
-            <div className="text-[11px] uppercase tracking-widest opacity-70">Current Chapter</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold mb-1">"Wizard" #6</div>
-            <div className="text-[11px] uppercase tracking-widest opacity-70">Line Name and Number</div>
-          </div>
+      {/* Stats */}
+      <section className="px-4 sm:px-6 pb-10">
+        <FadeIn className="max-w-6xl mx-auto">
+          <Panel className="p-6 md:p-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
+              <div>
+                <div className="text-3xl font-bold text-white mb-1"><Counter from={0} to={25} suffix="+" /></div>
+                <div className="text-[11px] tracking-wide text-[#c8c9c7]">Years in SIGMA</div>
+                <motion.div initial={{ width: 0 }} whileInView={{ width: '100%' }} viewport={{ once: true }} transition={{ duration: 1.5, ease: 'easeOut' }}
+                  className="h-1 bg-white mt-2 rounded-full mx-auto" />
+              </div>
+              <div>
+                <div className="text-2xl md:text-3xl font-bold text-white mb-1">Zeta Iota</div>
+                <div className="text-[11px] tracking-wide text-[#c8c9c7]">Initiated Chapter</div>
+              </div>
+              <div>
+                <div className="text-2xl md:text-3xl font-bold text-white mb-1">Omicron Sigma</div>
+                <div className="text-[11px] tracking-wide text-[#c8c9c7]">Current Chapter</div>
+              </div>
+              <div>
+                <div className="text-2xl md:text-3xl font-bold text-white mb-1">"Wizard" #6</div>
+                <div className="text-[11px] tracking-wide text-[#c8c9c7]">Line Name and Number</div>
+              </div>
+            </div>
+          </Panel>
         </FadeIn>
-      </div>
+      </section>
 
       {/* Timeline */}
-      <section id="timeline" className="py-8 md:py-12 lg:py-20 px-6">
+      <section id="timeline" className="py-10 md:py-16 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <FadeIn className="mb-16">
-            <h2 className="text-3xl font-bold text-royal-blue uppercase tracking-tight">My SIGMA Timeline</h2>
-            <div className="w-24 h-1 bg-royal-blue mt-4"></div>
-          </FadeIn>
-          
-          <div className="grid md:grid-cols-4 gap-6 items-stretch">
+          <SectionTitle label="Since 1998" title="My SIGMA Timeline" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
             {[
-              { 
-                year: '1998-2001', 
-                title: 'Zeta Iota Chapter', 
-                type: 'Foundation', 
+              {
+                year: '1998-2001',
+                title: 'Zeta Iota Chapter',
+                type: 'Foundation',
                 desc: 'Initiated in the Gulf Coast Region at Northwestern State University on November 12, 1998. During collegiate tenure, I served as Chapter President, Vice President, Senior Advisor and NPHC chair.',
                 image: "https://lh3.googleusercontent.com/d/13PuzhCyH15LmbRKny2nOa3yaltCh-wB0",
-                imageClassName: "w-full h-full object-contain",
                 link: "https://www.pbsgulfcoastregion.org/",
-                icon: <GraduationCap size={24} />
+                icon: <GraduationCap size={22} />
               },
-              { 
-                year: '2006-Present', 
-                title: 'Omicron Sigma Chapter', 
-                type: 'Metriculation', 
+              {
+                year: '2006-Present',
+                title: 'Omicron Sigma Chapter',
+                type: 'Metriculation',
                 desc: 'Over 20 years financially active with the Omicron Sigma Chapter of North Dallas. Most recently served as the Director of Membership Intake.\n\nBecame Gulf Coast Life Member #7 in 2006.',
                 image: "https://lh3.googleusercontent.com/d/1BGPAm6l9eCXBP55m8QLEb0QtPacvf6g9",
-                imageClassName: "w-full h-full object-contain",
                 link: "https://omicronsigma.clubexpress.com/",
-                icon: <Users size={24} />
+                icon: <Users size={22} />
               },
-              { 
-                year: '2014', 
-                title: 'Life Member #2174', 
-                type: 'Life Member', 
+              {
+                year: '2014',
+                title: 'Life Member #2174',
+                type: 'Life Member',
                 desc: "On January 9, 2014, I officially attained Life Membership status, which is significant not only because it occurred during my fraternity's centennial year but also because it solidified my lifetime financial commitment.",
                 image: "https://bluculturecollections.com/cdn/shop/products/64dOJ104_2048x.jpg?v=1466704947",
-                imageClassName: "w-full h-full object-contain",
-                icon: <Award size={24} />
+                icon: <Award size={22} />
               },
-              { 
-                year: '2023', 
-                title: '25 Years in SIGMA', 
-                type: 'Milestone', 
+              {
+                year: '2023',
+                title: '25 Years in SIGMA',
+                type: 'Milestone',
                 desc: 'On November 12, 2023, I officially became a 25-year member and proudly celebrated the milestone by serving as the Membership Intake Chair for Omicron Sigma and initiating three new members.',
                 image: "https://image2url.com/r2/default/images/1772120015033-f60ab1a1-6c4a-447c-bcd8-c21913b76e05.png",
-                imageClassName: "w-full h-full object-contain",
-                icon: <Clock size={24} />
+                icon: <Clock size={22} />
               },
             ].map((item, i) => (
-              <FadeIn key={i} delay={i * 0.1} className="group relative h-full">
-                 <div className="absolute top-8 left-0 w-full h-0.5 bg-gray-100 -z-10 hidden md:block"></div>
-                 <div className="w-16 h-16 bg-white border-2 border-royal-blue flex items-center justify-center text-royal-blue font-bold rounded-sm mb-6 z-10 relative shadow-sm group-hover:bg-royal-blue group-hover:text-white transition-colors">
-                    {item.icon}
-                 </div>
-                  <div className="bg-white p-6 border border-gray-100 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 flex flex-col">
-                    <div className="flex flex-col">
-                      <span className="text-royal-blue font-bold text-lg block mb-1">{item.year}</span>
-                      <h4 className="font-bold text-sm uppercase mb-3">{item.title}</h4>
-                      <p className="text-xs text-slate-500 leading-relaxed mb-4 whitespace-pre-wrap">{item.desc}</p>
-                    </div>
-                    <div className="mt-auto flex flex-col">
-                      {item.image && (
-                        <div className="w-full flex justify-center items-center overflow-hidden h-40 rounded-sm mb-4">
-                          {item.link ? (
-                            <a href={item.link} target="_blank" rel="noopener noreferrer" className="w-full h-full flex justify-center items-center" aria-label={`Link to ${item.title}`}>
-                              <img src={item.image} alt={item.title} className={item.imageClassName} referrerPolicy="no-referrer" loading="lazy" width="300" height="160" />
-                            </a>
-                          ) : (
-                            <img src={item.image} alt={item.title} className={item.imageClassName} referrerPolicy="no-referrer" loading="lazy" width="300" height="160" />
-                          )}
-                        </div>
-                      )}
-                      <div className="w-full flex justify-center">
-                        {item.type === 'Life Member' ? (
-                          <span 
-                            className="px-3 py-1 bg-royal-blue text-[#D4AF37] text-[11px] font-bold uppercase tracking-wider rounded-sm shadow-md animate-pulse gold-text-shadow"
-                          >
-                            {item.type}
-                          </span>
+              <FadeIn key={i} delay={i * 0.1} className="h-full">
+                <Panel className="h-full p-5 flex flex-col">
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 h-11 bg-white text-royal-blue flex items-center justify-center rounded-2xl shadow-lg">{item.icon}</span>
+                    <span className="text-white font-bold text-lg">{item.year}</span>
+                  </div>
+                  <h4 className="mt-4 font-bold text-white">{item.title}</h4>
+                  <p className="mt-2 text-sm text-white/80 leading-relaxed whitespace-pre-wrap">{item.desc}</p>
+                  <div className="mt-auto pt-5 flex flex-col">
+                    {item.image && (
+                      <div className="w-full flex justify-center items-center overflow-hidden h-36 rounded-2xl bg-white p-2 mb-4">
+                        {item.link ? (
+                          <a href={item.link} target="_blank" rel="noopener noreferrer" className="w-full h-full flex justify-center items-center" aria-label={`Link to ${item.title}`}>
+                            <img src={item.image} alt={item.title} className="w-full h-full object-contain" referrerPolicy="no-referrer" loading="lazy" width="300" height="160" />
+                          </a>
                         ) : (
-                          <span className="px-3 py-1 bg-gray-100 text-gray-600 text-[11px] font-bold uppercase tracking-wider rounded-sm">{item.type}</span>
+                          <img src={item.image} alt={item.title} className="w-full h-full object-contain" referrerPolicy="no-referrer" loading="lazy" width="300" height="160" />
                         )}
                       </div>
+                    )}
+                    <div className="flex justify-center">
+                      {item.type === 'Life Member' ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-royal-blue text-[11px] font-bold tracking-wide shadow-md">
+                          <img src="/img/life-member.png" alt="" className="h-4 w-auto" /> {item.type}
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 rounded-full border border-white/30 text-white/85 text-[11px] font-bold tracking-wide">{item.type}</span>
+                      )}
                     </div>
-                 </div>
+                  </div>
+                </Panel>
               </FadeIn>
             ))}
           </div>
@@ -811,555 +811,626 @@ const BioPage = () => {
       </section>
 
       {/* Masonic */}
-      <section id="masonic" className="py-8 md:py-12 lg:py-20 bg-slate-50 border-t border-gray-200">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="border-4 border-royal-blue/20 p-8 md:p-12 bg-white rounded-sm shadow-xl relative">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
+      <section id="masonic" className="py-10 md:py-16 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <Panel className="p-6 md:p-12">
+            <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
               <FadeIn>
-                <div className="w-16 h-1 bg-royal-blue mb-6"></div>
-                <h2 className="text-3xl font-bold text-royal-blue uppercase mb-6">Masonic Affiliation</h2>
-                <blockquote className="text-lg md:text-xl font-bold text-royal-blue italic leading-snug mb-8 border-l-4 border-royal-blue pl-6 py-2 bg-slate-50">
+                <SectionLabel align="left">Brotherhood Beyond SIGMA</SectionLabel>
+                <h2 className="mt-3 text-3xl md:text-4xl font-bold text-white text-center md:text-left">Masonic Affiliation</h2>
+                <blockquote className="mt-6 text-lg md:text-xl font-bold text-white italic leading-snug border-l-4 border-white pl-5 py-1">
                   "Freemasonry chose me before I chose it. I just did not recognize it until I was ready, standing on the shoulders of a man of God who never needed a degree to understand dignity, service, and what it means to live with integrity"
                 </blockquote>
-                <div className="grid gap-6">
-                  <div className="bg-white p-6 border border-gray-200 shadow-sm hover:shadow-md hover:scale-[1.02] hover:border-royal-blue transition-all duration-300 group cursor-default">
-                    <div className="flex gap-4 items-center">
-                      <div className="w-12 h-12 bg-royal-blue/10 flex items-center justify-center text-royal-blue shrink-0 group-hover:bg-royal-blue group-hover:text-white transition-colors">
-                        <Users size={24} />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-royal-blue text-sm uppercase">Free and Accepted Mason (F&AM)</h5>
-                        <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">Master Mason: November 17, 2000</p>
-                      </div>
+                <div className="mt-8 grid gap-3">
+                  <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-4 flex gap-4 items-center">
+                    <span className="w-11 h-11 bg-white text-royal-blue rounded-2xl flex items-center justify-center shrink-0"><Users size={22} /></span>
+                    <div>
+                      <h5 className="font-bold text-white text-sm">Free and Accepted Mason (F&AM)</h5>
+                      <p className="text-xs text-[#c8c9c7] mt-1 tracking-wide">Master Mason: November 17, 2000</p>
                     </div>
                   </div>
-                  
-                  <div className="bg-white p-6 border border-gray-200 shadow-sm hover:shadow-md hover:scale-[1.02] hover:border-royal-blue transition-all duration-300 group cursor-default">
-                    <div className="flex gap-4 items-center">
-                       <div className="w-12 h-12 bg-royal-blue/10 flex items-center justify-center text-royal-blue shrink-0 group-hover:bg-royal-blue group-hover:text-white transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 2L3 21" />
-                          <path d="M12 2L21 21" />
-                          <path d="M7 11L12 16L17 11" />
-                          <circle cx="12" cy="2" r="1" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-royal-blue text-sm uppercase">Current Affiliation: Silver Square #49</h5>
-                        <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">District 9, Louisiana</p>
-                      </div>
+                  <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-4 flex gap-4 items-center">
+                    <span className="w-11 h-11 bg-white text-royal-blue rounded-2xl flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M12 2L3 21" />
+                        <path d="M12 2L21 21" />
+                        <path d="M7 11L12 16L17 11" />
+                        <circle cx="12" cy="2" r="1" />
+                      </svg>
+                    </span>
+                    <div>
+                      <h5 className="font-bold text-white text-sm">Current Affiliation: Silver Square #49</h5>
+                      <p className="text-xs text-[#c8c9c7] mt-1 tracking-wide">District 9, Louisiana</p>
                     </div>
                   </div>
                 </div>
               </FadeIn>
-              <FadeIn delay={0.2} className="relative flex flex-col items-center justify-center h-full">
-                 <div className="w-full max-w-[280px] flex flex-col items-center justify-center gap-6">
-                    <img src="https://image2url.com/r2/default/images/1772167739816-2dcaa4ec-2705-4500-9574-7f7005b4a02e.png" className="w-full aspect-square object-contain mx-auto" alt="Masonic Logo" referrerPolicy="no-referrer" width="280" height="280" loading="lazy" />
-                    <div className="bg-royal-blue p-4 text-white w-full text-center shadow-lg">
-                      <h4 className="font-bold uppercase text-sm">Brotherhood</h4>
-                      <p className="text-[11px] uppercase tracking-widest opacity-70">Strength in Unity</p>
-                    </div>
-                 </div>
+              <FadeIn delay={0.2} className="flex flex-col items-center">
+                <div className="w-full max-w-[260px] flex flex-col items-center gap-5">
+                  <div className="w-full aspect-square rounded-[28px] bg-white p-5 shadow-xl">
+                    <img src="https://image2url.com/r2/default/images/1772167739816-2dcaa4ec-2705-4500-9574-7f7005b4a02e.png" className="w-full h-full object-contain" alt="Masonic Logo" referrerPolicy="no-referrer" width="280" height="280" loading="lazy" />
+                  </div>
+                  <div className="w-full text-center rounded-2xl border border-white/20 bg-white/[0.06] p-4">
+                    <h4 className="font-bold text-white">Brotherhood</h4>
+                    <p className="text-[11px] tracking-wide text-[#c8c9c7]">Strength in Unity</p>
+                  </div>
+                </div>
               </FadeIn>
             </div>
-          </div>
+          </Panel>
         </div>
       </section>
-
-      {/* Quote */}
     </motion.main>
   );
 }
 
+/* ============================== The Scholarship ============================== */
+// BeVISIBLE™ dimensions, worded as on bevisible.work
+const BEVISIBLE = [
+  { l: 'Be', t: 'Believing', d: 'Leadership identity, conviction, readiness, and agency grounded in credible evidence rather than empty confidence.' },
+  { l: 'V', t: 'Voice', d: 'Strategic expression shaped by whether expertise is heard, credited, and acted upon.' },
+  { l: 'I', t: 'Insight', d: 'Access to candid developmental truth, decision criteria, feedback, and what the next level actually requires.' },
+  { l: 'S', t: 'Sponsorship', d: 'Advocacy, access, opportunity, and the active use of influence by people positioned to affect consequential decisions.' },
+  { l: 'I', t: 'Intentionality', d: 'Deliberate choices about preparation, exposure, relationships, career direction, and accountable action.' },
+  { l: 'B', t: 'Boldness', d: 'Strategic action taken with awareness of timing, context, risk, authority, and available protection.' },
+  { l: 'L', t: 'Leverage', d: 'Converting relationships, reputation, access, demonstrated performance, and organizational authority into meaningful opportunity.' },
+  { l: 'E', t: 'Endurance', d: 'Sustainable performance, recovery, community, and informed choice without treating inequitable conditions as an individual burden to absorb.' },
+];
+
+// Doctoral milestones, as tracked on bevisible.work
+const MILESTONES: { label: string; state: 'done' | 'now' | 'next' }[] = [
+  { label: 'Research Topic', state: 'done' },
+  { label: 'Project Justification', state: 'done' },
+  { label: 'Proposal', state: 'done' },
+  { label: 'Proposal Defense', state: 'done' },
+  { label: 'IRB Approved', state: 'done' },
+  { label: 'Interviews', state: 'now' },
+  { label: 'Analysis & Project', state: 'next' },
+  { label: 'Final Defense', state: 'next' },
+];
+
+const DoctoralTracker = () => (
+  <ol className="relative mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {MILESTONES.map((m, i) => (
+      <motion.li key={m.label} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+        className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${m.state === 'done' ? 'border-white/25 bg-white/[0.08]' : m.state === 'now' ? 'border-emerald-300/70 bg-emerald-400/10 shadow-[0_0_18px_rgba(52,211,153,0.35)]' : 'border-white/15 bg-transparent'}`}>
+        <span className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold ${m.state === 'done' ? 'bg-white text-royal-blue' : m.state === 'now' ? 'bg-emerald-400 text-royal-blue' : 'border border-white/30 text-white/60'}`}>
+          {m.state === 'done' ? <Check size={15} strokeWidth={3} /> : i + 1}
+        </span>
+        <span className="min-w-0">
+          <span className={`block text-sm font-bold ${m.state === 'next' ? 'text-white/60' : 'text-white'}`}>{m.label}</span>
+          <span className="block text-[11px] text-[#c8c9c7]">{m.state === 'done' ? 'Complete' : m.state === 'now' ? 'Underway' : 'Ahead'}</span>
+        </span>
+      </motion.li>
+    ))}
+  </ol>
+);
+
 const LeadershipPage = () => {
-  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>('Believing');
+  const active = BEVISIBLE.find((b) => b.t === open);
 
   return (
-    <motion.main 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="bg-white"
     >
       <SubNav links={[
         { label: 'Disciplines', id: 'disciplines' },
-        { label: 'Academic Focus', id: 'academic' },
+        { label: 'Doctorate', id: 'academic' },
+        { label: 'Business', id: 'business' },
         { label: 'Education', id: 'education' }
       ]} />
-       {/* Hero */}
-       <section className="py-12 px-6 text-center max-w-5xl mx-auto">
-         <motion.h1 
-           initial={{ opacity: 0, y: 15 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           transition={{ duration: 0.5 }}
-           className="text-5xl md:text-7xl font-bold text-royal-blue uppercase tracking-tighter"
-         >
-           Architecting the Future With Strategy.
-         </motion.h1>
-       </section>
 
-       {/* Track Record */}
-       <section id="disciplines" className="py-12 max-w-7xl mx-auto px-6">
-          <FadeIn className="flex items-center gap-4 mb-12">
-            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-royal-blue whitespace-nowrap">Professional Disciplines</h2>
-            <div className="h-px bg-gray-200 w-full"></div>
+      <section className="pt-8 md:pt-14 pb-6 px-4 sm:px-6 max-w-5xl mx-auto">
+        <PageHero label="The Scholarship" title="Architecting the Future With Strategy." />
+      </section>
+
+      {/* Professional disciplines */}
+      <section id="disciplines" className="py-10 max-w-7xl mx-auto px-4 sm:px-6">
+        <SectionTitle label="Professional Disciplines" title="How I Lead" />
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            {
+              icon: <Globe size={22} />,
+              title: "Enterprise Transformation & Operating Governance",
+              subtitle: "Strategy, Execution, and Organizational Clarity",
+              text: "Big ideas fail without structure behind them. My focus is on building operating models, decision habits, and ownership frameworks that turn strategy into real, sustained execution. When teams know what they own and why it matters, results follow."
+            },
+            {
+              icon: <Activity size={22} />,
+              title: "Intelligent & AI-Enabled Execution",
+              subtitle: "Digital Infrastructure, Systems, and Responsible Adoption",
+              text: "Speed matters. So does judgment. My approach centers on helping organizations adopt AI the right way, reduce complexity, improve decision quality, and keep humans accountable for outcomes. Better tools should make the work cleaner, not just faster."
+            },
+            {
+              icon: <TrendingUp size={22} />,
+              title: "Governance, Risk & Servant Leadership",
+              subtitle: "Decision Frameworks, Compliance, and People-First Performance",
+              text: "In high-stakes environments, clarity and trust are not soft skills. My foundation is building guardrails that allow teams to move with confidence, manage risk without paralysis, and perform at their best because expectations are clear and leadership is present."
+            }
+          ].map((item, i) => (
+            <FadeIn key={i} delay={i * 0.15}>
+              <Panel className="h-full p-6 md:p-7 group">
+                <div className="w-12 h-12 bg-white text-royal-blue flex items-center justify-center rounded-2xl mb-5 shadow-lg group-hover:scale-110 transition-transform">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">{item.title}</h3>
+                <p className="text-[11px] font-bold text-[#c8c9c7] tracking-wide mb-4">{item.subtitle}</p>
+                <p className="text-sm text-white/85 leading-relaxed">{item.text}</p>
+              </Panel>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+
+      {/* Digital platforms */}
+      <section className="py-4 max-w-7xl mx-auto px-4 sm:px-6">
+        <FadeIn className="flex flex-wrap justify-center items-center gap-3">
+          {[
+            { href: 'https://www.MrJackDee.com/', label: 'Professional Digital Page' },
+            { href: 'https://www.donoraglobal.com/', label: 'DonOra Global' },
+            { href: 'https://bevisible.work/', label: 'BeVISIBLE.work' },
+            { href: 'https://curious2capable.netlify.app/#/', label: 'Curious 2 Capable: AI Series' },
+          ].map((l) => (
+            <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer"
+              className="btn-pill btn-solid inline-flex items-center gap-2 px-5 py-3 bg-white text-royal-blue rounded-full text-xs font-bold tracking-wide">
+              {l.label} <ArrowUpRight size={14} />
+            </a>
+          ))}
+        </FadeIn>
+      </section>
+
+      {/* Doctorate */}
+      <section id="academic" className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6">
+        <SectionTitle label="Academic Focus" title="Advancing Black Leadership in Technology" />
+
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-10 items-start">
+          <FadeIn>
+            <Panel className="p-4">
+              <div className="relative overflow-hidden rounded-[22px]">
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop" alt="Research Papers and Glasses" className="w-full aspect-[4/3] object-cover" width="800" height="533" loading="lazy" />
+                <div className="absolute left-3 top-3"><LogoTile src="https://lh3.googleusercontent.com/d/1LlTcEdkVnhW4j68ysp3rUpWWG9vJwKeL" alt="Academic Focus Logo" size="w-20 h-20" /></div>
+              </div>
+              <div className="mt-4 rounded-2xl bg-white p-5 text-left">
+                <p className="text-[11px] font-bold text-royal-blue tracking-wide mb-1">William Howard Taft University</p>
+                <p className="text-sm font-serif italic text-royal-blue">"Developing a Strategic Advisory Framework to Advance Black Senior Leadership in the Technology Industry: The BeVISIBLE Alliance Model"</p>
+              </div>
+            </Panel>
           </FadeIn>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <FadeIn delay={0.15} className="space-y-5 text-center lg:text-left">
+            <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+              <span className="inline-block px-4 py-1.5 rounded-full border border-white/60 text-white text-[11px] font-bold tracking-wide">Doctor of Business Administration Candidate</span>
+              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-400/15 border border-emerald-300/60 text-emerald-100 text-[11px] font-bold tracking-wide">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" /> Proposal Defense Complete · IRB Approved
+              </span>
+            </div>
+            <div className="text-white/85 leading-relaxed space-y-4 text-sm md:text-base text-left">
+              <p>
+                In the technology sector, high-performing Black professionals routinely advance through mid-level leadership only to stall at the threshold of senior and executive opportunity. The gap is rarely about performance. It is about sponsorship, strategic visibility, and the institutional support structures that determine who gets elevated and who gets passed over.
+              </p>
+              <p>
+                My applied doctoral research examines this structural reality directly -- investigating why demonstrated competence and progressive experience are necessary but insufficient conditions for sustained advancement, and what organizations and leaders must do differently to close that gap.
+              </p>
+              <p>
+                This research produces the BeVISIBLE™ Alliance Model, an applied leadership framework I have curated to help Black technology leaders translate visibility into influence, build meaningful sponsorship relationships, and develop the institutional capital required for executive-level advancement.
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+
+        {/* Where the research stands */}
+        <FadeIn className="mt-10">
+          <Panel className="p-6 md:p-8">
+            <div className="grid md:grid-cols-3 gap-6 text-left">
+              <div>
+                <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">The Question</p>
+                <p className="mt-1 text-lg font-bold text-white">How does a leadership record become recognized?</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">The Method</p>
+                <p className="mt-1 text-sm text-white/85 leading-relaxed">Semi-structured interviews with up to 15 Black leaders who hold, or held within the last five years, Director-level or higher technology roles in the United States, analyzed through reflexive thematic analysis.</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">The Context</p>
+                <p className="mt-1 text-sm text-white/85 leading-relaxed">In 2022 high-tech data, Black employees held 7.6% of sector jobs, 4% of first- and mid-level manager positions, and 3% of executive and senior positions (EEOC).</p>
+              </div>
+            </div>
+            <div className="mt-8">
+              <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7] text-center md:text-left">Doctoral Journey</p>
+              <DoctoralTracker />
+            </div>
+          </Panel>
+        </FadeIn>
+
+        {/* BeVISIBLE model: tap a letter to read the dimension */}
+        <FadeIn className="mt-10">
+          <Panel className="p-6 md:p-8">
+            <div className="text-center">
+              <p className="text-white font-bold text-lg md:text-xl">The BeVISIBLE™ Alliance Model</p>
+              <p className="mt-1 text-xs text-[#c8c9c7]">Tap a letter to explore each dimension</p>
+            </div>
+            <div className="mt-6 grid grid-cols-4 sm:grid-cols-8 gap-3 sm:gap-4 justify-items-center">
+              {BEVISIBLE.map((item) => {
+                const on = open === item.t;
+                return (
+                  <button key={item.t} onClick={() => setOpen(item.t)} aria-pressed={on}
+                    className="flex flex-col items-center gap-2 text-center">
+                    <span className={`w-12 h-12 md:w-14 md:h-14 rounded-full border-2 flex items-center justify-center font-bold text-xl md:text-2xl transition-colors ${on ? 'bg-white text-royal-blue border-white shadow-[0_0_20px_rgba(255,255,255,0.5)]' : 'border-white/40 text-white bg-white/[0.06]'}`}>
+                      {item.l}
+                    </span>
+                    <span className={`text-[11px] font-bold tracking-wide ${on ? 'text-white' : 'text-[#c8c9c7]'}`}>{item.t}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <AnimatePresence mode="wait">
+              {active && (
+                <motion.p key={active.t} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                  className="mt-6 mx-auto max-w-2xl rounded-2xl bg-white text-royal-blue p-5 text-sm md:text-base leading-relaxed text-center">
+                  <b>{active.t}.</b> {active.d}
+                </motion.p>
+              )}
+            </AnimatePresence>
+            <div className="mt-8 grid sm:grid-cols-3 gap-3">
               {[
-                { 
-                  icon: <Globe />, 
-                  title: "Enterprise Transformation & Operating Governance", 
-                  subtitle: "Strategy, Execution, and Organizational Clarity", 
-                  text: "Big ideas fail without structure behind them. My focus is on building operating models, decision habits, and ownership frameworks that turn strategy into real, sustained execution. When teams know what they own and why it matters, results follow." 
-                },
-                { 
-                  icon: <Activity />, 
-                  title: "Intelligent & AI-Enabled Execution", 
-                  subtitle: "Digital Infrastructure, Systems, and Responsible Adoption", 
-                  text: "Speed matters. So does judgment. My approach centers on helping organizations adopt AI the right way, reduce complexity, improve decision quality, and keep humans accountable for outcomes. Better tools should make the work cleaner, not just faster." 
-                },
-                { 
-                  icon: <TrendingUp />, 
-                  title: "Governance, Risk & Servant Leadership", 
-                  subtitle: "Decision Frameworks, Compliance, and People-First Performance", 
-                  text: "In high-stakes environments, clarity and trust are not soft skills. My foundation is building guardrails that allow teams to move with confidence, manage risk without paralysis, and perform at their best because expectations are clear and leadership is present." 
-                }
-              ].map((item, i) => (
-               <FadeIn key={i} delay={i * 0.2} className="p-8 border border-gray-200 hover:border-royal-blue hover:shadow-md hover:scale-[1.02] transition-all duration-300 group bg-white">
-                  <div className="w-12 h-12 bg-slate-50 flex items-center justify-center text-royal-blue mb-6 border border-gray-100 group-hover:bg-royal-blue group-hover:text-white transition-colors">
-                    {item.icon}
+                { n: '1', t: 'The Leader', d: 'Agency and preparation' },
+                { n: '2', t: 'The Alliance', d: 'Advocacy and access' },
+                { n: '3', t: 'The Organization', d: 'Opportunity and authority' },
+              ].map((x) => (
+                <div key={x.t} className="rounded-2xl border border-white/15 bg-white/[0.06] p-4 flex items-center gap-3">
+                  <span className="w-9 h-9 rounded-full bg-white text-royal-blue font-bold flex items-center justify-center shrink-0">{x.n}</span>
+                  <span><span className="block font-bold text-white text-sm">{x.t}</span><span className="block text-xs text-[#c8c9c7]">{x.d}</span></span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-6 text-center text-sm font-bold text-white">Mentorship advises. Sponsorship acts.</p>
+            <p className="mt-2 text-center text-[11px] text-[#c8c9c7] max-w-2xl mx-auto">The framework is not presented as empirically validated, and no participant data or unpublished findings are shared here.</p>
+            <div className="mt-6 flex justify-center">
+              <a href="https://bevisible.work/" target="_blank" rel="noopener noreferrer"
+                className="btn-pill btn-solid inline-flex items-center gap-2 px-7 py-3.5 bg-white text-royal-blue rounded-full text-sm font-bold tracking-wide">
+                Explore BeVISIBLE.work <ArrowUpRight size={16} />
+              </a>
+            </div>
+          </Panel>
+        </FadeIn>
+
+        <FadeIn delay={0.2}>
+          <AcademicCarousel />
+        </FadeIn>
+      </section>
+
+      {/* Business */}
+      <section id="business" className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6">
+        <SectionTitle label="Business" title="DonOra Global" sub="Strategic advisory for the AI era: enterprise transformation, AI governance, and digital presence strategy for organizations ready to lead." />
+        <div className="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-4">
+          <FadeIn>
+            <Panel className="h-full p-6 md:p-8">
+              <div className="flex items-center gap-4">
+                <span className="w-12 h-12 rounded-2xl bg-white text-royal-blue flex items-center justify-center shadow-lg"><Building2 size={22} /></span>
+                <span>
+                  <span className="block text-xl font-bold text-white">Founder & Chief Strategist</span>
+                  <span className="block text-xs text-[#c8c9c7]">DonOra Global LLC · Dallas, Texas</span>
+                </span>
+              </div>
+              <p className="mt-5 text-white/85 leading-relaxed text-sm md:text-base">
+                Advancement is not accidental. DonOra Global helps organizations connect strategy, power, and execution, so transformation lands, AI is adopted responsibly, and leaders show up with authority.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {['AI Strategy & Governance', 'Organizational Transformation', 'Growth Infrastructure & Systems', 'Strategic Market Positioning', 'Digital Presence Architecture', 'Executive Authority & Leadership'].map((t) => (
+                  <span key={t} className="px-3 py-1.5 rounded-full border border-white/25 bg-white/[0.06] text-[11px] font-bold tracking-wide text-white/90">{t}</span>
+                ))}
+              </div>
+              <a href="https://www.donoraglobal.com/" target="_blank" rel="noopener noreferrer"
+                className="btn-pill btn-solid mt-6 inline-flex items-center gap-2 px-7 py-3.5 bg-white text-royal-blue rounded-full text-sm font-bold tracking-wide">
+                Visit DonOra Global <ArrowUpRight size={16} />
+              </a>
+            </Panel>
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <Panel className="h-full p-6 md:p-8">
+              <p className="text-[11px] font-bold tracking-wide text-[#c8c9c7]">Career Highlights</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                {[
+                  { n: '$300M+', t: 'Technology programs led' },
+                  { n: '600+', t: 'Implementations moved to AWS' },
+                  { n: '17,000+', t: 'Hours saved' },
+                  { n: '$12.3M', t: 'Annual cost reduction' },
+                ].map((s) => (
+                  <div key={s.t} className="rounded-2xl bg-white/[0.08] border border-white/15 p-4 text-center">
+                    <p className="text-2xl md:text-3xl font-bold text-white">{s.n}</p>
+                    <p className="mt-1 text-[11px] text-[#c8c9c7] leading-snug">{s.t}</p>
                   </div>
-                  <h3 className="text-2xl font-bold text-royal-blue uppercase mb-2">{item.title}</h3>
-                  <p className="text-xs font-bold text-sigma-gray uppercase tracking-widest mb-4">{item.subtitle}</p>
-                  <p className="text-sm text-slate-600 leading-relaxed">{item.text}</p>
-               </FadeIn>
-             ))}
-          </div>
-       </section>
-
-       {/* Digital Platforms */}
-       <section className="py-8 max-w-7xl mx-auto px-6">
-          <FadeIn className="flex flex-wrap justify-center items-center gap-4">
-             <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-royal-blue text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                Professional Digital Page
-             </a>
-             <a href="https://donoraglobal.netlify.app/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-royal-blue text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                DonOra Group, LLC
-             </a>
-             <a href="https://curious2capable.netlify.app/#/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-royal-blue text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                Curious 2 Capable: AI Series
-             </a>
+                ))}
+              </div>
+              <ul className="mt-5 space-y-2 text-sm text-white/85">
+                <li className="flex justify-between gap-3"><span className="font-bold text-white">JLL</span><span className="text-right">Director, Technology Program Management</span></li>
+                <li className="flex justify-between gap-3"><span className="font-bold text-white">HCL Technologies</span><span className="text-right">2019–2021</span></li>
+                <li className="flex justify-between gap-3"><span className="font-bold text-white">DXC Technology</span><span className="text-right">2016–2019</span></li>
+                <li className="flex justify-between gap-3"><span className="font-bold text-white">Bank of America</span><span className="text-right">Analyst to Vice President</span></li>
+              </ul>
+              <a href="https://www.MrJackDee.com/" target="_blank" rel="noopener noreferrer"
+                className="mt-5 inline-flex items-center gap-1.5 text-xs font-bold tracking-wide text-white underline underline-offset-4">
+                Full résumé on MrJackDee.com <ArrowUpRight size={13} />
+              </a>
+            </Panel>
           </FadeIn>
-       </section>
+        </div>
+      </section>
 
-       {/* Research */}
-       <section id="academic" className="py-8 md:py-12 lg:py-20 max-w-7xl mx-auto px-6">
-          <FadeIn className="flex items-center gap-4 mb-12">
-            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-royal-blue whitespace-nowrap">Academic Focus</h2>
-            <div className="h-px bg-gray-200 w-full"></div>
-          </FadeIn>
+      {/* Education and industry credentials */}
+      <section id="education" className="py-12 md:py-16 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionTitle label="Credentials" title="Education & Certifications" />
+          <div className="grid md:grid-cols-2 gap-8">
+            <FadeIn delay={0.1}>
+              <h3 className="text-xs font-bold tracking-wide text-[#c8c9c7] mb-4 text-center md:text-left">Education</h3>
+              <div className="space-y-4">
+                {[
+                  { logo: 'https://lh3.googleusercontent.com/d/1ELDMVAuy5eBx7QZk8x_jiZVo7rJAIlUK', alt: 'William Howard Taft University Logo', name: 'William Howard Taft University', href: 'http://www.taft.edu', place: 'Deming School of Business · Denver, Colorado',
+                    lines: ['In Progress [Confirmed 2026]: Doctor of Business Administration, Organizational Strategy Concentration', 'ADRP: "Developing a Strategic Advisory Framework to Advance Black Senior Leadership in the Technology Industry: The BeVISIBLE Alliance Model"'] },
+                  { logo: 'https://lh3.googleusercontent.com/d/12KggcKuWZV2P40deLWdvEXhkMagH4D6A', alt: 'Northwestern State University Logo', name: 'Northwestern State University', href: 'http://www.nsula.edu/', place: 'Natchitoches, LA',
+                    lines: ['M.Ed., Educational Technology Leadership', 'Ed.S., Educational Leadership and Instruction', 'B.Sc., Computer Information Systems', 'B.Sc., Business Administration'] },
+                  { logo: 'https://lh3.googleusercontent.com/d/16IyhlNnxV-GeY53BbgTooJ0tavKMUOHX', alt: 'Louisiana State University Logo', name: 'Louisiana State University', href: 'http://www.lsus.edu', place: 'Shreveport, LA',
+                    lines: ['MBA, Project Management'] },
+                ].map((e) => (
+                  <Panel key={e.name} className="p-5 flex items-start gap-4">
+                    <LogoTile src={e.logo} alt={e.alt} />
+                    <div className="min-w-0 text-left">
+                      <a href={e.href} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-white leading-tight hover:underline block">{e.name}</a>
+                      <p className="text-xs font-bold text-[#c8c9c7] tracking-wide mb-2">{e.place}</p>
+                      <div className="text-sm text-white/85 space-y-1">{e.lines.map((l) => <p key={l}>{l}</p>)}</div>
+                    </div>
+                  </Panel>
+                ))}
+              </div>
+            </FadeIn>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-             <FadeIn className="relative p-4 border border-gray-200">
-                <img 
-                  src="https://lh3.googleusercontent.com/d/1LlTcEdkVnhW4j68ysp3rUpWWG9vJwKeL" 
-                  alt="Academic Focus Logo" 
-                  className="w-48 mb-6 object-contain"
-                  referrerPolicy="no-referrer"
-                  width="192"
-                  height="192"
-                  loading="lazy"
-                />
-                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop" alt="Research Papers and Glasses" className="w-full grayscale hover:grayscale-0 transition-all duration-500" width="800" height="533" loading="lazy" />
-                <div className="absolute bottom-8 left-8 bg-white border-l-4 border-royal-blue p-6 max-w-xs shadow-lg">
-                   <p className="text-[11px] font-bold text-royal-blue uppercase tracking-widest mb-1">William Howard Taft University</p>
-                   <p className="text-sm font-serif italic text-slate-900">"Developing a Strategic Advisory Framework to Advance Black Senior Leadership in the Technology Industry: The BeVISIBLE Alliance Model"</p>
+            <FadeIn delay={0.25}>
+              <h3 className="text-xs font-bold tracking-wide text-[#c8c9c7] mb-4 text-center md:text-left">Industry Certifications</h3>
+              <div className="grid gap-4">
+                {[
+                  { logo: 'https://lh3.googleusercontent.com/d/1xXOFjtkLrGqVmimq3h5-eIt8TmSqkmSl', alt: 'Project Management Professional Logo', name: 'Project Management Professional (PMP®)', by: 'Project Management Institute · PMP #3993606' },
+                  { logo: 'https://lh3.googleusercontent.com/d/1OD7CqiAEqIxWw-8Jd9-h_BdElBP7tRQq', alt: 'Lean Six Sigma Black Belt Logo', name: 'Lean Six Sigma Black Belt', by: 'Council for Six Sigma Certification' },
+                  { logo: 'https://lh3.googleusercontent.com/d/1ACOeqyyrqEtcTKC9ICXp9w5UfrFjUsYo', alt: 'SAFe 6 Product Owner Logo', name: 'SaFE 6® Product Owner / Product Manager', by: 'Scaled Agile, Inc.' },
+                  { logo: 'https://lh3.googleusercontent.com/d/1ACOeqyyrqEtcTKC9ICXp9w5UfrFjUsYo', alt: 'SAFe 6 Lean Portfolio Manager Logo', name: 'SaFE 6® Lean Portfolio Manager', by: 'Scaled Agile, Inc.' },
+                  { logo: 'https://lh3.googleusercontent.com/d/1otH78TM9tuDtUb_Cy4ILn14P0I_lma_7', alt: 'University of South Florida Logo', name: 'Diversity, Equity & Inclusion in the Workplace', by: 'University of South Florida' },
+                ].map((c) => (
+                  <Panel key={c.name} className="p-4 flex items-center gap-4">
+                    <LogoTile src={c.logo} alt={c.alt} size="w-14 h-14" />
+                    <div className="text-left">
+                      <h4 className="font-bold text-white leading-tight">{c.name}</h4>
+                      <p className="text-xs text-[#c8c9c7] mt-1">{c.by}</p>
+                    </div>
+                  </Panel>
+                ))}
+                <div className="flex flex-wrap justify-center md:justify-start gap-2 pt-1">
+                  {['CSPO® · Scrum Alliance', 'Google Project Management', 'Google Generative AI Leader', 'Anthropic AI Fluency'].map((t) => (
+                    <span key={t} className="px-3 py-1.5 rounded-full border border-white/25 bg-white/[0.06] text-[11px] font-bold tracking-wide text-white/90">{t}</span>
+                  ))}
                 </div>
-             </FadeIn>
-             
-             <FadeIn delay={0.2} className="space-y-8">
-                <span className="inline-block px-4 py-1 border border-royal-blue text-royal-blue text-[11px] font-bold uppercase tracking-widest">Doctor of Business Administration Candidate</span>
-                <h3 className="text-4xl font-bold text-royal-blue uppercase leading-tight">ADVANCING BLACK LEADERSHIP IN TECHNOLOGY</h3>
-                <div className="text-slate-600 leading-relaxed space-y-4 text-sm">
-                  <p>
-                    In the technology sector, high-performing Black professionals routinely advance through mid-level leadership only to stall at the threshold of senior and executive opportunity. The gap is rarely about performance. It is about sponsorship, strategic visibility, and the institutional support structures that determine who gets elevated and who gets passed over.
-                  </p>
-                  <p>
-                    My applied doctoral research examines this structural reality directly -- investigating why demonstrated competence and progressive experience are necessary but insufficient conditions for sustained advancement, and what organizations and leaders must do differently to close that gap.
-                  </p>
-                  <p>
-                    This research produces the BeVISIBLE™ Alliance Model, an applied leadership framework I have curated to help Black technology leaders translate visibility into influence, build meaningful sponsorship relationships, and develop the institutional capital required for executive-level advancement.
-                  </p>
-                </div>
-                
-                <div className="h-px bg-gray-200 w-full my-8"></div>
-                
-                <div className="bg-white p-6 md:p-8 border border-gray-200 shadow-sm rounded-sm">
-                  <div className="mb-6 text-royal-blue font-bold tracking-wide whitespace-nowrap text-[14px] md:text-[16px] text-center border-b border-gray-100 pb-4">
-                    The BeVISIBLE™ Alliance Model
-                  </div>
-                  <div className="bevisible-grid grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-y-8">
-                    {[
-                      { l: 'Be', t: 'Believing' },
-                      { l: 'V', t: 'Voice' },
-                      { l: 'I', t: 'Insight' },
-                      { l: 'S', t: 'Sponsorship' },
-                      { l: 'I', t: 'Intentionality' },
-                      { l: 'B', t: 'Boldness' },
-                      { l: 'L', t: 'Leverage' },
-                      { l: 'E', t: 'Endurance' }
-                    ].map((item, i) => (
-                       <motion.div 
-                         key={i} 
-                         className="flex flex-col items-center gap-3 text-center cursor-pointer"
-                         onMouseEnter={() => setHoveredLetter(item.t)}
-                         onMouseLeave={() => setHoveredLetter(null)}
-                         animate={{ 
-                           opacity: hoveredLetter && hoveredLetter !== item.t ? 0.3 : 1,
-                           scale: hoveredLetter === item.t ? 1.1 : 1
-                         }}
-                       >
-                          <div
-                            data-letter={item.l}
-                            className={`w-12 h-12 md:w-14 md:h-14 rounded-full border-2 flex items-center justify-center font-bold text-xl md:text-2xl transition-colors shadow-sm ${
-                              hoveredLetter === item.t ? 'bg-royal-blue text-white border-royal-blue shadow-md' : 'border-royal-blue/20 text-royal-blue bg-slate-50'
-                            }`}
-                          >
-                             {item.l}
-                          </div>
-                          <span className={`text-[11px] font-bold uppercase tracking-widest transition-colors ${
-                            hoveredLetter === item.t ? 'text-royal-blue' : 'text-slate-500'
-                          }`}>{item.t}</span>
-                       </motion.div>
-                    ))}
-                 </div>
-               </div>
-             </FadeIn>
+              </div>
+            </FadeIn>
           </div>
-          <FadeIn delay={0.4}>
-            <AcademicCarousel />
-          </FadeIn>
-       </section>
-
-       {/* Education and Industry Credentials */}
-       <section id="education" className="py-12 bg-slate-50 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-6">
-             <FadeIn className="mb-12 text-center">
-                <div className="w-24 h-1 bg-royal-blue mx-auto"></div>
-             </FadeIn>
-
-             <div className="grid md:grid-cols-2 gap-12">
-                {/* Education */}
-                <div className="space-y-8">
-                   <FadeIn delay={0.1}>
-                      <div className="flex items-center gap-4 mb-6">
-                        <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-royal-blue whitespace-nowrap">Education</h3>
-                        <div className="h-px bg-gray-200 w-full"></div>
-                      </div>
-                      <div className="space-y-6">
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-start gap-6 hover:shadow-md hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-20 h-20 shrink-0 flex items-center justify-center p-2 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/1ELDMVAuy5eBx7QZk8x_jiZVo7rJAIlUK" alt="William Howard Taft University Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="80" height="80" loading="lazy" />
-                            </div>
-                            <div>
-                               <a href="http://www.taft.edu" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-royal-blue uppercase leading-tight mb-1 hover:underline block">William Howard Taft University</a>
-                               <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Deming School of Business<br/>Denver, Colorado</p>
-                               <div className="text-sm text-slate-700 space-y-1">
-                                  <p>In Progress [Confirmed 2026]: Doctor of Business Administration, Organizational Strategy Concentration</p>
-                                  <p className="mt-2">ADRP: "Developing a Strategic Advisory Framework to Advance Black Senior Leadership in the Technology Industry: The BeVISIBLE Alliance Model"</p>
-                               </div>
-                            </div>
-                         </div>
-
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-start gap-6 hover:shadow-md hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-20 h-20 shrink-0 flex items-center justify-center p-2 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/12KggcKuWZV2P40deLWdvEXhkMagH4D6A" alt="Northwestern State University Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="80" height="80" loading="lazy" />
-                            </div>
-                            <div>
-                               <a href="http://www.nsula.edu/" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-royal-blue uppercase leading-tight mb-1 hover:underline block">Northwestern State University</a>
-                               <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Natchitoches, LA</p>
-                               <div className="text-sm text-slate-700 space-y-1">
-                                  <p>M.Ed., Educational Technology Leadership</p>
-                                  <p>Ed.S., Educational Leadership and Instruction</p>
-                                  <p>B.Sc., Computer Information Systems</p>
-                                  <p>B.Sc., Business Administration</p>
-                               </div>
-                            </div>
-                         </div>
-
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-start gap-6 hover:shadow-md hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-20 h-20 shrink-0 flex items-center justify-center p-2 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/16IyhlNnxV-GeY53BbgTooJ0tavKMUOHX" alt="Louisiana State University Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="80" height="80" loading="lazy" />
-                            </div>
-                            <div>
-                               <a href="http://www.lsus.edu" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-royal-blue uppercase leading-tight mb-1 hover:underline block">Louisiana State University</a>
-                               <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Shreveport, LA</p>
-                               <div className="text-sm text-slate-700 space-y-1">
-                                  <p>MBA, Project Management</p>
-                               </div>
-                            </div>
-                         </div>
-                      </div>
-                   </FadeIn>
-                </div>
-
-                {/* Industry Certifications */}
-                <div className="space-y-8">
-                   <FadeIn delay={0.3}>
-                      <div className="flex items-center gap-4 mb-6">
-                        <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-royal-blue whitespace-nowrap">Industry Certifications</h3>
-                        <div className="h-px bg-gray-200 w-full"></div>
-                      </div>
-                      <div className="grid grid-cols-1 gap-6">
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-6 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-16 h-16 shrink-0 flex items-center justify-center p-1 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/1xXOFjtkLrGqVmimq3h5-eIt8TmSqkmSl" alt="Project Management Professional Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="64" height="64" loading="lazy" />
-                            </div>
-                            <div>
-                               <h4 className="text-md font-bold text-royal-blue uppercase leading-tight">Project Management Professional (PMP®)</h4>
-                               <p className="text-xs text-slate-500 mt-1">Project Management Institute<br/>PMP #3993606</p>
-                            </div>
-                         </div>
-
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-6 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-16 h-16 shrink-0 flex items-center justify-center p-1 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/1OD7CqiAEqIxWw-8Jd9-h_BdElBP7tRQq" alt="Lean Six Sigma Black Belt Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="64" height="64" loading="lazy" />
-                            </div>
-                            <div>
-                               <h4 className="text-md font-bold text-royal-blue uppercase leading-tight">Lean Six Sigma Black Belt</h4>
-                               <p className="text-xs text-slate-500 mt-1">Council for Six Sigma Certification</p>
-                            </div>
-                         </div>
-
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-6 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-16 h-16 shrink-0 flex items-center justify-center p-1 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/1ACOeqyyrqEtcTKC9ICXp9w5UfrFjUsYo" alt="SAFe 6 Product Owner Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="64" height="64" loading="lazy" />
-                            </div>
-                            <div>
-                               <h4 className="text-md font-bold text-royal-blue uppercase leading-tight">SaFE 6® Product Owner / Product Manager</h4>
-                               <p className="text-xs text-slate-500 mt-1">Scaled Agile, Inc.</p>
-                            </div>
-                         </div>
-
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-6 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-16 h-16 shrink-0 flex items-center justify-center p-1 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/1ACOeqyyrqEtcTKC9ICXp9w5UfrFjUsYo" alt="SAFe 6 Lean Portfolio Manager Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="64" height="64" loading="lazy" />
-                            </div>
-                            <div>
-                               <h4 className="text-md font-bold text-royal-blue uppercase leading-tight">SaFE 6® Lean Portfolio Manager</h4>
-                               <p className="text-xs text-slate-500 mt-1">Scaled Agile, Inc.</p>
-                            </div>
-                         </div>
-
-                         <div className="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-6 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-                            <div className="w-16 h-16 shrink-0 flex items-center justify-center p-1 bg-white border border-gray-100 rounded-sm">
-                               <img src="https://lh3.googleusercontent.com/d/1otH78TM9tuDtUb_Cy4ILn14P0I_lma_7" alt="University of South Florida Logo" className="w-full h-full object-contain" referrerPolicy="no-referrer" width="64" height="64" loading="lazy" />
-                            </div>
-                            <div>
-                               <h4 className="text-md font-bold text-royal-blue uppercase leading-tight">Diversity, Equity & Inclusion in the Workplace</h4>
-                               <p className="text-xs text-slate-500 mt-1">University of South Florida</p>
-                            </div>
-                         </div>
-                      </div>
-                   </FadeIn>
-                </div>
-             </div>
-          </div>
-       </section>
+        </div>
+      </section>
     </motion.main>
   );
 }
 
+/* ============================== The Service ============================== */
 const LifeStylePage = () => {
   return (
-    <motion.main 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="bg-white"
     >
       <SubNav links={[
         { label: 'Perspective', id: 'perspective' },
-        { label: 'Lifestyle', id: 'lifestyle' }
+        { label: 'Wellness', id: 'wellness' },
+        { label: 'Style', id: 'style' },
+        { label: 'Community', id: 'community' }
       ]} />
-      {/* Header */}
-      <section id="perspective" className="py-8 md:py-12 lg:py-20 px-6 max-w-7xl mx-auto text-center">
-        <motion.h1 
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-5xl md:text-7xl font-bold text-royal-blue mb-12"
-        >
-          Balance and Perspective.
-        </motion.h1>
-        <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto text-left">
+
+      <section id="perspective" className="pt-8 md:pt-14 pb-10 px-4 sm:px-6 max-w-5xl mx-auto">
+        <PageHero label="The Service" title="Balance and Perspective." />
+        <div className="mt-8 flex flex-col gap-5 w-full max-w-3xl mx-auto text-left">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight leading-tight">
+            <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight leading-tight">
               At this stage of my life, balance feels earned.
             </h2>
           </FadeIn>
-          <FadeIn delay={0.2}>
-            <h3 className="text-base md:text-lg lg:text-xl text-slate-500 font-medium tracking-tight leading-relaxed">
+          <FadeIn delay={0.15}>
+            <h3 className="text-base md:text-xl text-white/80 font-medium leading-relaxed">
               It lives somewhere between discipline and joy, between taking care of myself and still having fun.
             </h3>
           </FadeIn>
-          <FadeIn delay={0.4}>
-            <blockquote className="text-lg md:text-2xl lg:text-3xl text-royal-blue font-bold tracking-tight border-l-4 border-royal-blue pl-6 py-1 text-left">
+          <FadeIn delay={0.3}>
+            <blockquote className="text-lg md:text-2xl text-white font-bold tracking-tight border-l-4 border-white pl-5 py-1">
               These are the things that keep me grounded and remind me who I have always been.
             </blockquote>
           </FadeIn>
         </div>
-        
-        <FadeIn delay={0.6} className="mt-16 mb-8">
-           <div className="h-px bg-gray-200 w-full max-w-2xl mx-auto"></div>
+      </section>
+
+      {/* Wellness: strength, yoga, meditation and therapy */}
+      <section id="wellness" className="px-4 sm:px-6 pb-12 max-w-7xl mx-auto">
+        <SectionTitle label="Wellness" title="Strength, Stillness, and Taking Care of My Mind" />
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-4">
+          <FadeIn>
+            <Panel className="h-full flex flex-col">
+              <img src="https://lh3.googleusercontent.com/d/1ba5_nMDhov_ehq6YvM_-MRPzXGEfO8K4" alt="Man lifting weights in gym" className="w-full h-72 lg:h-80 object-cover object-top" referrerPolicy="no-referrer" width="600" height="400" loading="lazy" />
+              <div className="p-6 flex-1 flex flex-col">
+                <span className="self-start px-3 py-1 rounded-full bg-white text-royal-blue text-[11px] font-bold tracking-wide">Wellness</span>
+                <p className="mt-4 text-white/85 text-sm leading-relaxed">
+                  Weight training keeps me connected to my body and reminds me of what I am capable of. Meditation slows things down and gives me space to breathe. Therapy keeps my mental health strong and my perspective honest. None of this feels trendy to me. It feels necessary. Taking care of my body and mind is how I stay steady, present, and fully myself.
+                </p>
+                <div className="flex gap-3 text-white mt-auto pt-5">
+                  <Activity size={20} />
+                  <Heart size={20} />
+                </div>
+              </div>
+            </Panel>
+          </FadeIn>
+          <div className="grid gap-4">
+            {/* DRAFT copy for Jack's review: yoga and meditation, written in his voice */}
+            <FadeIn delay={0.1}>
+              <Panel className="p-6">
+                <div className="flex items-center gap-3">
+                  <span className="w-11 h-11 rounded-2xl bg-white text-royal-blue flex items-center justify-center shadow-lg"><Flower2 size={20} /></span>
+                  <h3 className="text-xl font-bold text-white">Yoga</h3>
+                </div>
+                <p className="mt-4 text-white/85 text-sm leading-relaxed">
+                  Yoga is where strength meets patience. The mat does not care about titles or deadlines. It asks for breath, balance, and honesty about where my body is today. Some days that means a demanding flow. Other days it means a long hold and gratitude. Either way, I roll up the mat steadier than I rolled it out.
+                </p>
+              </Panel>
+            </FadeIn>
+            <FadeIn delay={0.2}>
+              <Panel className="p-6">
+                <div className="flex items-center gap-3">
+                  <span className="w-11 h-11 rounded-2xl bg-white text-royal-blue flex items-center justify-center shadow-lg"><Sparkles size={20} /></span>
+                  <h3 className="text-xl font-bold text-white">Meditation</h3>
+                </div>
+                <p className="mt-4 text-white/85 text-sm leading-relaxed">
+                  Meditation is how I clear the noise. A few quiet minutes before the day starts give me room to think before the world starts asking for answers. It sharpens my focus, softens my reactions, and keeps me anchored to what actually matters.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {['Breathe first', 'Respond, do not react', 'Rest is part of the work'].map((t) => (
+                    <span key={t} className="px-3 py-1.5 rounded-full border border-white/25 bg-white/[0.06] text-[11px] font-bold tracking-wide text-white/90">{t}</span>
+                  ))}
+                </div>
+              </Panel>
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* Style: Air Jordans and the hunt */}
+      <section id="style" className="px-4 sm:px-6 pb-12 max-w-7xl mx-auto">
+        <SectionTitle label="Style" title="Sneakers and the Joy of the Hunt" />
+        <FadeIn>
+          <Panel className="grid md:grid-cols-2">
+            <div className="h-64 md:h-auto relative">
+              <img src="https://lh3.googleusercontent.com/d/19I2Izijp1jMdeVZgewWrnqxCDylxasxP" alt="Air Jordan 1 Royal Blue Sneakers" className="w-full h-full object-cover object-center" referrerPolicy="no-referrer" width="600" height="400" loading="lazy" />
+            </div>
+            <div className="p-6 md:p-8 flex flex-col justify-center">
+              <span className="self-start px-3 py-1 rounded-full bg-white text-royal-blue text-[11px] font-bold tracking-wide">Nike Air Jordans</span>
+              <p className="mt-4 text-white/85 text-sm leading-relaxed">
+                I am a sneakerhead, always have been. Air Jordans, especially the classics, take me back. They remind me of growing up, paying attention to details, and understanding how style carries memory. I love a clean pair that just works.
+              </p>
+              {/* DRAFT copy for Jack's review */}
+              <p className="mt-4 text-white/85 text-sm leading-relaxed">
+                My collection is not about hype. Every pair carries a memory: the retros I wanted long before I could buy them, the colorways that defined a season, and anything in royal blue. I wear them, I take care of them, and I still get excited on release day.
+              </p>
+              <p className="mt-4 text-white/85 text-sm leading-relaxed">
+                I also love the hunt. Thrift shopping, tracking down the right piece, finding the best deal, or catching a promo code before it disappears. Scrolling deal threads and following deal accounts is part nostalgia, part strategy, and part pure fun.
+              </p>
+              <p className="mt-4 text-white/70 text-xs italic border-l-2 border-white pl-3 flex items-center gap-1 flex-wrap">
+                I keep an eye on deal feeds like
+                <a href="https://x.com/FatKidDeals" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-white font-bold hover:underline">
+                  @fatkiddeals <Twitter size={12} fill="currentColor" />
+                </a>
+                and treat bargain-hunting like a sport.
+              </p>
+            </div>
+          </Panel>
+        </FadeIn>
+
+        {/* Travel */}
+        <FadeIn delay={0.1} className="mt-4">
+          <Panel>
+            <div className="h-44 md:h-56 relative">
+              <img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&w=2831&auto=format&fit=crop" alt="Airplane flying over ocean" className="w-full h-full object-cover" width="800" height="400" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#113b6c] to-transparent" />
+              <span className="absolute top-4 left-4 bg-white text-royal-blue px-3 py-1 text-[11px] font-bold tracking-wide rounded-full shadow-sm">Perspective</span>
+            </div>
+            <div className="p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-white mb-3">Travel</h3>
+              <p className="text-white/85 text-sm leading-relaxed">
+                Travel reminds me that the world is bigger than any room I have ever walked into. New places reset my thinking, sharpen my perspective, and feed my curiosity.
+              </p>
+            </div>
+          </Panel>
         </FadeIn>
       </section>
 
-      {/* Bento Grid */}
-      <section id="lifestyle" className="px-6 pb-8 md:pb-12 lg:pb-20 max-w-7xl mx-auto">
-         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 grid-rows-[auto]">
-            
-            {/* Card A: Wellness (Left Large) */}
-            <FadeIn className="md:col-span-4 md:row-span-2 bg-white border border-gray-200 rounded-sm overflow-hidden group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 flex flex-col">
-               <div className="relative h-[400px] md:h-[45%] flex-shrink-0">
-                  <img src="https://lh3.googleusercontent.com/d/1ba5_nMDhov_ehq6YvM_-MRPzXGEfO8K4" alt="Man lifting weights in gym" className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" width="600" height="400" loading="lazy" />
-               </div>
-               <div className="p-8 flex-grow flex flex-col justify-between">
-                  <div>
-                    <span className="bg-slate-100 text-royal-blue px-3 py-1 text-[11px] font-bold uppercase tracking-widest rounded-full mb-4 inline-block">WELLNESS</span>
-                    <h3 className="text-2xl font-bold text-royal-blue leading-tight mb-6">Strength, Stillness, and Taking Care of My Mind</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                      Weight training keeps me connected to my body and reminds me of what I am capable of. Meditation slows things down and gives me space to breathe. Therapy keeps my mental health strong and my perspective honest. None of this feels trendy to me. It feels necessary. Taking care of my body and mind is how I stay steady, present, and fully myself.
-                    </p>
-                  </div>
-                  <div className="flex gap-4 text-royal-blue mt-auto">
-                     <Activity size={20} />
-                     <Heart size={20} />
-                  </div>
-               </div>
+      {/* Community and service */}
+      <section id="community" className="px-4 sm:px-6 pb-14 max-w-7xl mx-auto">
+        <SectionTitle label="Service" title="In the Community" sub="Brotherhood, scholarship, and service are not just principles I joined. They are how I show up." />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { Icon: Users, t: 'Membership Intake', d: 'Served as Director of Membership Intake for Omicron Sigma, initiating three new members in my 25th year as a Sigma.' },
+            { Icon: Handshake, t: 'Workplace Inclusion', d: 'Sponsored community strategic team initiatives focused on employee inclusion, engagement, and workforce effectiveness across a 150+ person organization.' },
+            { Icon: Building2, t: 'Nonprofit Technology', d: 'Modernized a member organization through practical digital infrastructure: member, voting, and support workflows.' },
+            { Icon: GraduationCap, t: 'Paying It Forward', d: 'Someone invested in me before I earned it. Mentoring, sharing knowledge, and opening doors is how I pay that forward.' },
+          ].map(({ Icon, t, d }, i) => (
+            <FadeIn key={t} delay={i * 0.08}>
+              <Panel className="h-full p-6">
+                <span className="w-11 h-11 rounded-2xl bg-white text-royal-blue flex items-center justify-center shadow-lg"><Icon size={20} /></span>
+                <h3 className="mt-4 font-bold text-white">{t}</h3>
+                <p className="mt-2 text-sm text-white/80 leading-relaxed">{d}</p>
+              </Panel>
             </FadeIn>
-
-            {/* Card B: Style (Top Right Large - Replaces previous Travel position) */}
-            <FadeIn delay={0.2} className="md:col-span-8 bg-white border border-gray-200 rounded-sm overflow-hidden flex flex-col md:flex-row group hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
-               <div className="md:w-1/2 h-64 md:h-auto relative">
-                 <img src="https://lh3.googleusercontent.com/d/19I2Izijp1jMdeVZgewWrnqxCDylxasxP" alt="Air Jordan 1 Royal Blue Sneakers" className="w-full h-full object-cover object-center" referrerPolicy="no-referrer" width="600" height="400" loading="lazy" />
-               </div>
-               <div className="md:w-1/2 p-8 flex flex-col justify-center">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-royal-blue mb-2">STYLE</span>
-                  <h3 className="text-3xl font-bold text-royal-blue mb-4">Sneakers and the Joy of the Hunt</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                    I am a sneakerhead, always have been. Air Jordans, especially the classics, take me back. They remind me of growing up, paying attention to details, and understanding how style carries memory. I love a clean pair that just works.
-                  </p>
-                  <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                    I also love the hunt. Thrift shopping, tracking down the right piece, finding the best deal, or catching a promo code before it disappears. Scrolling deal threads and following deal accounts is part nostalgia, part strategy, and part pure fun.
-                  </p>
-                  <p className="text-slate-500 text-xs italic mb-6 border-l-2 border-royal-blue pl-3 flex items-center gap-1 flex-wrap">
-                    I keep an eye on deal feeds like 
-                    <a href="https://x.com/FatKidDeals" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-royal-blue font-bold hover:underline">
-                      @fatkiddeals <Twitter size={12} fill="currentColor" />
-                    </a> 
-                    and treat bargain-hunting like a sport.
-                  </p>
-                  
-               </div>
-            </FadeIn>
-
-            {/* Card C: Travel (Bottom Middle - Moved from Top Right) */}
-            <FadeIn delay={0.4} className="md:col-span-8 bg-white border border-gray-200 rounded-sm overflow-hidden flex flex-col group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 relative">
-               <div className="h-48 relative">
-                 <img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&w=2831&auto=format&fit=crop" alt="Airplane flying over ocean" className="w-full h-full object-cover" width="800" height="400" loading="lazy" />
-                 <div className="absolute inset-0 bg-black/40"></div>
-                 <div className="absolute top-6 left-6">
-                   <span className="bg-white text-royal-blue px-3 py-1 text-[11px] font-bold uppercase tracking-widest rounded-full shadow-sm">Perspective</span>
-                 </div>
-               </div>
-               <div className="p-8 flex flex-col justify-center flex-grow">
-                  <h3 className="text-2xl font-bold text-royal-blue mb-4">Travel</h3>
-                  <p className="text-slate-800 font-medium text-sm leading-relaxed mb-6">
-                    Travel reminds me that the world is bigger than any room I have ever walked into. New places reset my thinking, sharpen my perspective, and feed my curiosity.
-                  </p>
-               </div>
-            </FadeIn>
-
-            {/* Card D: Removed Socials & Blog (Moved to Connect Page) */}
-         </div>
+          ))}
+        </div>
       </section>
     </motion.main>
   );
 }
 
-const PrivacyPolicyPage = () => {
-  return (
-    <motion.main
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="pt-8 md:pt-12 lg:pt-20 bg-slate-50"
-    >
-      <section className="py-8 md:py-12 lg:py-20 px-6">
-        <div className="max-w-4xl mx-auto bg-white p-12 shadow-sm border border-gray-100">
-          <h1 className="text-4xl font-bold text-royal-blue mb-8">Privacy Policy</h1>
-          <div className="prose prose-slate max-w-none">
-            <p className="text-sm text-slate-500 mb-8">Last Updated: April 2026</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">1. Information We Collect</h2>
-            <p className="mb-4">We may collect personal information that you voluntarily provide to us when you express an interest in obtaining information about us or our products and Services, when you participate in activities on the Website, or otherwise when you contact us.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">2. How We Use Your Information</h2>
-            <p className="mb-4">We use personal information collected via our Website for a variety of business purposes described below. We process your personal information for these purposes in reliance on our legitimate business interests, in order to enter into or perform a contract with you, with your consent, and/or for compliance with our legal obligations.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">3. Information Sharing</h2>
-            <p className="mb-4">We only share information with your consent, to comply with laws, to provide you with services, to protect your rights, or to fulfill business obligations.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">4. Cookies and Tracking Technologies</h2>
-            <p className="mb-4">We may use cookies and similar tracking technologies (like web beacons and pixels) to access or store information. Specific information about how we use such technologies and how you can refuse certain cookies is set out in our Cookie Notice.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">5. Contact Us</h2>
-            <p className="mb-4">If you have questions or comments about this notice, you may email us at jd@geauxmab.com.</p>
-          </div>
-        </div>
-      </section>
-    </motion.main>
-  );
-};
+/* ============================== Legal ============================== */
+const LegalPage = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-3 sm:px-6 pt-6 md:pt-12 pb-12">
+    <div className="max-w-4xl mx-auto">
+      <Panel className="p-6 sm:p-8 md:p-12">
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{title}</h1>
+        <p className="text-xs text-[#c8c9c7] mb-8">Last Updated: April 2026</p>
+        <div className="legal-body text-white/85 leading-relaxed text-sm md:text-base">{children}</div>
+      </Panel>
+    </div>
+  </motion.main>
+);
 
-const TermsOfServicePage = () => {
-  return (
-    <motion.main
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="pt-8 md:pt-12 lg:pt-20 bg-slate-50"
-    >
-      <section className="py-8 md:py-12 lg:py-20 px-6">
-        <div className="max-w-4xl mx-auto bg-white p-12 shadow-sm border border-gray-100">
-          <h1 className="text-4xl font-bold text-royal-blue mb-8">Terms of Service</h1>
-          <div className="prose prose-slate max-w-none">
-            <p className="text-sm text-slate-500 mb-8">Last Updated: April 2026</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">1. Agreement to Terms</h2>
-            <p className="mb-4">These Terms of Use constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and GeauxMAB.com ("Company", "we", "us", or "our"), concerning your access to and use of the website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">2. Intellectual Property Rights</h2>
-            <p className="mb-4">Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the "Content") and the trademarks, service marks, and logos contained therein (the "Marks") are owned or controlled by us or licensed to us.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">3. User Representations</h2>
-            <p className="mb-4">By using the Site, you represent and warrant that: (1) you have the legal capacity and you agree to comply with these Terms of Use; (2) you are not a minor in the jurisdiction in which you reside; (3) you will not access the Site through automated or non-human means, whether through a bot, script or otherwise.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">4. Modifications and Interruptions</h2>
-            <p className="mb-4">We reserve the right to change, modify, or remove the contents of the Site at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Site.</p>
-            
-            <h2 className="text-2xl font-semibold text-slate-800 mt-8 mb-4">5. Contact Us</h2>
-            <p className="mb-4">In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at: jd@geauxmab.com.</p>
-          </div>
-        </div>
-      </section>
-    </motion.main>
-  );
-};
+const PrivacyPolicyPage = () => (
+  <LegalPage title="Privacy Policy">
+    <h2>1. Information We Collect</h2>
+    <p>We may collect personal information that you voluntarily provide to us when you express an interest in obtaining information about us or our products and Services, when you participate in activities on the Website, or otherwise when you contact us.</p>
+
+    <h2>2. How We Use Your Information</h2>
+    <p>We use personal information collected via our Website for a variety of business purposes described below. We process your personal information for these purposes in reliance on our legitimate business interests, in order to enter into or perform a contract with you, with your consent, and/or for compliance with our legal obligations.</p>
+
+    <h2>3. Information Sharing</h2>
+    <p>We only share information with your consent, to comply with laws, to provide you with services, to protect your rights, or to fulfill business obligations.</p>
+
+    <h2>4. Cookies and Tracking Technologies</h2>
+    <p>We may use cookies and similar tracking technologies (like web beacons and pixels) to access or store information. Specific information about how we use such technologies and how you can refuse certain cookies is set out in our Cookie Notice.</p>
+
+    <h2>5. Contact Us</h2>
+    <p>If you have questions or comments about this notice, you may email us at <a href="mailto:jd@geauxmab.com">jd@geauxmab.com</a>.</p>
+  </LegalPage>
+);
+
+const TermsOfServicePage = () => (
+  <LegalPage title="Terms of Service">
+    <h2>1. Agreement to Terms</h2>
+    <p>These Terms of Use constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and GeauxMAB.com ("Company", "we", "us", or "our"), concerning your access to and use of the website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.</p>
+
+    <h2>2. Intellectual Property Rights</h2>
+    <p>Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the "Content") and the trademarks, service marks, and logos contained therein (the "Marks") are owned or controlled by us or licensed to us.</p>
+
+    <h2>3. User Representations</h2>
+    <p>By using the Site, you represent and warrant that: (1) you have the legal capacity and you agree to comply with these Terms of Use; (2) you are not a minor in the jurisdiction in which you reside; (3) you will not access the Site through automated or non-human means, whether through a bot, script or otherwise.</p>
+
+    <h2>4. Modifications and Interruptions</h2>
+    <p>We reserve the right to change, modify, or remove the contents of the Site at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Site.</p>
+
+    <h2>5. Contact Us</h2>
+    <p>In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at: <a href="mailto:jd@geauxmab.com">jd@geauxmab.com</a>.</p>
+  </LegalPage>
+);
 
 // --- Main App ---
 

@@ -250,3 +250,14 @@ html {
   line-height: 0.85;
   padding: 0.06em 0.1em 0 0;
 }
+
+/* Legal pages: readable headings and links on the blue panels */
+.legal-body h2 {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 1.8em 0 0.6em;
+}
+.legal-body h2:first-child { margin-top: 0; }
+.legal-body p { margin: 0 0 1em; }
+.legal-body a { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
