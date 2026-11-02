@@ -133,7 +133,7 @@ Event type used: `https://api.calendly.com/event_types/dc9fc8cf-9a0c-4902-8035-3
 
 ### 6.2 Header (sticky)
 - Left: **Jack Dee / Life Member #2174**.
-- Then three linked insignia (same size, same centerline): **Phi Beta Sigma seal** → phibetasigma1914.org, **Gulf Coast Region** → pbsgulfcoastregion.org, **North Dallas Sigmas** (Omicron Sigma Alumni Chapter) → omicronsigma1914.org. Each has a hover label.
+- Then three linked insignia (same size, same centerline): **Phi Beta Sigma seal** → phibetasigma1914.org, **Gulf Coast Region** → pbsgulfcoastregion.org, **North Dallas Sigmas** (Omicron Sigma Alumni Chapter) → omicronsigma.clubexpress.com (omicronsigma1914.org has no working HTTPS certificate; its http address redirects there). Each has a hover label.
 - Right: **Save** (icon-only on phones, "Save App" on wider screens). In desktop mode Save is hidden (it is an app feature) and Share and Menu show instead.
 - Desktop mode (≥ 1024 px) adds center navigation pills: Home, The Brotherhood, The Scholarship, The Service.
 - On non-home views the left side becomes a back arrow; tablet center title shows the view name (hidden in desktop mode, where nav takes its place).
