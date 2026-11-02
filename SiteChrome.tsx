@@ -52,7 +52,7 @@ export const NAV = [
 const LINKS = {
   fraternity: 'https://phibetasigma1914.org/',
   region: 'https://www.pbsgulfcoastregion.org/',
-  chapter: 'https://omicronsigma1914.org/',
+  chapter: 'https://omicronsigma.clubexpress.com/',
 };
 
 /* ---------------- Social icons ---------------- */
