@@ -136,7 +136,7 @@ const SocialIcons = ({ variant }: { variant: SocialVariant }) => {
 };
 
 const SHARE = {
-  title: 'Personal Calendar | Jack Dee',
+  title: 'Jack Dee Calendar | GeauxMAB',
   text: 'Book time with Jack Dee. Pick a time and lock it in.',
   url: 'https://book.geauxmab.com/',
 };
